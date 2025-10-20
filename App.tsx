@@ -1,45 +1,42 @@
 /**
- * Sample React Native App
- * https://github.com/facebook/react-native
- *
+ * Memento App
+ * Turn photos into beautiful memory slideshows
  * @format
  */
 
-import { NewAppScreen } from '@react-native/new-app-screen';
-import { StatusBar, StyleSheet, useColorScheme, View } from 'react-native';
-import {
-  SafeAreaProvider,
-  useSafeAreaInsets,
-} from 'react-native-safe-area-context';
+import React, { useEffect } from 'react';
+import { StatusBar, LogBox } from 'react-native';
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
+import { SafeAreaProvider } from 'react-native-safe-area-context';
+import { RootNavigator } from './src/navigation/RootNavigator';
+import { useThemeStore } from './src/store/themeStore';
+import './src/i18n';
+
+// Ignore specific warnings
+LogBox.ignoreLogs([
+  'Non-serializable values were found in the navigation state',
+]);
 
 function App() {
-  const isDarkMode = useColorScheme() === 'dark';
+  const { colors, theme } = useThemeStore();
+
+  useEffect(() => {
+    // Set status bar style based on theme
+    const isDark = theme === 'dark';
+    StatusBar.setBarStyle(isDark ? 'light-content' : 'dark-content');
+  }, [theme]);
 
   return (
-    <SafeAreaProvider>
-      <StatusBar barStyle={isDarkMode ? 'light-content' : 'dark-content'} />
-      <AppContent />
-    </SafeAreaProvider>
+    <GestureHandlerRootView style={{ flex: 1 }}>
+      <SafeAreaProvider>
+        <StatusBar
+          barStyle={theme === 'dark' ? 'light-content' : 'dark-content'}
+          backgroundColor={colors.background}
+        />
+        <RootNavigator />
+      </SafeAreaProvider>
+    </GestureHandlerRootView>
   );
 }
-
-function AppContent() {
-  const safeAreaInsets = useSafeAreaInsets();
-
-  return (
-    <View style={styles.container}>
-      <NewAppScreen
-        templateFileName="App.tsx"
-        safeAreaInsets={safeAreaInsets}
-      />
-    </View>
-  );
-}
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
-});
 
 export default App;

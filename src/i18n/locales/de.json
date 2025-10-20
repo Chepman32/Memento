@@ -1,0 +1,220 @@
+{
+  "common": {
+    "cancel": "Cancel",
+    "done": "Done",
+    "save": "Save",
+    "delete": "Delete",
+    "edit": "Edit",
+    "share": "Share",
+    "close": "Close",
+    "back": "Back",
+    "next": "Next",
+    "previous": "Previous",
+    "continue": "Continue",
+    "ok": "OK",
+    "yes": "Yes",
+    "no": "No",
+    "loading": "Loading...",
+    "retry": "Retry",
+    "error": "Error",
+    "success": "Success"
+  },
+  "home": {
+    "title": "Memento",
+    "emptyStateTitle": "Create Your First Memory",
+    "emptyStateSubtitle": "Turn photos into magical slideshows",
+    "getStartedButton": "Get Started",
+    "yourProjects": "Your Projects",
+    "createNewProject": "Create New Project",
+    "lastEdited": "Last edited {{time}}",
+    "projectCount": "{{count}} photo",
+    "projectCount_plural": "{{count}} photos"
+  },
+  "imageSelection": {
+    "title": "Select Photos",
+    "permissionRequired": "Photos Access Required",
+    "permissionMessage": "We need permission to access your photos",
+    "grantAccess": "Grant Access",
+    "selectedCount": "{{count}} selected",
+    "createSlideshow": "Create Slideshow ({{count}} photos)",
+    "maximumReached": "Maximum {{count}} photos allowed",
+    "minimumRequired": "Select at least {{count}} photos"
+  },
+  "editor": {
+    "title": "Edit Slideshow",
+    "transition": "Transition",
+    "duration": "Photo Duration",
+    "effects": "Photo Effects",
+    "music": "Background Music",
+    "preview": "Preview",
+    "export": "Export",
+    "durationValue": "{{value}}s",
+    "saveChanges": "Save Changes",
+    "discardChanges": "Discard Changes"
+  },
+  "transitions": {
+    "fade": "Fade",
+    "slideLeft": "Slide Left",
+    "slideRight": "Slide Right",
+    "slideUp": "Slide Up",
+    "slideDown": "Slide Down",
+    "zoom": "Zoom",
+    "rotate": "Rotate",
+    "cube": "Cube",
+    "flip": "Flip",
+    "dissolve": "Dissolve",
+    "blur": "Blur",
+    "wipeCircle": "Circle Wipe",
+    "push": "Push"
+  },
+  "effects": {
+    "kenBurns": "Ken Burns",
+    "vignette": "Vignette",
+    "sepia": "Sepia",
+    "blackWhite": "Black & White",
+    "vintage": "Vintage",
+    "filmGrain": "Film Grain",
+    "colorPop": "Color Pop",
+    "lightLeak": "Light Leak"
+  },
+  "preview": {
+    "title": "Preview",
+    "play": "Play",
+    "pause": "Pause",
+    "position": "{{current}}/{{total}}",
+    "speed": "Speed",
+    "loop": "Loop",
+    "mute": "Mute"
+  },
+  "export": {
+    "title": "Export Your Memory",
+    "subtitle": "{{count}} photos • {{duration}} seconds",
+    "quality": "Quality",
+    "format": "Format",
+    "resolution": "Resolution",
+    "saveToPhotos": "Save to Photos",
+    "share": "Share",
+    "saveToFiles": "Save to Files",
+    "exporting": "Exporting...",
+    "progress": "{{percent}}% complete",
+    "estimatedTime": "About {{time}} remaining",
+    "success": "Exported Successfully!",
+    "error": "Export Failed",
+    "view": "View",
+    "done": "Done",
+    "formats": {
+      "video": "Video (MP4)",
+      "gif": "GIF (Animated)"
+    },
+    "qualities": {
+      "720p": "HD (720p)",
+      "1080p": "Full HD (1080p)",
+      "4K": "4K Ultra HD"
+    },
+    "resolutions": {
+      "1:1": "Square (1:1)",
+      "9:16": "Portrait (9:16)",
+      "16:9": "Landscape (16:9)",
+      "21:9": "Cinema (21:9)"
+    },
+    "fileSizeEstimate": "Estimated size: {{size}}",
+    "tooLarge": "File size may exceed {{size}}MB"
+  },
+  "settings": {
+    "title": "Settings",
+    "appearance": "Appearance",
+    "theme": "Theme",
+    "soundEffects": "Sound Effects",
+    "hapticFeedback": "Haptic Feedback",
+    "hapticStrength": "Haptic Strength",
+    "language": "Language",
+    "storage": "Storage",
+    "clearCache": "Clear Cache",
+    "cacheSize": "Cache size: {{size}}",
+    "premium": "Premium",
+    "about": "About",
+    "version": "Version {{version}}",
+    "rateApp": "Rate App",
+    "shareApp": "Share App",
+    "helpSupport": "Help & Support",
+    "privacyPolicy": "Privacy Policy",
+    "termsOfService": "Terms of Service",
+    "licenses": "Open Source Licenses"
+  },
+  "themes": {
+    "light": "Light",
+    "dark": "Dark",
+    "solar": "Solar",
+    "mono": "Mono",
+    "description": {
+      "light": "Clean and bright",
+      "dark": "Easy on the eyes",
+      "solar": "Warm and vibrant",
+      "mono": "Simple grayscale"
+    }
+  },
+  "premium": {
+    "title": "Upgrade to Premium",
+    "subtitle": "Unlock all features",
+    "features": {
+      "unlimitedPhotos": "Unlimited Photos",
+      "unlimitedPhotosDesc": "Create slideshows with 50+ photos",
+      "premiumTransitions": "Premium Transitions",
+      "premiumTransitionsDesc": "Access 20+ exclusive transition effects",
+      "customMusic": "Custom Music",
+      "customMusicDesc": "Add your own background music",
+      "export4K": "4K Export",
+      "export4KDesc": "Export in ultra-high definition",
+      "noWatermark": "No Watermark",
+      "noWatermarkDesc": "Clean, professional exports",
+      "advancedEffects": "Advanced Effects",
+      "advancedEffectsDesc": "Ken Burns, color grading, text overlays",
+      "prioritySupport": "Priority Support",
+      "prioritySupportDesc": "Get help when you need it",
+      "cloudSync": "Cloud Sync",
+      "cloudSyncDesc": "Sync projects across devices"
+    },
+    "subscribe": "Subscribe Now",
+    "monthlyPlan": "Monthly Plan",
+    "annualPlan": "Annual Plan",
+    "freeTrial": "Start Free Trial",
+    "restore": "Restore Purchases",
+    "pricing": {
+      "monthly": "$4.99/month",
+      "annual": "$29.99/year",
+      "annualMonthly": "$2.50/month",
+      "save": "Save 50%",
+      "trialMonthly": "3 days free, then $4.99/month",
+      "trialAnnual": "7 days free, then $29.99/year"
+    },
+    "badges": {
+      "mostFlexible": "Most Flexible",
+      "bestValue": "Best Value"
+    },
+    "legal": {
+      "cancelAnytime": "Cancel anytime",
+      "autoRenewable": "Auto-renewable subscription",
+      "termsApply": "Terms and conditions apply"
+    }
+  },
+  "errors": {
+    "generic": "Something went wrong",
+    "networkError": "Network error. Please try again.",
+    "permissionDenied": "Permission denied",
+    "insufficientStorage": "Insufficient storage space",
+    "imageLoadFailed": "Failed to load image",
+    "videoEncodeFailed": "Failed to encode video",
+    "gifCreateFailed": "Failed to create GIF",
+    "purchaseFailed": "Purchase failed",
+    "restoreFailed": "No purchases found to restore",
+    "subscriptionExpired": "Your subscription has expired"
+  },
+  "success": {
+    "projectCreated": "Project created",
+    "projectSaved": "Project saved",
+    "projectDeleted": "Project deleted",
+    "exported": "Exported successfully",
+    "purchaseComplete": "Purchase complete",
+    "cacheCleared": "Cache cleared"
+  }
+}
