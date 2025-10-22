@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
-import { View, StyleSheet, Dimensions, ScrollView, TouchableOpacity, Text, Image as RNImage } from 'react-native';
+import { View, StyleSheet, Dimensions, ScrollView, TouchableOpacity, Text, Image as RNImage, LayoutChangeEvent } from 'react-native';
 import { useNavigation, useRoute, RouteProp } from '@react-navigation/native';
 import { StackNavigationProp } from '@react-navigation/stack';
 import { RootStackParamList } from '../navigation/navigationTypes';
@@ -10,7 +10,7 @@ import { SPACING, RADII, TYPOGRAPHY, SHADOWS } from '../constants/theme';
 import { TRANSITIONS } from '../constants/transitions';
 import { Canvas, Image, useImage, ColorMatrix } from '@shopify/react-native-skia';
 import { Gesture, GestureDetector, GestureHandlerRootView } from 'react-native-gesture-handler';
-import Animated, { runOnJS, useSharedValue, withSpring, useAnimatedStyle } from 'react-native-reanimated';
+import Animated, { runOnJS, useSharedValue, useAnimatedStyle } from 'react-native-reanimated';
 import { TransitionType, PhotoEffect } from '../types/project.types';
 import { PremiumFeature } from '../types/purchase.types';
 import { haptics } from '../utils/hapticFeedback';
@@ -348,37 +348,72 @@ interface SliderProps {
 
 const Slider: React.FC<SliderProps> = ({ value, min, max, step, onValueChange, color }) => {
   const { colors } = useThemeStore();
-  const sliderWidth = SCREEN_WIDTH - SPACING.md * 4;
-  const knobSize = 24;
-  const translateX = useSharedValue(((value - min) / (max - min)) * sliderWidth);
+  const [trackWidth, setTrackWidth] = useState(0);
+  const position = useSharedValue(0);
+  const startOffset = useSharedValue(0);
+  const currentValue = useSharedValue(value);
+  const range = max - min;
+
+  const handleTrackLayout = useCallback((event: LayoutChangeEvent) => {
+    setTrackWidth(event.nativeEvent.layout.width);
+  }, []);
 
   useEffect(() => {
-    translateX.value = ((value - min) / (max - min)) * sliderWidth;
-  }, [value, min, max, sliderWidth]);
+    if (trackWidth <= 0 || range === 0) return;
+    const clampedValue = Math.min(Math.max(value, min), max);
+    const ratio = (clampedValue - min) / range;
+    position.value = ratio * trackWidth;
+    currentValue.value = clampedValue;
+  }, [value, min, max, range, trackWidth, position, currentValue]);
 
   const gesture = Gesture.Pan()
-    .onUpdate((e) => {
-      const newX = Math.max(0, Math.min(e.x, sliderWidth));
-      translateX.value = newX;
-      const newProgress = newX / sliderWidth;
-      const newValue = min + Math.round((newProgress * (max - min)) / step) * step;
-      runOnJS(onValueChange)(newValue);
+    .onBegin(() => {
+      startOffset.value = position.value;
+    })
+    .onChange((event) => {
+      if (trackWidth <= 0 || range === 0) return;
+      const nextPosition = Math.min(Math.max(startOffset.value + event.translationX, 0), trackWidth);
+      if (nextPosition === position.value) return;
+
+      position.value = nextPosition;
+
+      const ratio = nextPosition / trackWidth;
+      const rawValue = min + ratio * range;
+      const snapped = min + Math.round((rawValue - min) / step) * step;
+      const clampedValue = Math.min(Math.max(snapped, min), max);
+
+      if (currentValue.value !== clampedValue) {
+        currentValue.value = clampedValue;
+        runOnJS(onValueChange)(clampedValue);
+      }
+    })
+    .onFinalize(() => {
+      startOffset.value = position.value;
     });
 
-  const animatedStyle = useAnimatedStyle(() => ({
-    transform: [{ translateX: translateX.value - knobSize / 2 }],
+  const progressStyle = useAnimatedStyle(() => ({
+    width: position.value,
   }));
 
-  const progressWidth = ((value - min) / (max - min)) * 100;
+  const knobStyle = useAnimatedStyle(() => ({
+    transform: [{ translateX: position.value }],
+  }));
 
   return (
     <View style={styles.sliderContainer}>
-      <View style={[styles.sliderTrack, { backgroundColor: colors.border }]}>
-        <View style={[styles.sliderProgress, { width: `${progressWidth}%`, backgroundColor: color }]} />
+      <View style={styles.sliderTrackWrapper}>
+        <View
+          style={[styles.sliderTrack, { backgroundColor: colors.border }]}
+          onLayout={handleTrackLayout}
+        >
+          <Animated.View style={[styles.sliderProgress, { backgroundColor: color }, progressStyle]} />
+        </View>
+        <GestureDetector gesture={gesture}>
+          <Animated.View style={styles.sliderGestureArea}>
+            <Animated.View style={[styles.sliderKnob, { borderColor: color }, knobStyle]} />
+          </Animated.View>
+        </GestureDetector>
       </View>
-      <GestureDetector gesture={gesture}>
-        <Animated.View style={[styles.sliderKnob, { borderColor: color }, animatedStyle]} />
-      </GestureDetector>
       <Text style={[styles.sliderValue, { color: colors.textSecondary }]}>{value}s</Text>
     </View>
   );
@@ -597,6 +632,12 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginTop: SPACING.sm,
   },
+  sliderTrackWrapper: {
+    flex: 1,
+    position: 'relative',
+    justifyContent: 'center',
+    marginRight: SPACING.sm,
+  },
   sliderTrack: {
     flex: 1,
     height: 4,
@@ -605,9 +646,15 @@ const styles = StyleSheet.create({
   },
   sliderProgress: {
     height: '100%',
+    borderRadius: 2,
+  },
+  sliderGestureArea: {
+    ...StyleSheet.absoluteFillObject,
   },
   sliderKnob: {
     position: 'absolute',
+    top: -10,
+    left: -12,
     width: 24,
     height: 24,
     borderRadius: 12,
@@ -617,16 +664,17 @@ const styles = StyleSheet.create({
   },
   sliderValue: {
     ...TYPOGRAPHY.caption,
-    marginLeft: SPACING.sm,
     minWidth: 30,
     textAlign: 'right',
   },
   transitionContainer: {
-    paddingVertical: SPACING.xs,
+    paddingTop: SPACING.xs,
+    paddingBottom: SPACING.sm,
   },
   transitionItem: {
     alignItems: 'center',
     marginRight: SPACING.md,
+    paddingBottom: SPACING.xs,
   },
   transitionIcon: {
     width: 50,
