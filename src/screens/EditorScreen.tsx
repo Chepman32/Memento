@@ -48,6 +48,7 @@ export const EditorScreen = () => {
 
   const [activePhotoIndex, setActivePhotoIndex] = useState(0);
   const [isPlaying, setIsPlaying] = useState(false);
+  const [activeTab, setActiveTab] = useState<'controls' | 'tools' | 'layers'>('controls');
 
   // Get current project
   const currentProject = projects.find(p => p.id === currentProjectId);
@@ -170,32 +171,16 @@ export const EditorScreen = () => {
     navigation.goBack();
   };
 
-  return (
-    <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]} edges={['top', 'bottom']}>
-      <GestureHandlerRootView style={styles.container}>
-        <View style={styles.header}>
-          <IconButton
-            icon={<Text style={[styles.backIcon, { color: colors.text }]}>←</Text>}
-            onPress={handleBack}
-            variant="default"
-            size={44}
-          />
-          <Text style={[styles.headerTitle, { color: colors.text }]}>Editor</Text>
-          <View style={{ width: 44 }} />
-        </View>
+  const handleTabChange = (tab: 'controls' | 'tools' | 'layers') => {
+    setActiveTab(tab);
+    haptics.light();
+  };
 
-        <ScrollView style={styles.scrollContent} showsVerticalScrollIndicator={false}>
-          <View style={[styles.previewContainer, { backgroundColor: colors.surface, borderColor: colors.border }]}>
-            {activePhoto && (
-              <PhotoPreview
-                photo={activePhoto}
-                width={PREVIEW_WIDTH}
-                height={PREVIEW_HEIGHT}
-              />
-            )}
-          </View>
-
-          <View style={[styles.controlsContainer, { borderBottomColor: colors.border }]}>
+  const renderTabContent = () => {
+    switch (activeTab) {
+      case 'controls':
+        return (
+          <View style={styles.tabContent}>
             <View style={styles.controlGroup}>
               <Text style={[styles.controlLabel, { color: colors.textSecondary }]}>
                 Duration: {activePhoto?.duration || 0}s
@@ -218,7 +203,11 @@ export const EditorScreen = () => {
                 isPremium={purchaseState.isPremium}
               />
             </View>
-
+          </View>
+        );
+      case 'tools':
+        return (
+          <View style={styles.tabContent}>
             <View style={styles.controlGroup}>
               <Text style={[styles.controlLabel, { color: colors.textSecondary }]}>Effects</Text>
               <EffectPicker
@@ -227,8 +216,52 @@ export const EditorScreen = () => {
               />
             </View>
           </View>
+        );
+      case 'layers':
+        return (
+          <View style={styles.tabContent}>
+            <Text style={[styles.controlLabel, { color: colors.textSecondary }]}>Layers</Text>
+            <Text style={[styles.placeholderText, { color: colors.textSecondary }]}>
+              Layers feature coming soon
+            </Text>
+          </View>
+        );
+    }
+  };
 
-          <View style={[styles.timelineContainer, { borderBottomColor: colors.border }]}>
+  return (
+    <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]} edges={['top', 'bottom']}>
+      <GestureHandlerRootView style={styles.container}>
+        {/* Header */}
+        <View style={styles.header}>
+          <IconButton
+            icon={<Text style={[styles.backIcon, { color: colors.text }]}>←</Text>}
+            onPress={handleBack}
+            variant="default"
+            size={44}
+          />
+          <Text style={[styles.headerTitle, { color: colors.text }]}>Editor</Text>
+          <IconButton
+            icon={<Text style={[styles.backIcon, { color: colors.text }]}>♫</Text>}
+            onPress={() => {}}
+            variant="default"
+            size={44}
+          />
+        </View>
+
+        {/* Top Half: Preview & Timeline */}
+        <View style={styles.topHalf}>
+          <View style={[styles.previewContainer, { backgroundColor: colors.surface, borderColor: colors.border }]}>
+            {activePhoto && (
+              <PhotoPreview
+                photo={activePhoto}
+                width={PREVIEW_WIDTH}
+                height={PREVIEW_HEIGHT * 0.6}
+              />
+            )}
+          </View>
+
+          <View style={styles.timelineContainer}>
             <PhotoTimeline
               photos={currentProject?.photos || []}
               activeIndex={activePhotoIndex}
@@ -236,24 +269,61 @@ export const EditorScreen = () => {
               onDragEnd={handleDragEnd}
             />
           </View>
-        </ScrollView>
+        </View>
 
-        <View style={[styles.footer, { backgroundColor: colors.surface, borderTopColor: colors.border }]}>
-          <TouchableOpacity
-            style={[styles.button, styles.secondaryButton, { backgroundColor: colors.surface, borderColor: colors.border }]}
-            onPress={handleSave}
-          >
-            <Text style={[styles.buttonText, { color: colors.text }]}>Save</Text>
-          </TouchableOpacity>
+        {/* Bottom Half: Tabs & Content */}
+        <View style={[styles.bottomHalf, { backgroundColor: colors.surface }]}>
+          {/* Tab Selector */}
+          <View style={[styles.tabSelector, { borderBottomColor: colors.border }]}>
+            <TouchableOpacity
+              style={[styles.tab, activeTab === 'controls' && { borderBottomColor: colors.primary, borderBottomWidth: 2 }]}
+              onPress={() => handleTabChange('controls')}
+            >
+              <Text style={[styles.tabText, { color: activeTab === 'controls' ? colors.primary : colors.textSecondary }]}>
+                Controls
+              </Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={[styles.tab, activeTab === 'tools' && { borderBottomColor: colors.primary, borderBottomWidth: 2 }]}
+              onPress={() => handleTabChange('tools')}
+            >
+              <Text style={[styles.tabText, { color: activeTab === 'tools' ? colors.primary : colors.textSecondary }]}>
+                Tools
+              </Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={[styles.tab, activeTab === 'layers' && { borderBottomColor: colors.primary, borderBottomWidth: 2 }]}
+              onPress={() => handleTabChange('layers')}
+            >
+              <Text style={[styles.tabText, { color: activeTab === 'layers' ? colors.primary : colors.textSecondary }]}>
+                Layers
+              </Text>
+            </TouchableOpacity>
+          </View>
 
-          <TouchableOpacity
-            style={[styles.button, { backgroundColor: colors.primary }]}
-            onPress={handlePreview}
-          >
-            <Text style={[styles.buttonText, { color: '#FFFFFF' }]}>
-              {isPlaying ? 'Pause' : 'Preview'}
-            </Text>
-          </TouchableOpacity>
+          {/* Tab Content */}
+          <ScrollView style={styles.scrollContent} showsVerticalScrollIndicator={false}>
+            {renderTabContent()}
+          </ScrollView>
+
+          {/* Footer Buttons */}
+          <View style={[styles.footer, { backgroundColor: colors.surface, borderTopColor: colors.border }]}>
+            <TouchableOpacity
+              style={[styles.button, styles.secondaryButton, { backgroundColor: colors.surface, borderColor: colors.border }]}
+              onPress={handleSave}
+            >
+              <Text style={[styles.buttonText, { color: colors.text }]}>Save</Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity
+              style={[styles.button, { backgroundColor: colors.primary }]}
+              onPress={handlePreview}
+            >
+              <Text style={[styles.buttonText, { color: '#FFFFFF' }]}>
+                Preview
+              </Text>
+            </TouchableOpacity>
+          </View>
         </View>
       </GestureHandlerRootView>
     </SafeAreaView>
@@ -644,12 +714,20 @@ const styles = StyleSheet.create({
     ...TYPOGRAPHY.h3,
     fontWeight: '600',
   },
-  scrollContent: {
+  topHalf: {
     flex: 1,
+    paddingBottom: SPACING.sm,
+  },
+  bottomHalf: {
+    flex: 1,
+    borderTopLeftRadius: RADII.lg,
+    borderTopRightRadius: RADII.lg,
+    overflow: 'hidden',
   },
   previewContainer: {
+    flex: 1,
     margin: SPACING.md,
-    height: PREVIEW_HEIGHT,
+    marginBottom: SPACING.sm,
     borderRadius: RADII.md,
     overflow: 'hidden',
     ...SHADOWS.md,
@@ -657,9 +735,29 @@ const styles = StyleSheet.create({
   previewPlaceholder: {
     flex: 1,
   },
-  controlsContainer: {
-    padding: SPACING.md,
+  timelineContainer: {
+    height: TIMELINE_HEIGHT,
+    paddingHorizontal: SPACING.md,
+  },
+  tabSelector: {
+    flexDirection: 'row',
     borderBottomWidth: 1,
+    paddingTop: SPACING.sm,
+  },
+  tab: {
+    flex: 1,
+    paddingVertical: SPACING.md,
+    alignItems: 'center',
+  },
+  tabText: {
+    ...TYPOGRAPHY.body1,
+    fontWeight: '600',
+  },
+  tabContent: {
+    padding: SPACING.md,
+  },
+  scrollContent: {
+    flex: 1,
   },
   controlGroup: {
     marginBottom: SPACING.md,
@@ -667,6 +765,11 @@ const styles = StyleSheet.create({
   controlLabel: {
     ...TYPOGRAPHY.body2,
     marginBottom: SPACING.xs,
+  },
+  placeholderText: {
+    ...TYPOGRAPHY.body2,
+    textAlign: 'center',
+    marginTop: SPACING.lg,
   },
   sliderContainer: {
     flexDirection: 'row',
@@ -775,11 +878,6 @@ const styles = StyleSheet.create({
     fontSize: 11,
     maxWidth: 60,
     textAlign: 'center',
-  },
-  timelineContainer: {
-    height: TIMELINE_HEIGHT + SPACING.md * 2,
-    paddingVertical: SPACING.md,
-    borderBottomWidth: 1,
   },
   timelineContent: {
     paddingHorizontal: SPACING.md,
