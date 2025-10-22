@@ -1,5 +1,6 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { View, StyleSheet, Dimensions, ScrollView, TouchableOpacity, Text, Image as RNImage, LayoutChangeEvent } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { useNavigation, useRoute, RouteProp } from '@react-navigation/native';
 import { StackNavigationProp } from '@react-navigation/stack';
 import { RootStackParamList } from '../navigation/navigationTypes';
@@ -15,6 +16,7 @@ import { TransitionType, PhotoEffect } from '../types/project.types';
 import { PremiumFeature } from '../types/purchase.types';
 import { haptics } from '../utils/hapticFeedback';
 import { sounds } from '../utils/soundEffects';
+import { IconButton } from '../components/common';
 
 // Types
 type EditorScreenRouteProp = RouteProp<RootStackParamList, 'Editor'>;
@@ -161,79 +163,100 @@ export const EditorScreen = () => {
     sounds.success();
     navigation.goBack();
   };
-  
+
+  // Go back without saving
+  const handleBack = () => {
+    haptics.light();
+    navigation.goBack();
+  };
+
   return (
-    <GestureHandlerRootView style={[styles.container, { backgroundColor: colors.background }]}>
-      <View style={[styles.previewContainer, { backgroundColor: colors.surface, borderColor: colors.border }]}>
-        {activePhoto && (
-          <PhotoPreview
-            photo={activePhoto}
-            width={PREVIEW_WIDTH}
-            height={PREVIEW_HEIGHT}
+    <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]} edges={['top', 'bottom']}>
+      <GestureHandlerRootView style={styles.container}>
+        <View style={styles.header}>
+          <IconButton
+            icon={<Text style={[styles.backIcon, { color: colors.text }]}>←</Text>}
+            onPress={handleBack}
+            variant="default"
+            size={44}
           />
-        )}
-      </View>
-
-      <View style={[styles.controlsContainer, { borderBottomColor: colors.border }]}>
-        <View style={styles.controlGroup}>
-          <Text style={[styles.controlLabel, { color: colors.textSecondary }]}>
-            Duration: {activePhoto?.duration || 0}s
-          </Text>
-          <Slider
-            value={activePhoto?.duration || 3}
-            min={1}
-            max={15}
-            step={1}
-            onValueChange={handleDurationChange}
-            color={colors.primary}
-          />
+          <Text style={[styles.headerTitle, { color: colors.text }]}>Editor</Text>
+          <View style={{ width: 44 }} />
         </View>
 
-        <View style={styles.controlGroup}>
-          <Text style={[styles.controlLabel, { color: colors.textSecondary }]}>Transition</Text>
-          <TransitionPicker
-            selectedTransition={activePhoto?.transition || TransitionType.FADE}
-            onSelect={handleTransitionChange}
-            isPremium={purchaseState.isPremium}
-          />
+        <ScrollView style={styles.scrollContent} showsVerticalScrollIndicator={false}>
+          <View style={[styles.previewContainer, { backgroundColor: colors.surface, borderColor: colors.border }]}>
+            {activePhoto && (
+              <PhotoPreview
+                photo={activePhoto}
+                width={PREVIEW_WIDTH}
+                height={PREVIEW_HEIGHT}
+              />
+            )}
+          </View>
+
+          <View style={[styles.controlsContainer, { borderBottomColor: colors.border }]}>
+            <View style={styles.controlGroup}>
+              <Text style={[styles.controlLabel, { color: colors.textSecondary }]}>
+                Duration: {activePhoto?.duration || 0}s
+              </Text>
+              <Slider
+                value={activePhoto?.duration || 3}
+                min={1}
+                max={15}
+                step={1}
+                onValueChange={handleDurationChange}
+                color={colors.primary}
+              />
+            </View>
+
+            <View style={styles.controlGroup}>
+              <Text style={[styles.controlLabel, { color: colors.textSecondary }]}>Transition</Text>
+              <TransitionPicker
+                selectedTransition={activePhoto?.transition || TransitionType.FADE}
+                onSelect={handleTransitionChange}
+                isPremium={purchaseState.isPremium}
+              />
+            </View>
+
+            <View style={styles.controlGroup}>
+              <Text style={[styles.controlLabel, { color: colors.textSecondary }]}>Effects</Text>
+              <EffectPicker
+                selectedEffects={activePhoto?.effects || []}
+                onSelect={handleEffectApply}
+              />
+            </View>
+          </View>
+
+          <View style={[styles.timelineContainer, { borderBottomColor: colors.border }]}>
+            <PhotoTimeline
+              photos={currentProject?.photos || []}
+              activeIndex={activePhotoIndex}
+              onSelectPhoto={handleSelectPhoto}
+              onDragEnd={handleDragEnd}
+            />
+          </View>
+        </ScrollView>
+
+        <View style={[styles.footer, { backgroundColor: colors.surface, borderTopColor: colors.border }]}>
+          <TouchableOpacity
+            style={[styles.button, styles.secondaryButton, { backgroundColor: colors.surface, borderColor: colors.border }]}
+            onPress={handleSave}
+          >
+            <Text style={[styles.buttonText, { color: colors.text }]}>Save</Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            style={[styles.button, { backgroundColor: colors.primary }]}
+            onPress={handlePreview}
+          >
+            <Text style={[styles.buttonText, { color: '#FFFFFF' }]}>
+              {isPlaying ? 'Pause' : 'Preview'}
+            </Text>
+          </TouchableOpacity>
         </View>
-
-        <View style={styles.controlGroup}>
-          <Text style={[styles.controlLabel, { color: colors.textSecondary }]}>Effects</Text>
-          <EffectPicker
-            selectedEffects={activePhoto?.effects || []}
-            onSelect={handleEffectApply}
-          />
-        </View>
-      </View>
-
-      <View style={[styles.timelineContainer, { borderBottomColor: colors.border }]}>
-        <PhotoTimeline
-          photos={currentProject?.photos || []}
-          activeIndex={activePhotoIndex}
-          onSelectPhoto={handleSelectPhoto}
-          onDragEnd={handleDragEnd}
-        />
-      </View>
-
-      <View style={[styles.footer, { backgroundColor: colors.surface, borderTopColor: colors.border }]}>
-        <TouchableOpacity
-          style={[styles.button, styles.secondaryButton, { backgroundColor: colors.surface, borderColor: colors.border }]}
-          onPress={handleSave}
-        >
-          <Text style={[styles.buttonText, { color: colors.text }]}>Save</Text>
-        </TouchableOpacity>
-
-        <TouchableOpacity
-          style={[styles.button, { backgroundColor: colors.primary }]}
-          onPress={handlePreview}
-        >
-          <Text style={[styles.buttonText, { color: '#FFFFFF' }]}>
-            {isPlaying ? 'Pause' : 'Preview'}
-          </Text>
-        </TouchableOpacity>
-      </View>
-    </GestureHandlerRootView>
+      </GestureHandlerRootView>
+    </SafeAreaView>
   );
 };
 
@@ -606,6 +629,24 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
   },
+  header: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingHorizontal: SPACING.md,
+    paddingBottom: SPACING.sm,
+  },
+  backIcon: {
+    fontSize: 28,
+    fontWeight: '300',
+  },
+  headerTitle: {
+    ...TYPOGRAPHY.h3,
+    fontWeight: '600',
+  },
+  scrollContent: {
+    flex: 1,
+  },
   previewContainer: {
     margin: SPACING.md,
     height: PREVIEW_HEIGHT,
@@ -736,7 +777,7 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
   timelineContainer: {
-    flex: 1,
+    height: TIMELINE_HEIGHT + SPACING.md * 2,
     paddingVertical: SPACING.md,
     borderBottomWidth: 1,
   },
