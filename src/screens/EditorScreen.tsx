@@ -11,7 +11,7 @@ import { SPACING, RADII, TYPOGRAPHY, SHADOWS } from '../constants/theme';
 import { TRANSITIONS } from '../constants/transitions';
 import { Canvas, Image, useImage, ColorMatrix } from '@shopify/react-native-skia';
 import { Gesture, GestureDetector, GestureHandlerRootView } from 'react-native-gesture-handler';
-import Animated, { runOnJS, useSharedValue, useAnimatedStyle } from 'react-native-reanimated';
+import Animated, { runOnJS, useSharedValue, useAnimatedStyle, withSpring, withTiming } from 'react-native-reanimated';
 import { TransitionType, PhotoEffect } from '../types/project.types';
 import { PremiumFeature } from '../types/purchase.types';
 import { haptics } from '../utils/hapticFeedback';
@@ -659,6 +659,13 @@ const PhotoTimeline: React.FC<PhotoTimelineProps> = ({ photos, activeIndex, onSe
   const { colors } = useThemeStore();
   const scrollViewRef = useRef<ScrollView>(null);
   const [draggedIndex, setDraggedIndex] = useState<number | null>(null);
+  const [currentTargetIndex, setCurrentTargetIndex] = useState<number | null>(null);
+  const positions = useSharedValue<number[]>(photos.map((_, i) => i));
+
+  // Reset positions when photos change
+  useEffect(() => {
+    positions.value = photos.map((_, i) => i);
+  }, [photos.length]);
 
   // Scroll to active photo
   useEffect(() => {
@@ -671,33 +678,55 @@ const PhotoTimeline: React.FC<PhotoTimelineProps> = ({ photos, activeIndex, onSe
     }
   }, [activeIndex, photos.length]);
 
+  const getOrder = (index: number) => {
+    'worklet';
+    return positions.value.indexOf(index);
+  };
+
   const renderPhoto = (photo: any, index: number) => {
     const isActive = index === activeIndex;
     const isDragged = index === draggedIndex;
     const translateX = useSharedValue(0);
-    const translateY = useSharedValue(0);
     const scale = useSharedValue(1);
+    const itemWidth = THUMBNAIL_SIZE + SPACING.sm * 2;
 
     const longPress = Gesture.LongPress()
       .minDuration(400)
       .onStart(() => {
         runOnJS(haptics.medium)();
-        scale.value = 1.2;
+        scale.value = withSpring(1.2);
         runOnJS(setDraggedIndex)(index);
       });
 
     const pan = Gesture.Pan()
       .activeOffsetX([-10, 10])
-      .activeOffsetY([-10, 10])
+      .failOffsetY([-10, 10])
       .onUpdate((event) => {
         if (draggedIndex === index) {
           translateX.value = event.translationX;
-          translateY.value = event.translationY;
+
+          // Calculate target index based on drag distance
+          const movedItems = Math.round(translateX.value / itemWidth);
+          const newTargetIndex = Math.max(0, Math.min(photos.length - 1, index + movedItems));
+
+          // Update positions array in real-time for live reordering
+          const oldOrder = [...positions.value];
+          const currentPos = oldOrder.indexOf(index);
+          const targetPos = newTargetIndex;
+
+          if (currentPos !== targetPos) {
+            // Create new order array
+            const newOrder = oldOrder.filter(i => i !== index);
+            newOrder.splice(targetPos, 0, index);
+            positions.value = newOrder;
+
+            runOnJS(setCurrentTargetIndex)(newTargetIndex);
+            runOnJS(haptics.light)();
+          }
         }
       })
       .onEnd(() => {
         if (draggedIndex === index) {
-          const itemWidth = THUMBNAIL_SIZE + SPACING.sm * 2;
           const movedItems = Math.round(translateX.value / itemWidth);
           const targetIndex = Math.max(0, Math.min(photos.length - 1, index + movedItems));
 
@@ -706,10 +735,13 @@ const PhotoTimeline: React.FC<PhotoTimelineProps> = ({ photos, activeIndex, onSe
             runOnJS(haptics.success)();
           }
 
-          scale.value = 1;
-          translateX.value = 0;
-          translateY.value = 0;
+          scale.value = withSpring(1);
+          translateX.value = withSpring(0);
           runOnJS(setDraggedIndex)(null);
+          runOnJS(setCurrentTargetIndex)(null);
+
+          // Reset positions after actual reorder
+          positions.value = photos.map((_, i) => i);
         }
       });
 
@@ -724,15 +756,27 @@ const PhotoTimeline: React.FC<PhotoTimelineProps> = ({ photos, activeIndex, onSe
       tap
     );
 
-    const animatedStyle = useAnimatedStyle(() => ({
-      transform: [
-        { translateX: translateX.value },
-        { translateY: translateY.value },
-        { scale: scale.value },
-      ],
-      zIndex: draggedIndex === index ? 1000 : 1,
-      opacity: draggedIndex === index ? 0.9 : 1,
-    }));
+    const animatedStyle = useAnimatedStyle(() => {
+      // Calculate position based on current order
+      const currentOrder = getOrder(index);
+      const offset = (currentOrder - index) * itemWidth;
+
+      const finalTranslateX = draggedIndex === index
+        ? translateX.value
+        : withSpring(offset, {
+            damping: 20,
+            stiffness: 150,
+          });
+
+      return {
+        transform: [
+          { translateX: finalTranslateX },
+          { scale: scale.value },
+        ],
+        zIndex: draggedIndex === index ? 1000 : 1,
+        opacity: draggedIndex === index ? 0.9 : 1,
+      };
+    });
 
     return (
       <GestureDetector key={photo.id} gesture={composed}>
