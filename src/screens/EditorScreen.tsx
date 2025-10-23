@@ -48,7 +48,7 @@ export const EditorScreen = () => {
 
   const [activePhotoIndex, setActivePhotoIndex] = useState(0);
   const [isPlaying, setIsPlaying] = useState(false);
-  const [activeTab, setActiveTab] = useState<'controls' | 'tools' | 'layers'>('controls');
+  const [activeTab, setActiveTab] = useState<'controls' | 'duration' | 'transitions' | 'tools'>('controls');
 
   // Get current project
   const currentProject = projects.find(p => p.id === currentProjectId);
@@ -171,7 +171,7 @@ export const EditorScreen = () => {
     navigation.goBack();
   };
 
-  const handleTabChange = (tab: 'controls' | 'tools' | 'layers') => {
+  const handleTabChange = (tab: 'controls' | 'duration' | 'transitions' | 'tools') => {
     setActiveTab(tab);
     haptics.light();
   };
@@ -179,6 +179,15 @@ export const EditorScreen = () => {
   const renderTabContent = () => {
     switch (activeTab) {
       case 'controls':
+        return (
+          <View style={styles.tabContent}>
+            <Text style={[styles.sectionTitle, { color: colors.text }]}>General Controls</Text>
+            <Text style={[styles.placeholderText, { color: colors.textSecondary }]}>
+              General project controls will be here
+            </Text>
+          </View>
+        );
+      case 'duration':
         return (
           <View style={styles.tabContent}>
             <View style={styles.controlGroup}>
@@ -194,9 +203,16 @@ export const EditorScreen = () => {
                 color={colors.primary}
               />
             </View>
-
+            <Text style={[styles.helpText, { color: colors.textSecondary }]}>
+              Set how long this photo will be displayed in the slideshow
+            </Text>
+          </View>
+        );
+      case 'transitions':
+        return (
+          <View style={styles.tabContent}>
             <View style={styles.controlGroup}>
-              <Text style={[styles.controlLabel, { color: colors.textSecondary }]}>Transition</Text>
+              <Text style={[styles.controlLabel, { color: colors.textSecondary }]}>Select Transition</Text>
               <TransitionPicker
                 selectedTransition={activePhoto?.transition || TransitionType.FADE}
                 onSelect={handleTransitionChange}
@@ -215,15 +231,6 @@ export const EditorScreen = () => {
                 onSelect={handleEffectApply}
               />
             </View>
-          </View>
-        );
-      case 'layers':
-        return (
-          <View style={styles.tabContent}>
-            <Text style={[styles.controlLabel, { color: colors.textSecondary }]}>Layers</Text>
-            <Text style={[styles.placeholderText, { color: colors.textSecondary }]}>
-              Layers feature coming soon
-            </Text>
           </View>
         );
     }
@@ -284,19 +291,27 @@ export const EditorScreen = () => {
               </Text>
             </TouchableOpacity>
             <TouchableOpacity
+              style={[styles.tab, activeTab === 'duration' && { borderBottomColor: colors.primary, borderBottomWidth: 2 }]}
+              onPress={() => handleTabChange('duration')}
+            >
+              <Text style={[styles.tabText, { color: activeTab === 'duration' ? colors.primary : colors.textSecondary }]}>
+                Duration
+              </Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={[styles.tab, activeTab === 'transitions' && { borderBottomColor: colors.primary, borderBottomWidth: 2 }]}
+              onPress={() => handleTabChange('transitions')}
+            >
+              <Text style={[styles.tabText, { color: activeTab === 'transitions' ? colors.primary : colors.textSecondary }]}>
+                Transitions
+              </Text>
+            </TouchableOpacity>
+            <TouchableOpacity
               style={[styles.tab, activeTab === 'tools' && { borderBottomColor: colors.primary, borderBottomWidth: 2 }]}
               onPress={() => handleTabChange('tools')}
             >
               <Text style={[styles.tabText, { color: activeTab === 'tools' ? colors.primary : colors.textSecondary }]}>
                 Tools
-              </Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={[styles.tab, activeTab === 'layers' && { borderBottomColor: colors.primary, borderBottomWidth: 2 }]}
-              onPress={() => handleTabChange('layers')}
-            >
-              <Text style={[styles.tabText, { color: activeTab === 'layers' ? colors.primary : colors.textSecondary }]}>
-                Layers
               </Text>
             </TouchableOpacity>
           </View>
@@ -770,6 +785,16 @@ const styles = StyleSheet.create({
     ...TYPOGRAPHY.body2,
     textAlign: 'center',
     marginTop: SPACING.lg,
+  },
+  sectionTitle: {
+    ...TYPOGRAPHY.h3,
+    fontWeight: '600',
+    marginBottom: SPACING.md,
+  },
+  helpText: {
+    ...TYPOGRAPHY.caption,
+    fontStyle: 'italic',
+    marginTop: SPACING.sm,
   },
   sliderContainer: {
     flexDirection: 'row',
