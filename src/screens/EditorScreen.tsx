@@ -9,6 +9,7 @@ import { useThemeStore } from '../store/themeStore';
 import { usePurchaseStore } from '../store/purchaseStore';
 import { SPACING, RADII, TYPOGRAPHY, SHADOWS } from '../constants/theme';
 import { TRANSITIONS } from '../constants/transitions';
+import { Transition } from '../types/project.types';
 import { Canvas, Image, useImage, ColorMatrix } from '@shopify/react-native-skia';
 import { Gesture, GestureDetector, GestureHandlerRootView } from 'react-native-gesture-handler';
 import Animated, { runOnJS, useSharedValue, useAnimatedStyle, withSpring, withTiming } from 'react-native-reanimated';
@@ -44,6 +45,9 @@ export const EditorScreen = () => {
     reorderPhotos,
     setCurrentProject,
     addPhotos,
+    addTransition,
+    removeTransition,
+    updateTransition,
   } = useProjectStore();
 
   const [activePhotoIndex, setActivePhotoIndex] = useState(0);
@@ -106,9 +110,9 @@ export const EditorScreen = () => {
     haptics.light();
   };
 
-  // Apply transition effect
+  // Apply transition effect - adds a transition object before the selected photo
   const handleTransitionChange = (transitionType: TransitionType) => {
-    if (!currentProject || !activePhoto) return;
+    if (!currentProject) return;
 
     // Check if premium transition
     const transition = TRANSITIONS[transitionType];
@@ -117,9 +121,35 @@ export const EditorScreen = () => {
       return;
     }
 
+    // Check if transition already exists at this position
+    const existingTransition = currentProject.transitions?.find(
+      t => t.order === activePhotoIndex
+    );
+
+    if (existingTransition) {
+      // Update existing transition type
+      updateTransition(currentProject.id, existingTransition.id, { type: transitionType });
+    } else {
+      // Add new transition before the selected photo
+      addTransition(currentProject.id, activePhotoIndex, transitionType);
+    }
+
     haptics.medium();
     sounds.tap();
-    updatePhoto(currentProject.id, activePhoto.id, { transition: transitionType });
+  };
+
+  // Remove transition at current position
+  const handleTransitionRemove = () => {
+    if (!currentProject) return;
+
+    const existingTransition = currentProject.transitions?.find(
+      t => t.order === activePhotoIndex
+    );
+
+    if (existingTransition) {
+      removeTransition(currentProject.id, existingTransition.id);
+      haptics.light();
+    }
   };
 
   // Apply photo effect
@@ -209,15 +239,33 @@ export const EditorScreen = () => {
           </View>
         );
       case 'transitions':
+        const currentTransition = currentProject?.transitions?.find(t => t.order === activePhotoIndex);
         return (
           <View style={styles.tabContent}>
             <View style={styles.controlGroup}>
-              <Text style={[styles.controlLabel, { color: colors.textSecondary }]}>Select Transition</Text>
+              <Text style={[styles.controlLabel, { color: colors.textSecondary }]}>
+                {activePhotoIndex === 0
+                  ? 'Transition In (First Photo)'
+                  : `Transition: Photo ${activePhotoIndex} → Photo ${activePhotoIndex + 1}`}
+              </Text>
+              <Text style={[styles.helpText, { color: colors.textSecondary, marginBottom: SPACING.sm }]}>
+                {currentTransition
+                  ? `Current: ${TRANSITIONS[currentTransition.type]?.name || 'Unknown'}`
+                  : 'No transition selected - tap to add one'}
+              </Text>
               <TransitionPicker
-                selectedTransition={activePhoto?.transition || TransitionType.FADE}
+                selectedTransition={currentTransition?.type || null}
                 onSelect={handleTransitionChange}
                 isPremium={purchaseState.isPremium}
               />
+              {currentTransition && (
+                <TouchableOpacity
+                  style={[styles.removeButton, { backgroundColor: colors.error + '20', borderColor: colors.error }]}
+                  onPress={handleTransitionRemove}
+                >
+                  <Text style={[styles.removeButtonText, { color: colors.error }]}>Remove Transition</Text>
+                </TouchableOpacity>
+              )}
             </View>
           </View>
         );
@@ -271,9 +319,14 @@ export const EditorScreen = () => {
           <View style={styles.timelineContainer}>
             <PhotoTimeline
               photos={currentProject?.photos || []}
+              transitions={currentProject?.transitions || []}
               activeIndex={activePhotoIndex}
               onSelectPhoto={handleSelectPhoto}
               onDragEnd={handleDragEnd}
+              onSelectTransition={(index) => {
+                setActivePhotoIndex(index);
+                setActiveTab('transitions');
+              }}
             />
           </View>
         </View>
@@ -529,7 +582,7 @@ const Slider: React.FC<SliderProps> = ({ value, min, max, step, onValueChange, c
 
 // Transition Picker Component
 interface TransitionPickerProps {
-  selectedTransition: TransitionType;
+  selectedTransition: TransitionType | null;
   onSelect: (transition: TransitionType) => void;
   isPremium: boolean;
 }
@@ -650,12 +703,14 @@ const EffectPicker: React.FC<EffectPickerProps> = ({ selectedEffects, onSelect }
 // Photo Timeline Component
 interface PhotoTimelineProps {
   photos: any[];
+  transitions: any[];
   activeIndex: number;
   onSelectPhoto: (index: number) => void;
   onDragEnd: (fromIndex: number, toIndex: number) => void;
+  onSelectTransition?: (index: number) => void;
 }
 
-const PhotoTimeline: React.FC<PhotoTimelineProps> = ({ photos, activeIndex, onSelectPhoto, onDragEnd }) => {
+const PhotoTimeline: React.FC<PhotoTimelineProps> = ({ photos, transitions, activeIndex, onSelectPhoto, onDragEnd, onSelectTransition }) => {
   const { colors } = useThemeStore();
   const scrollViewRef = useRef<ScrollView>(null);
   const [draggedIndex, setDraggedIndex] = useState<number | null>(null);
@@ -801,6 +856,41 @@ const PhotoTimeline: React.FC<PhotoTimelineProps> = ({ photos, activeIndex, onSe
     );
   };
 
+  // Render transition item
+  const renderTransition = (transition: any, index: number) => {
+    return (
+      <TouchableOpacity
+        key={`transition-${transition.id}`}
+        style={styles.transitionTimelineItem}
+        onPress={() => onSelectTransition?.(index)}
+      >
+        <View style={[styles.transitionIcon, { backgroundColor: colors.primary + '20', borderColor: colors.primary }]}>
+          <Text style={[styles.transitionTimelineText, { color: colors.primary }]}>
+            {TRANSITIONS[transition.type]?.name?.charAt(0) || 'T'}
+          </Text>
+        </View>
+      </TouchableOpacity>
+    );
+  };
+
+  // Build timeline items array with photos and transitions
+  const renderTimelineItems = () => {
+    const items = [];
+
+    photos.forEach((photo, index) => {
+      // Only add transition if it actually exists
+      const transition = transitions?.find(t => t.order === index);
+      if (transition) {
+        items.push(renderTransition(transition, index));
+      }
+
+      // Add photo
+      items.push(renderPhoto(photo, index));
+    });
+
+    return items;
+  };
+
   return (
     <ScrollView
       ref={scrollViewRef}
@@ -809,7 +899,7 @@ const PhotoTimeline: React.FC<PhotoTimelineProps> = ({ photos, activeIndex, onSe
       contentContainerStyle={styles.timelineContent}
       scrollEnabled={draggedIndex === null}
     >
-      {photos.map((photo: any, index: number) => renderPhoto(photo, index))}
+      {renderTimelineItems()}
     </ScrollView>
   );
 };
@@ -899,6 +989,18 @@ const styles = StyleSheet.create({
     ...TYPOGRAPHY.caption,
     fontStyle: 'italic',
     marginTop: SPACING.sm,
+  },
+  removeButton: {
+    marginTop: SPACING.md,
+    paddingVertical: SPACING.sm,
+    paddingHorizontal: SPACING.md,
+    borderRadius: RADII.sm,
+    borderWidth: 1,
+    alignItems: 'center',
+  },
+  removeButtonText: {
+    ...TYPOGRAPHY.body2,
+    fontWeight: '600',
   },
   sliderContainer: {
     flexDirection: 'row',
@@ -1037,6 +1139,17 @@ const styles = StyleSheet.create({
     fontSize: 11,
     marginTop: SPACING.xs,
     textAlign: 'center',
+  },
+  transitionTimelineItem: {
+    width: 40,
+    height: THUMBNAIL_SIZE,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginHorizontal: SPACING.xs / 2,
+  },
+  transitionTimelineText: {
+    fontSize: 16,
+    fontWeight: 'bold',
   },
   footer: {
     flexDirection: 'row',

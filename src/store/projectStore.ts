@@ -1,7 +1,7 @@
 import { create } from 'zustand';
 import { persist, createJSONStorage } from 'zustand/middleware';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { Project, Photo, TransitionType, PhotoEffect } from '../types/project.types';
+import { Project, Photo, TransitionType, PhotoEffect, Transition } from '../types/project.types';
 
 // Generate unique ID
 const generateId = () => {
@@ -22,7 +22,7 @@ interface ProjectState {
   currentProjectId: string | null;
   isLoading: boolean;
   error: string | null;
-  
+
   // Actions
   createProject: (title?: string) => Promise<Project>;
   updateProject: (id: string, updates: Partial<Project>) => void;
@@ -33,7 +33,12 @@ interface ProjectState {
   updatePhoto: (projectId: string, photoId: string, updates: Partial<Photo>) => void;
   reorderPhotos: (projectId: string, fromIndex: number, toIndex: number) => void;
   updateProjectSettings: (projectId: string, settings: Partial<typeof DEFAULT_PROJECT_SETTINGS>) => void;
-  
+
+  // Transition actions
+  addTransition: (projectId: string, photoIndex: number, transitionType: TransitionType) => void;
+  removeTransition: (projectId: string, transitionId: string) => void;
+  updateTransition: (projectId: string, transitionId: string, updates: Partial<Transition>) => void;
+
   // Selectors
   getCurrentProject: () => Project | undefined;
   getProjectById: (id: string) => Project | undefined;
@@ -54,6 +59,7 @@ export const useProjectStore = create<ProjectState>()(
           createdAt: new Date(),
           updatedAt: new Date(),
           photos: [],
+          transitions: [],
           settings: { ...DEFAULT_PROJECT_SETTINGS },
           thumbnail: '',
           duration: 0,
@@ -90,14 +96,19 @@ export const useProjectStore = create<ProjectState>()(
       
       addPhotos: async (assets) => {
         const { currentProjectId, updateProject, getProjectById } = get();
-        
+
         if (!currentProjectId) {
           console.error('No project selected');
           return;
         }
-        
+
         const project = getProjectById(currentProjectId);
         if (!project) return;
+
+        // Ensure transitions array exists
+        if (!project.transitions) {
+          project.transitions = [];
+        }
         
         // Process each photo
         const newPhotos: Photo[] = [];
@@ -197,7 +208,7 @@ export const useProjectStore = create<ProjectState>()(
       updateProjectSettings: (projectId, settings) => {
         const project = get().projects.find(p => p.id === projectId);
         if (!project) return;
-        
+
         get().updateProject(projectId, {
           settings: {
             ...project.settings,
@@ -205,15 +216,83 @@ export const useProjectStore = create<ProjectState>()(
           },
         });
       },
-      
+
+      // Transition Actions
+      addTransition: (projectId, photoIndex, transitionType) => {
+        const project = get().projects.find(p => p.id === projectId);
+        if (!project) return;
+
+        // Ensure transitions array exists
+        if (!project.transitions) {
+          project.transitions = [];
+        }
+
+        // Create new transition object
+        const newTransition: Transition = {
+          id: generateId(),
+          type: transitionType,
+          duration: 1, // Default 1 second transition
+          order: photoIndex, // Insert before the photo at photoIndex
+        };
+
+        // Update order of existing transitions that come after
+        const updatedTransitions = project.transitions.map(t =>
+          t.order >= photoIndex ? { ...t, order: t.order + 1 } : t
+        );
+
+        get().updateProject(projectId, {
+          transitions: [...updatedTransitions, newTransition].sort((a, b) => a.order - b.order),
+        });
+      },
+
+      removeTransition: (projectId, transitionId) => {
+        const project = get().projects.find(p => p.id === projectId);
+        if (!project || !project.transitions) return;
+
+        const transitionToRemove = project.transitions.find(t => t.id === transitionId);
+        if (!transitionToRemove) return;
+
+        // Remove transition and update orders
+        const updatedTransitions = project.transitions
+          .filter(t => t.id !== transitionId)
+          .map(t => (t.order > transitionToRemove.order ? { ...t, order: t.order - 1 } : t));
+
+        get().updateProject(projectId, {
+          transitions: updatedTransitions,
+        });
+      },
+
+      updateTransition: (projectId, transitionId, updates) => {
+        const project = get().projects.find(p => p.id === projectId);
+        if (!project || !project.transitions) return;
+
+        const updatedTransitions = project.transitions.map(transition =>
+          transition.id === transitionId ? { ...transition, ...updates } : transition
+        );
+
+        get().updateProject(projectId, {
+          transitions: updatedTransitions,
+        });
+      },
+
       // Selectors
       getCurrentProject: () => {
         const { currentProjectId, projects } = get();
-        return projects.find(project => project.id === currentProjectId);
+        const project = projects.find(project => project.id === currentProjectId);
+        // Ensure transitions array exists for backward compatibility
+        if (project && !project.transitions) {
+          project.transitions = [];
+        }
+        return project;
       },
-      
+
       getProjectById: (id) => {
-        return get().projects.find(project => project.id === id);
+        const project = get().projects.find(project => project.id === id);
+        // Ensure transitions array exists for backward compatibility
+        if (project && !project.transitions) {
+          project.transitions = [];
+        }
+        return project;
       },
     }),
     {

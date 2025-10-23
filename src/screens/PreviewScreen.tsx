@@ -18,6 +18,7 @@ import { haptics } from '../utils/hapticFeedback';
 import { sounds } from '../utils/soundEffects';
 import { calculateTransition } from '../utils/transitionEffects';
 import { SPACING, SCREEN_WIDTH, SCREEN_HEIGHT } from '../constants/theme';
+import { TransitionType } from '../types/project.types';
 
 type PreviewScreenRouteProp = RouteProp<RootStackParamList, 'Preview'>;
 type PreviewScreenNavigationProp = StackNavigationProp<RootStackParamList, 'Preview'>;
@@ -37,14 +38,20 @@ const PreviewScreen: React.FC = () => {
   const [currentPhotoIndex, setCurrentPhotoIndex] = useState(0);
   const [isPlaying, setIsPlaying] = useState(false);
   const [progress, setProgress] = useState(0);
+  const [isTransitioning, setIsTransitioning] = useState(false);
 
   const animationRef = useRef<NodeJS.Timeout | null>(null);
+  const transitionRef = useRef<NodeJS.Timeout | null>(null);
   const progressAnim = useRef(new RNAnimated.Value(0)).current;
+  const transitionAnim = useRef(new RNAnimated.Value(0)).current;
 
   useEffect(() => {
     return () => {
       if (animationRef.current) {
         clearTimeout(animationRef.current);
+      }
+      if (transitionRef.current) {
+        clearTimeout(transitionRef.current);
       }
     };
   }, []);
@@ -75,10 +82,30 @@ const PreviewScreen: React.FC = () => {
       useNativeDriver: false,
     }).start();
 
-    // Move to next photo
+    // Move to next photo with transition
     animationRef.current = setTimeout(() => {
       const nextIndex = (currentPhotoIndex + 1) % project.photos.length;
-      setCurrentPhotoIndex(nextIndex);
+
+      // Check if there's a transition for the next photo
+      const transition = project.transitions?.find(t => t.order === nextIndex);
+
+      if (transition) {
+        // Start transition
+        setIsTransitioning(true);
+        transitionAnim.setValue(0);
+
+        RNAnimated.timing(transitionAnim, {
+          toValue: 1,
+          duration: transition.duration * 1000, // Transition duration
+          useNativeDriver: true,
+        }).start(() => {
+          setIsTransitioning(false);
+          setCurrentPhotoIndex(nextIndex);
+        });
+      } else {
+        // No transition, just switch
+        setCurrentPhotoIndex(nextIndex);
+      }
 
       if (nextIndex === 0) {
         // Loop completed
@@ -130,10 +157,51 @@ const PreviewScreen: React.FC = () => {
   }
 
   const currentPhoto = project.photos[currentPhotoIndex];
+  const nextPhotoIndex = (currentPhotoIndex + 1) % project.photos.length;
+  const nextPhoto = project.photos[nextPhotoIndex];
+  const currentTransition = project.transitions?.find(t => t.order === nextPhotoIndex);
+
   const progressWidth = progressAnim.interpolate({
     inputRange: [0, 1],
     outputRange: ['0%', '100%'],
   });
+
+  // Calculate transition styles based on type
+  const getTransitionStyle = () => {
+    if (!isTransitioning || !currentTransition) return {};
+
+    const animValue = transitionAnim;
+
+    switch (currentTransition.type) {
+      case TransitionType.FADE:
+        return {
+          opacity: animValue.interpolate({
+            inputRange: [0, 1],
+            outputRange: [1, 0],
+          }),
+        };
+      case TransitionType.SLIDE_LEFT:
+        return {
+          transform: [{
+            translateX: animValue.interpolate({
+              inputRange: [0, 1],
+              outputRange: [0, -PREVIEW_WIDTH],
+            }),
+          }],
+        };
+      case TransitionType.SLIDE_RIGHT:
+        return {
+          transform: [{
+            translateX: animValue.interpolate({
+              inputRange: [0, 1],
+              outputRange: [0, PREVIEW_WIDTH],
+            }),
+          }],
+        };
+      default:
+        return {};
+    }
+  };
 
   return (
     <SafeAreaView style={[styles.container, { backgroundColor: '#000000' }]}>
@@ -149,7 +217,14 @@ const PreviewScreen: React.FC = () => {
 
       {/* Preview canvas */}
       <View style={styles.previewContainer}>
-        <PhotoCanvas photo={currentPhoto} width={PREVIEW_WIDTH} height={PREVIEW_HEIGHT} />
+        {isTransitioning && nextPhoto && (
+          <RNAnimated.View style={[styles.photoLayer, { opacity: transitionAnim }]}>
+            <PhotoCanvas photo={nextPhoto} width={PREVIEW_WIDTH} height={PREVIEW_HEIGHT} />
+          </RNAnimated.View>
+        )}
+        <RNAnimated.View style={[styles.photoLayer, getTransitionStyle()]}>
+          <PhotoCanvas photo={currentPhoto} width={PREVIEW_WIDTH} height={PREVIEW_HEIGHT} />
+        </RNAnimated.View>
       </View>
 
       {/* Progress bar */}
@@ -259,6 +334,11 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
+  },
+  photoLayer: {
+    position: 'absolute',
+    width: PREVIEW_WIDTH,
+    height: PREVIEW_HEIGHT,
   },
   progressBarContainer: {
     height: 4,

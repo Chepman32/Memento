@@ -44,10 +44,21 @@ export interface Photo {
   width: number;
   height: number;
   duration: number;
-  transition: TransitionType;
+  transition: TransitionType; // Deprecated - kept for backward compatibility
   effects: PhotoEffect[];
   order: number;
 }
+
+export interface Transition {
+  id: string;
+  type: TransitionType;
+  duration: number; // Transition duration in seconds (e.g., 0.5s, 1s)
+  order: number; // Position on timeline
+}
+
+export type TimelineItem =
+  | { type: 'photo'; data: Photo }
+  | { type: 'transition'; data: Transition };
 
 export interface MusicTrack {
   id: string;
@@ -71,6 +82,7 @@ export interface Project {
   createdAt: Date;
   updatedAt: Date;
   photos: Photo[];
+  transitions: Transition[]; // Separate transitions array
   settings: ProjectSettings;
   thumbnail: string;
   duration: number;
