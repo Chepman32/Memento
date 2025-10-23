@@ -658,6 +658,7 @@ interface PhotoTimelineProps {
 const PhotoTimeline: React.FC<PhotoTimelineProps> = ({ photos, activeIndex, onSelectPhoto, onDragEnd }) => {
   const { colors } = useThemeStore();
   const scrollViewRef = useRef<ScrollView>(null);
+  const [draggedIndex, setDraggedIndex] = useState<number | null>(null);
 
   // Scroll to active photo
   useEffect(() => {
@@ -672,29 +673,87 @@ const PhotoTimeline: React.FC<PhotoTimelineProps> = ({ photos, activeIndex, onSe
 
   const renderPhoto = (photo: any, index: number) => {
     const isActive = index === activeIndex;
+    const isDragged = index === draggedIndex;
+    const translateX = useSharedValue(0);
+    const translateY = useSharedValue(0);
+    const scale = useSharedValue(1);
+
+    const longPress = Gesture.LongPress()
+      .minDuration(400)
+      .onStart(() => {
+        runOnJS(haptics.medium)();
+        scale.value = 1.2;
+        runOnJS(setDraggedIndex)(index);
+      });
+
+    const pan = Gesture.Pan()
+      .activeOffsetX([-10, 10])
+      .activeOffsetY([-10, 10])
+      .onUpdate((event) => {
+        if (draggedIndex === index) {
+          translateX.value = event.translationX;
+          translateY.value = event.translationY;
+        }
+      })
+      .onEnd(() => {
+        if (draggedIndex === index) {
+          const itemWidth = THUMBNAIL_SIZE + SPACING.sm * 2;
+          const movedItems = Math.round(translateX.value / itemWidth);
+          const targetIndex = Math.max(0, Math.min(photos.length - 1, index + movedItems));
+
+          if (targetIndex !== index) {
+            runOnJS(onDragEnd)(index, targetIndex);
+            runOnJS(haptics.success)();
+          }
+
+          scale.value = 1;
+          translateX.value = 0;
+          translateY.value = 0;
+          runOnJS(setDraggedIndex)(null);
+        }
+      });
+
+    const tap = Gesture.Tap()
+      .onStart(() => {
+        runOnJS(onSelectPhoto)(index);
+        runOnJS(haptics.light)();
+      });
+
+    const composed = Gesture.Exclusive(
+      Gesture.Simultaneous(longPress, pan),
+      tap
+    );
+
+    const animatedStyle = useAnimatedStyle(() => ({
+      transform: [
+        { translateX: translateX.value },
+        { translateY: translateY.value },
+        { scale: scale.value },
+      ],
+      zIndex: draggedIndex === index ? 1000 : 1,
+      opacity: draggedIndex === index ? 0.9 : 1,
+    }));
 
     return (
-      <TouchableOpacity
-        key={photo.id}
-        style={styles.thumbnailContainer}
-        onPress={() => onSelectPhoto(index)}
-        activeOpacity={0.7}
-      >
-        <View
-          style={[
-            styles.thumbnailWrapper,
-            { borderColor: isActive ? colors.primary : 'transparent' },
-          ]}
-        >
-          <RNImage source={{ uri: photo.uri }} style={styles.thumbnailImage} resizeMode="cover" />
-          {isActive && (
-            <View style={[styles.thumbnailActiveIndicator, { borderColor: colors.primary }]} />
-          )}
-        </View>
-        <Text style={[styles.thumbnailDuration, { color: colors.textSecondary }]} numberOfLines={1}>
-          {photo.duration}s
-        </Text>
-      </TouchableOpacity>
+      <GestureDetector key={photo.id} gesture={composed}>
+        <Animated.View style={[styles.thumbnailContainer, animatedStyle]}>
+          <View
+            style={[
+              styles.thumbnailWrapper,
+              { borderColor: isActive ? colors.primary : 'transparent' },
+              isDragged && { borderColor: colors.success, borderWidth: 3 },
+            ]}
+          >
+            <RNImage source={{ uri: photo.uri }} style={styles.thumbnailImage} resizeMode="cover" />
+            {isActive && !isDragged && (
+              <View style={[styles.thumbnailActiveIndicator, { borderColor: colors.primary }]} />
+            )}
+          </View>
+          <Text style={[styles.thumbnailDuration, { color: colors.textSecondary }]} numberOfLines={1}>
+            {photo.duration}s
+          </Text>
+        </Animated.View>
+      </GestureDetector>
     );
   };
 
@@ -704,6 +763,7 @@ const PhotoTimeline: React.FC<PhotoTimelineProps> = ({ photos, activeIndex, onSe
       horizontal
       showsHorizontalScrollIndicator={false}
       contentContainerStyle={styles.timelineContent}
+      scrollEnabled={draggedIndex === null}
     >
       {photos.map((photo: any, index: number) => renderPhoto(photo, index))}
     </ScrollView>
