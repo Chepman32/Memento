@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, StyleSheet, Animated } from 'react-native';
+import { Text, StyleSheet, Animated } from 'react-native';
 import { useThemeStore } from '../../store/themeStore';
 import { TYPOGRAPHY, SPACING, RADII } from '../../constants/theme';
 import { SaveStatus } from '../../hooks/useAutosave';
@@ -15,7 +15,7 @@ export const SaveIndicator: React.FC<SaveIndicatorProps> = ({ status, lastSaved 
   const [scale] = useState(new Animated.Value(0.9));
 
   useEffect(() => {
-    if (status === 'idle') {
+    if (status !== 'error') {
       // Fade out
       Animated.parallel([
         Animated.timing(opacity, {
@@ -50,17 +50,8 @@ export const SaveIndicator: React.FC<SaveIndicatorProps> = ({ status, lastSaved 
   const getStatusDisplay = () => {
     switch (status) {
       case 'saving':
-        return {
-          text: 'Saving...',
-          color: colors.textSecondary,
-          icon: '⏳',
-        };
       case 'saved':
-        return {
-          text: 'Saved',
-          color: colors.success,
-          icon: '✓',
-        };
+        return null;
       case 'error':
         return {
           text: 'Save failed',
