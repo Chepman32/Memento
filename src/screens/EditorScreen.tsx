@@ -416,30 +416,41 @@ interface PhotoPreviewProps {
 }
 
 const PhotoPreview: React.FC<PhotoPreviewProps> = ({ photo, width, height }) => {
-  const [size, setSize] = useState({ width: 0, height: 0 });
+  const [size, setSize] = useState({ width, height });
   const image = useImage(photo.uri);
 
   // Calculate aspect ratio and dimensions
   useEffect(() => {
-    if (photo.width && photo.height) {
-      const aspectRatio = photo.width / photo.height;
-      const containerAspect = width / height;
+    const intrinsicWidth = image?.width();
+    const intrinsicHeight = image?.height();
 
-      if (aspectRatio > containerAspect) {
-        // Image is wider than container
-        setSize({
-          width: width,
-          height: width / aspectRatio,
-        });
-      } else {
-        // Image is taller than container
-        setSize({
-          width: height * aspectRatio,
-          height: height,
-        });
-      }
+    const sourceWidth =
+      intrinsicWidth && intrinsicHeight ? intrinsicWidth : photo.width;
+    const sourceHeight =
+      intrinsicWidth && intrinsicHeight ? intrinsicHeight : photo.height;
+
+    if (!sourceWidth || !sourceHeight) {
+      setSize({ width, height });
+      return;
     }
-  }, [photo, width, height]);
+
+    const aspectRatio = sourceWidth / sourceHeight;
+    const containerAspect = width / height;
+
+    if (aspectRatio > containerAspect) {
+      // Image is wider than container, match container width
+      setSize({
+        width,
+        height: width / aspectRatio,
+      });
+    } else {
+      // Image is taller than container, match container height
+      setSize({
+        width: height * aspectRatio,
+        height,
+      });
+    }
+  }, [photo.uri, photo.width, photo.height, image, width, height]);
 
   // Get color matrix for effects
   const getColorMatrix = (): number[] | undefined => {
