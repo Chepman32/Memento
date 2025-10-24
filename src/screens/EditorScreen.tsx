@@ -27,7 +27,7 @@ type EditorScreenNavigationProp = StackNavigationProp<RootStackParamList, 'Edito
 
 const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get('window');
 const PREVIEW_WIDTH = SCREEN_WIDTH - SPACING.sm * 2;
-const PREVIEW_HEIGHT = SCREEN_HEIGHT * 0.35; // Use 35% of screen height for preview
+const PREVIEW_HEIGHT = SCREEN_HEIGHT * 0.5; // Increased to 50% of screen height for preview
 const TIMELINE_HEIGHT = 80;
 const THUMBNAIL_SIZE = 60;
 
@@ -58,7 +58,7 @@ export const EditorScreen = () => {
 
   const [activePhotoIndex, setActivePhotoIndex] = useState(0);
   const [isPlaying, setIsPlaying] = useState(false);
-  const [activeTab, setActiveTab] = useState<'controls' | 'duration' | 'transitions' | 'tools'>('controls');
+  const [activeTab, setActiveTab] = useState<'duration' | 'transitions'>('duration');
 
   // Get current project
   const currentProject = projects.find(p => p.id === currentProjectId);
@@ -233,22 +233,13 @@ export const EditorScreen = () => {
     }
   };
 
-  const handleTabChange = (tab: 'controls' | 'duration' | 'transitions' | 'tools') => {
+  const handleTabChange = (tab: 'duration' | 'transitions') => {
     setActiveTab(tab);
     haptics.light();
   };
 
   const renderTabContent = () => {
     switch (activeTab) {
-      case 'controls':
-        return (
-          <View style={styles.tabContent}>
-            <Text style={[styles.sectionTitle, { color: colors.text }]}>General Controls</Text>
-            <Text style={[styles.placeholderText, { color: colors.textSecondary }]}>
-              General project controls will be here
-            </Text>
-          </View>
-        );
       case 'duration':
         return (
           <View style={styles.tabContent}>
@@ -295,18 +286,6 @@ export const EditorScreen = () => {
                   <Text style={[styles.removeButtonText, { color: colors.error }]}>Remove Transition</Text>
                 </TouchableOpacity>
               )}
-            </View>
-          </View>
-        );
-      case 'tools':
-        return (
-          <View style={styles.tabContent}>
-            <View style={styles.controlGroup}>
-              <Text style={[styles.controlLabel, { color: colors.textSecondary }]}>Effects</Text>
-              <EffectPicker
-                selectedEffects={activePhoto?.effects || []}
-                onSelect={handleEffectApply}
-              />
             </View>
           </View>
         );
@@ -385,14 +364,6 @@ export const EditorScreen = () => {
           {/* Tab Selector */}
           <View style={[styles.tabSelector, { borderBottomColor: colors.border }]}>
             <TouchableOpacity
-              style={[styles.tab, activeTab === 'controls' && { borderBottomColor: colors.primary, borderBottomWidth: 2 }]}
-              onPress={() => handleTabChange('controls')}
-            >
-              <Text style={[styles.tabText, { color: activeTab === 'controls' ? colors.primary : colors.textSecondary }]}>
-                Controls
-              </Text>
-            </TouchableOpacity>
-            <TouchableOpacity
               style={[styles.tab, activeTab === 'duration' && { borderBottomColor: colors.primary, borderBottomWidth: 2 }]}
               onPress={() => handleTabChange('duration')}
             >
@@ -406,14 +377,6 @@ export const EditorScreen = () => {
             >
               <Text style={[styles.tabText, { color: activeTab === 'transitions' ? colors.primary : colors.textSecondary }]}>
                 Transitions
-              </Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={[styles.tab, activeTab === 'tools' && { borderBottomColor: colors.primary, borderBottomWidth: 2 }]}
-              onPress={() => handleTabChange('tools')}
-            >
-              <Text style={[styles.tabText, { color: activeTab === 'tools' ? colors.primary : colors.textSecondary }]}>
-                Tools
               </Text>
             </TouchableOpacity>
           </View>
@@ -1020,11 +983,11 @@ const styles = StyleSheet.create({
     fontWeight: '600',
   },
   topHalf: {
-    flex: 1,
+    flex: 2, // Increased from 1 to 2 to make it larger
     paddingBottom: SPACING.xs,
   },
   bottomHalf: {
-    flex: 1,
+    flex: 1, // Kept at 1, making it smaller relative to top half
     borderTopLeftRadius: RADII.lg,
     borderTopRightRadius: RADII.lg,
     overflow: 'hidden',
@@ -1047,11 +1010,11 @@ const styles = StyleSheet.create({
   tabSelector: {
     flexDirection: 'row',
     borderBottomWidth: 1,
-    paddingTop: SPACING.sm,
+    paddingTop: SPACING.xs, // Reduced padding
   },
   tab: {
     flex: 1,
-    paddingVertical: SPACING.md,
+    paddingVertical: SPACING.sm, // Reduced padding
     alignItems: 'center',
   },
   tabText: {
@@ -1059,7 +1022,7 @@ const styles = StyleSheet.create({
     fontWeight: '600',
   },
   tabContent: {
-    padding: SPACING.md,
+    padding: SPACING.sm, // Reduced padding
     paddingBottom: SPACING.xs,
   },
   scrollContent: {
