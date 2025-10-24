@@ -18,16 +18,18 @@ import { PremiumFeature } from '../types/purchase.types';
 import { haptics } from '../utils/hapticFeedback';
 import { sounds } from '../utils/soundEffects';
 import { IconButton } from '../components/common';
+import { useAutosave } from '../hooks/useAutosave';
+import { SaveIndicator } from '../components/editor/SaveIndicator';
 
 // Types
 type EditorScreenRouteProp = RouteProp<RootStackParamList, 'Editor'>;
 type EditorScreenNavigationProp = StackNavigationProp<RootStackParamList, 'Editor'>;
 
-const { width: SCREEN_WIDTH } = Dimensions.get('window');
-const PREVIEW_WIDTH = SCREEN_WIDTH - SPACING.md * 2;
-const PREVIEW_HEIGHT = PREVIEW_WIDTH * (16 / 9);
-const TIMELINE_HEIGHT = 100;
-const THUMBNAIL_SIZE = 80;
+const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get('window');
+const PREVIEW_WIDTH = SCREEN_WIDTH - SPACING.sm * 2;
+const PREVIEW_HEIGHT = SCREEN_HEIGHT * 0.35; // Use 35% of screen height for preview
+const TIMELINE_HEIGHT = 80;
+const THUMBNAIL_SIZE = 60;
 
 export const EditorScreen = () => {
   const route = useRoute<EditorScreenRouteProp>();
@@ -57,6 +59,14 @@ export const EditorScreen = () => {
   // Get current project
   const currentProject = projects.find(p => p.id === currentProjectId);
   const activePhoto = currentProject?.photos[activePhotoIndex];
+
+  // Autosave functionality
+  const { saveStatus, lastSaved, forceSave } = useAutosave(currentProjectId || undefined, {
+    debounceMs: 1500,
+    onSaveComplete: () => {
+      haptics.light();
+    },
+  });
 
   // Initialize project when screen loads
   useEffect(() => {
@@ -195,9 +205,11 @@ export const EditorScreen = () => {
     navigation.goBack();
   };
 
-  // Go back without saving
-  const handleBack = () => {
+  // Go back with autosave
+  const handleBack = async () => {
     haptics.light();
+    // Force save any pending changes before navigating back
+    await forceSave();
     navigation.goBack();
   };
 
@@ -233,9 +245,6 @@ export const EditorScreen = () => {
                 color={colors.primary}
               />
             </View>
-            <Text style={[styles.helpText, { color: colors.textSecondary }]}>
-              Set how long this photo will be displayed in the slideshow
-            </Text>
           </View>
         );
       case 'transitions':
@@ -295,7 +304,9 @@ export const EditorScreen = () => {
             variant="default"
             size={44}
           />
-          <Text style={[styles.headerTitle, { color: colors.text }]}>Editor</Text>
+          <View style={styles.headerCenter}>
+            <SaveIndicator status={saveStatus} lastSaved={lastSaved} />
+          </View>
           <IconButton
             icon={<Text style={[styles.backIcon, { color: colors.text }]}>♫</Text>}
             onPress={() => {}}
@@ -306,13 +317,15 @@ export const EditorScreen = () => {
 
         {/* Top Half: Preview & Timeline */}
         <View style={styles.topHalf}>
-          <View style={[styles.previewContainer, { backgroundColor: colors.surface, borderColor: colors.border }]}>
-            {activePhoto && (
+          <View style={styles.previewContainer}>
+            {activePhoto ? (
               <PhotoPreview
                 photo={activePhoto}
                 width={PREVIEW_WIDTH}
-                height={PREVIEW_HEIGHT * 0.6}
+                height={PREVIEW_HEIGHT}
               />
+            ) : (
+              <View style={[styles.previewPlaceholder, { backgroundColor: colors.surface }]} />
             )}
           </View>
 
@@ -374,17 +387,10 @@ export const EditorScreen = () => {
             {renderTabContent()}
           </ScrollView>
 
-          {/* Footer Buttons */}
+          {/* Footer Button */}
           <View style={[styles.footer, { backgroundColor: colors.surface, borderTopColor: colors.border }]}>
             <TouchableOpacity
-              style={[styles.button, styles.secondaryButton, { backgroundColor: colors.surface, borderColor: colors.border }]}
-              onPress={handleSave}
-            >
-              <Text style={[styles.buttonText, { color: colors.text }]}>Save</Text>
-            </TouchableOpacity>
-
-            <TouchableOpacity
-              style={[styles.button, { backgroundColor: colors.primary }]}
+              style={[styles.button, styles.primaryButton, { backgroundColor: colors.primary }]}
               onPress={handlePreview}
             >
               <Text style={[styles.buttonText, { color: '#FFFFFF' }]}>
@@ -919,13 +925,18 @@ const styles = StyleSheet.create({
     fontSize: 28,
     fontWeight: '300',
   },
+  headerCenter: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
   headerTitle: {
     ...TYPOGRAPHY.h3,
     fontWeight: '600',
   },
   topHalf: {
     flex: 1,
-    paddingBottom: SPACING.sm,
+    paddingBottom: SPACING.xs,
   },
   bottomHalf: {
     flex: 1,
@@ -935,11 +946,11 @@ const styles = StyleSheet.create({
   },
   previewContainer: {
     flex: 1,
-    margin: SPACING.md,
-    marginBottom: SPACING.sm,
-    borderRadius: RADII.md,
+    margin: SPACING.sm,
+    marginBottom: SPACING.xs,
+    borderRadius: RADII.sm,
     overflow: 'hidden',
-    ...SHADOWS.md,
+    backgroundColor: '#000',
   },
   previewPlaceholder: {
     flex: 1,
@@ -964,12 +975,13 @@ const styles = StyleSheet.create({
   },
   tabContent: {
     padding: SPACING.md,
+    paddingBottom: SPACING.xs,
   },
   scrollContent: {
     flex: 1,
   },
   controlGroup: {
-    marginBottom: SPACING.md,
+    marginBottom: SPACING.sm,
   },
   controlLabel: {
     ...TYPOGRAPHY.body2,
@@ -1153,16 +1165,19 @@ const styles = StyleSheet.create({
   },
   footer: {
     flexDirection: 'row',
-    padding: SPACING.md,
+    padding: SPACING.sm,
+    paddingTop: SPACING.xs,
     borderTopWidth: 1,
   },
   button: {
-    flex: 1,
     height: 50,
     borderRadius: RADII.md,
     justifyContent: 'center',
     alignItems: 'center',
-    marginHorizontal: SPACING.sm,
+    marginHorizontal: SPACING.md,
+  },
+  primaryButton: {
+    flex: 1,
   },
   secondaryButton: {
     borderWidth: 1,

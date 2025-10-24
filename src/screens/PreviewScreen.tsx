@@ -24,7 +24,7 @@ type PreviewScreenRouteProp = RouteProp<RootStackParamList, 'Preview'>;
 type PreviewScreenNavigationProp = StackNavigationProp<RootStackParamList, 'Preview'>;
 
 const PREVIEW_WIDTH = SCREEN_WIDTH;
-const PREVIEW_HEIGHT = SCREEN_HEIGHT - 200;
+const PREVIEW_HEIGHT = SCREEN_HEIGHT - 120; // Maximize height, only leave room for controls
 
 const PreviewScreen: React.FC = () => {
   const navigation = useNavigation<PreviewScreenNavigationProp>();
@@ -247,20 +247,20 @@ const PreviewScreen: React.FC = () => {
           <IconButton
             icon={<Text style={styles.controlIcon}>⏮</Text>}
             onPress={handlePrevious}
-            size={50}
+            size={44}
             style={styles.controlButton}
           />
           <IconButton
             icon={<Text style={styles.controlIcon}>{isPlaying ? '⏸' : '▶️'}</Text>}
             onPress={handlePlayPause}
-            size={70}
+            size={60}
             variant="filled"
             style={[styles.playButton, { backgroundColor: colors.primary }]}
           />
           <IconButton
             icon={<Text style={styles.controlIcon}>⏭</Text>}
             onPress={handleNext}
-            size={50}
+            size={44}
             style={styles.controlButton}
           />
         </View>
@@ -348,11 +348,12 @@ const styles = StyleSheet.create({
     height: '100%',
   },
   controls: {
-    padding: SPACING.lg,
+    padding: SPACING.sm,
+    paddingBottom: SPACING.md,
   },
   photoInfo: {
     alignItems: 'center',
-    marginBottom: SPACING.md,
+    marginBottom: SPACING.xs,
   },
   photoCounter: {
     fontSize: 14,
@@ -366,21 +367,21 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center',
-    marginBottom: SPACING.lg,
+    marginBottom: SPACING.sm,
   },
   controlButton: {
     backgroundColor: 'rgba(255,255,255,0.2)',
   },
   playButton: {
-    marginHorizontal: SPACING.lg,
+    marginHorizontal: SPACING.md,
   },
   controlIcon: {
     fontSize: 24,
     color: '#FFFFFF',
   },
   exportButton: {
-    height: 50,
-    borderRadius: 25,
+    height: 44,
+    borderRadius: 22,
     justifyContent: 'center',
     alignItems: 'center',
   },
