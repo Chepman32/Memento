@@ -8,11 +8,12 @@ import {
   TouchableOpacity,
   SafeAreaView,
   Alert,
+  Linking,
 } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { StackNavigationProp } from '@react-navigation/stack';
 import { launchImageLibrary } from 'react-native-image-picker';
-import { check, request, PERMISSIONS, RESULTS } from 'react-native-permissions';
+import { check, request, PERMISSIONS, RESULTS, openSettings } from 'react-native-permissions';
 import { RootStackParamList } from '../navigation/navigationTypes';
 import { useThemeStore } from '../store/themeStore';
 import { usePurchaseStore } from '../store/purchaseStore';
@@ -39,63 +40,128 @@ const ImageSelectionScreen: React.FC = () => {
   const { purchaseState } = usePurchaseStore();
 
   const [selectedImages, setSelectedImages] = useState<SelectedImage[]>([]);
-  const [hasPermission, setHasPermission] = useState(false);
+  const [permissionStatus, setPermissionStatus] = useState<string | null>(null);
+  const [hasPermission, setHasPermission] = useState(true);
 
   const maxPhotos = purchaseState.isPremium ? 50 : FREE_TIER_LIMITS.MAX_PHOTOS;
+  const photoPermission =
+    Platform.OS === 'ios' ? PERMISSIONS.IOS.PHOTO_LIBRARY : PERMISSIONS.ANDROID.READ_MEDIA_IMAGES;
+
+  const refreshPermissionStatus = useCallback(async () => {
+    const status = await check(photoPermission);
+    setPermissionStatus(status);
+    setHasPermission(status === RESULTS.GRANTED || status === RESULTS.LIMITED);
+    return status;
+  }, [photoPermission]);
 
   useEffect(() => {
-    checkPermission();
-  }, []);
+    refreshPermissionStatus();
+  }, [refreshPermissionStatus]);
 
-  const checkPermission = async () => {
-    const permission =
-      Platform.OS === 'ios' ? PERMISSIONS.IOS.PHOTO_LIBRARY : PERMISSIONS.ANDROID.READ_MEDIA_IMAGES;
+  const ensurePermission = useCallback(async (): Promise<string> => {
+    const existingStatus = await refreshPermissionStatus();
 
-    const result = await check(permission);
-
-    if (result === RESULTS.GRANTED) {
-      setHasPermission(true);
-    } else {
-      requestPermission();
+    if (existingStatus === RESULTS.GRANTED || existingStatus === RESULTS.LIMITED) {
+      return existingStatus;
     }
-  };
 
-  const requestPermission = async () => {
-    const permission =
-      Platform.OS === 'ios' ? PERMISSIONS.IOS.PHOTO_LIBRARY : PERMISSIONS.ANDROID.READ_MEDIA_IMAGES;
+    const requested = await request(photoPermission);
+    setPermissionStatus(requested);
+    const allowed = requested === RESULTS.GRANTED || requested === RESULTS.LIMITED;
+    setHasPermission(allowed);
 
-    const result = await request(permission);
-
-    if (result === RESULTS.GRANTED) {
-      setHasPermission(true);
-    } else {
+    if (!allowed) {
       Alert.alert(
         'Permission Required',
-        'Please grant photo library access to select images.',
-        [{ text: 'OK', onPress: () => navigation.goBack() }]
+        Platform.OS === 'ios'
+          ? 'Please allow photo access in Settings to pick images for your slideshow.'
+          : 'Please allow photo access to pick images for your slideshow.',
+        [
+          { text: 'Cancel', style: 'cancel' },
+          {
+            text: 'Open Settings',
+            onPress: () => {
+              if (Platform.OS === 'ios') {
+                Linking.openURL('app-settings:');
+              } else {
+                openSettings().catch(() => {
+                  Alert.alert('Error', 'Unable to open settings. Please enable permissions manually.');
+                });
+              }
+            },
+          },
+        ]
       );
     }
-  };
+
+    return requested;
+  }, [photoPermission, refreshPermissionStatus]);
 
   const handleSelectImages = async () => {
+    const status = await ensurePermission();
+
+    if (status !== RESULTS.GRANTED && status !== RESULTS.LIMITED) {
+      return;
+    }
+
+    const remainingSlots = Math.max(0, maxPhotos - selectedImages.length);
+    if (remainingSlots === 0) {
+      haptics.light();
+      Alert.alert('Photo Limit Reached', 'Remove a photo before adding new ones.');
+      return;
+    }
+
     haptics.light();
 
-    const result = await launchImageLibrary({
-      mediaType: 'photo',
-      selectionLimit: maxPhotos - selectedImages.length,
-      quality: 1,
-    });
+    try {
+      const result = await launchImageLibrary({
+        mediaType: 'photo',
+        selectionLimit: Math.max(1, remainingSlots),
+        quality: 1,
+        includeBase64: false,
+      });
 
-    if (result.assets && result.assets.length > 0) {
-      const newImages: SelectedImage[] = result.assets.map((asset) => ({
-        uri: asset.uri || '',
-        width: asset.width || 1920,
-        height: asset.height || 1080,
-      }));
+      // Handle permission denied
+      if (result.errorCode === 'permission') {
+        await refreshPermissionStatus();
+        Alert.alert(
+          'Permission Required',
+          'Please grant photo library access in Settings to select images.',
+          [
+            { text: 'Cancel', style: 'cancel' },
+            { text: 'Open Settings', onPress: () => {
+              // On iOS, this will open the app settings
+              if (Platform.OS === 'ios') {
+                Linking.openURL('app-settings:');
+              }
+            }},
+          ]
+        );
+        return;
+      }
 
-      setSelectedImages([...selectedImages, ...newImages]);
-      sounds.success();
-      haptics.success();
+      // Handle other errors
+      if (result.errorCode) {
+        console.log('Image picker error:', result.errorCode, result.errorMessage);
+        Alert.alert('Error', 'Unable to load photos. Please try again.');
+        return;
+      }
+
+      // Handle successful selection
+      if (result.assets && result.assets.length > 0) {
+        const newImages: SelectedImage[] = result.assets.map((asset) => ({
+          uri: asset.uri || '',
+          width: asset.width || 1920,
+          height: asset.height || 1080,
+        }));
+
+        setSelectedImages([...selectedImages, ...newImages]);
+        sounds.success();
+        haptics.success();
+      }
+    } catch (error) {
+      console.error('Error selecting images:', error);
+      Alert.alert('Error', 'Unable to load photos. Please try again.');
     }
   };
 
@@ -148,7 +214,7 @@ const ImageSelectionScreen: React.FC = () => {
           <Text style={[styles.permissionText, { color: colors.textSecondary }]}>
             We need access to your photo library to create slideshows
           </Text>
-          <Button title="Grant Access" onPress={requestPermission} variant="primary" />
+          <Button title="Grant Access" onPress={ensurePermission} variant="primary" />
         </View>
       </SafeAreaView>
     );

@@ -12,7 +12,7 @@ import { TRANSITIONS } from '../constants/transitions';
 import { Transition } from '../types/project.types';
 import { Canvas, Image, useImage, ColorMatrix } from '@shopify/react-native-skia';
 import { Gesture, GestureDetector, GestureHandlerRootView } from 'react-native-gesture-handler';
-import Animated, { runOnJS, useSharedValue, useAnimatedStyle, withSpring, withTiming } from 'react-native-reanimated';
+import Animated, { runOnJS, useSharedValue, useAnimatedStyle, withSpring, SharedValue } from 'react-native-reanimated';
 import { TransitionType, PhotoEffect } from '../types/project.types';
 import { PremiumFeature } from '../types/purchase.types';
 import { haptics } from '../utils/hapticFeedback';
@@ -50,6 +50,10 @@ export const EditorScreen = () => {
     addTransition,
     removeTransition,
     updateTransition,
+    undo,
+    redo,
+    canUndo,
+    canRedo,
   } = useProjectStore();
 
   const [activePhotoIndex, setActivePhotoIndex] = useState(0);
@@ -213,6 +217,22 @@ export const EditorScreen = () => {
     navigation.goBack();
   };
 
+  // Handle undo
+  const handleUndo = () => {
+    if (canUndo()) {
+      undo();
+      haptics.light();
+    }
+  };
+
+  // Handle redo
+  const handleRedo = () => {
+    if (canRedo()) {
+      redo();
+      haptics.light();
+    }
+  };
+
   const handleTabChange = (tab: 'controls' | 'duration' | 'transitions' | 'tools') => {
     setActiveTab(tab);
     haptics.light();
@@ -305,6 +325,22 @@ export const EditorScreen = () => {
             size={44}
           />
           <View style={styles.headerCenter}>
+            <View style={styles.undoRedoContainer}>
+              <TouchableOpacity
+                style={[styles.undoRedoButton, !canUndo() && styles.undoRedoDisabled]}
+                onPress={handleUndo}
+                disabled={!canUndo()}
+              >
+                <Text style={[styles.undoRedoText, { color: canUndo() ? colors.text : colors.textSecondary }]}>↶</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={[styles.undoRedoButton, !canRedo() && styles.undoRedoDisabled]}
+                onPress={handleRedo}
+                disabled={!canRedo()}
+              >
+                <Text style={[styles.undoRedoText, { color: canRedo() ? colors.text : colors.textSecondary }]}>↷</Text>
+              </TouchableOpacity>
+            </View>
             <SaveIndicator status={saveStatus} lastSaved={lastSaved} />
           </View>
           <IconButton
@@ -706,6 +742,155 @@ const EffectPicker: React.FC<EffectPickerProps> = ({ selectedEffects, onSelect }
   );
 };
 
+// Photo Timeline Item Component - Separated to properly handle hooks
+interface PhotoTimelineItemProps {
+  photo: any;
+  index: number;
+  isActive: boolean;
+  isDragged: boolean;
+  draggedIndex: number | null;
+  positions: SharedValue<number[]>;
+  onSelectPhoto: (index: number) => void;
+  onDragEnd: (fromIndex: number, toIndex: number) => void;
+  setDraggedIndex: (index: number | null) => void;
+  setCurrentTargetIndex: (index: number | null) => void;
+  photosLength: number;
+}
+
+const PhotoTimelineItem: React.FC<PhotoTimelineItemProps> = ({
+  photo,
+  index,
+  isActive,
+  isDragged,
+  draggedIndex,
+  positions,
+  onSelectPhoto,
+  onDragEnd,
+  setDraggedIndex,
+  setCurrentTargetIndex,
+  photosLength
+}) => {
+  const { colors } = useThemeStore();
+  const translateX = useSharedValue(0);
+  const scale = useSharedValue(1);
+  const itemWidth = THUMBNAIL_SIZE + SPACING.sm * 2;
+
+  const getOrder = (idx: number) => {
+    'worklet';
+    return positions.value.indexOf(idx);
+  };
+
+  const longPress = Gesture.LongPress()
+    .minDuration(400)
+    .onStart(() => {
+      runOnJS(haptics.medium)();
+      scale.value = withSpring(1.2);
+      runOnJS(setDraggedIndex)(index);
+    });
+
+  const pan = Gesture.Pan()
+    .activeOffsetX([-10, 10])
+    .failOffsetY([-10, 10])
+    .onUpdate((event) => {
+      if (draggedIndex === index) {
+        translateX.value = event.translationX;
+
+        // Calculate target index based on drag distance
+        const movedItems = Math.round(translateX.value / itemWidth);
+        const newTargetIndex = Math.max(0, Math.min(photosLength - 1, index + movedItems));
+
+        // Update positions array in real-time for live reordering
+        const oldOrder = [...positions.value];
+        const currentPos = oldOrder.indexOf(index);
+        const targetPos = newTargetIndex;
+
+        if (currentPos !== targetPos) {
+          // Create new order array
+          const newOrder = oldOrder.filter(i => i !== index);
+          newOrder.splice(targetPos, 0, index);
+          positions.value = newOrder;
+
+          runOnJS(setCurrentTargetIndex)(newTargetIndex);
+          runOnJS(haptics.light)();
+        }
+      }
+    })
+    .onEnd(() => {
+      if (draggedIndex === index) {
+        const movedItems = Math.round(translateX.value / itemWidth);
+        const targetIndex = Math.max(0, Math.min(photosLength - 1, index + movedItems));
+
+        if (targetIndex !== index) {
+          runOnJS(onDragEnd)(index, targetIndex);
+          runOnJS(haptics.success)();
+        }
+
+        scale.value = withSpring(1);
+        translateX.value = withSpring(0);
+        runOnJS(setDraggedIndex)(null);
+        runOnJS(setCurrentTargetIndex)(null);
+
+        // Reset positions after actual reorder
+        positions.value = Array.from({length: photosLength}, (_, i) => i);
+      }
+    });
+
+  const tap = Gesture.Tap()
+    .onStart(() => {
+      runOnJS(onSelectPhoto)(index);
+      runOnJS(haptics.light)();
+    });
+
+  const composed = Gesture.Exclusive(
+    Gesture.Simultaneous(longPress, pan),
+    tap
+  );
+
+  const animatedStyle = useAnimatedStyle(() => {
+    // Calculate position based on current order
+    const currentOrder = getOrder(index);
+    const offset = (currentOrder - index) * itemWidth;
+
+    const finalTranslateX = draggedIndex === index
+      ? translateX.value
+      : withSpring(offset, {
+          damping: 20,
+          stiffness: 150,
+        });
+
+    return {
+      transform: [
+        { translateX: finalTranslateX },
+        { scale: scale.value },
+      ],
+      zIndex: draggedIndex === index ? 1000 : 1,
+      opacity: draggedIndex === index ? 0.9 : 1,
+    };
+  });
+
+  return (
+    <GestureDetector key={photo.id} gesture={composed}>
+      <Animated.View style={[styles.thumbnailContainer, animatedStyle]}>
+        <View
+          style={[
+            styles.thumbnailWrapper,
+            { borderColor: isActive ? colors.primary : 'transparent' },
+            isDragged && { borderColor: colors.success, borderWidth: 3 },
+          ]}
+        >
+          <RNImage source={{ uri: photo.uri }} style={styles.thumbnailImage} resizeMode="cover" />
+          {isActive && !isDragged && (
+            <View style={[styles.thumbnailActiveIndicator, { borderColor: colors.primary }]} />
+          )}
+        </View>
+        <Text style={[styles.thumbnailDuration, { color: colors.textSecondary }]} numberOfLines={1}>
+          {photo.duration}s
+        </Text>
+      </Animated.View>
+    </GestureDetector>
+  );
+};
+
 // Photo Timeline Component
 interface PhotoTimelineProps {
   photos: any[];
@@ -739,129 +924,6 @@ const PhotoTimeline: React.FC<PhotoTimelineProps> = ({ photos, transitions, acti
     }
   }, [activeIndex, photos.length]);
 
-  const getOrder = (index: number) => {
-    'worklet';
-    return positions.value.indexOf(index);
-  };
-
-  const renderPhoto = (photo: any, index: number) => {
-    const isActive = index === activeIndex;
-    const isDragged = index === draggedIndex;
-    const translateX = useSharedValue(0);
-    const scale = useSharedValue(1);
-    const itemWidth = THUMBNAIL_SIZE + SPACING.sm * 2;
-
-    const longPress = Gesture.LongPress()
-      .minDuration(400)
-      .onStart(() => {
-        runOnJS(haptics.medium)();
-        scale.value = withSpring(1.2);
-        runOnJS(setDraggedIndex)(index);
-      });
-
-    const pan = Gesture.Pan()
-      .activeOffsetX([-10, 10])
-      .failOffsetY([-10, 10])
-      .onUpdate((event) => {
-        if (draggedIndex === index) {
-          translateX.value = event.translationX;
-
-          // Calculate target index based on drag distance
-          const movedItems = Math.round(translateX.value / itemWidth);
-          const newTargetIndex = Math.max(0, Math.min(photos.length - 1, index + movedItems));
-
-          // Update positions array in real-time for live reordering
-          const oldOrder = [...positions.value];
-          const currentPos = oldOrder.indexOf(index);
-          const targetPos = newTargetIndex;
-
-          if (currentPos !== targetPos) {
-            // Create new order array
-            const newOrder = oldOrder.filter(i => i !== index);
-            newOrder.splice(targetPos, 0, index);
-            positions.value = newOrder;
-
-            runOnJS(setCurrentTargetIndex)(newTargetIndex);
-            runOnJS(haptics.light)();
-          }
-        }
-      })
-      .onEnd(() => {
-        if (draggedIndex === index) {
-          const movedItems = Math.round(translateX.value / itemWidth);
-          const targetIndex = Math.max(0, Math.min(photos.length - 1, index + movedItems));
-
-          if (targetIndex !== index) {
-            runOnJS(onDragEnd)(index, targetIndex);
-            runOnJS(haptics.success)();
-          }
-
-          scale.value = withSpring(1);
-          translateX.value = withSpring(0);
-          runOnJS(setDraggedIndex)(null);
-          runOnJS(setCurrentTargetIndex)(null);
-
-          // Reset positions after actual reorder
-          positions.value = photos.map((_, i) => i);
-        }
-      });
-
-    const tap = Gesture.Tap()
-      .onStart(() => {
-        runOnJS(onSelectPhoto)(index);
-        runOnJS(haptics.light)();
-      });
-
-    const composed = Gesture.Exclusive(
-      Gesture.Simultaneous(longPress, pan),
-      tap
-    );
-
-    const animatedStyle = useAnimatedStyle(() => {
-      // Calculate position based on current order
-      const currentOrder = getOrder(index);
-      const offset = (currentOrder - index) * itemWidth;
-
-      const finalTranslateX = draggedIndex === index
-        ? translateX.value
-        : withSpring(offset, {
-            damping: 20,
-            stiffness: 150,
-          });
-
-      return {
-        transform: [
-          { translateX: finalTranslateX },
-          { scale: scale.value },
-        ],
-        zIndex: draggedIndex === index ? 1000 : 1,
-        opacity: draggedIndex === index ? 0.9 : 1,
-      };
-    });
-
-    return (
-      <GestureDetector key={photo.id} gesture={composed}>
-        <Animated.View style={[styles.thumbnailContainer, animatedStyle]}>
-          <View
-            style={[
-              styles.thumbnailWrapper,
-              { borderColor: isActive ? colors.primary : 'transparent' },
-              isDragged && { borderColor: colors.success, borderWidth: 3 },
-            ]}
-          >
-            <RNImage source={{ uri: photo.uri }} style={styles.thumbnailImage} resizeMode="cover" />
-            {isActive && !isDragged && (
-              <View style={[styles.thumbnailActiveIndicator, { borderColor: colors.primary }]} />
-            )}
-          </View>
-          <Text style={[styles.thumbnailDuration, { color: colors.textSecondary }]} numberOfLines={1}>
-            {photo.duration}s
-          </Text>
-        </Animated.View>
-      </GestureDetector>
-    );
-  };
-
   // Render transition item
   const renderTransition = (transition: any, index: number) => {
     return (
@@ -872,29 +934,11 @@ const PhotoTimeline: React.FC<PhotoTimelineProps> = ({ photos, transitions, acti
       >
         <View style={[styles.transitionIcon, { backgroundColor: colors.primary + '20', borderColor: colors.primary }]}>
           <Text style={[styles.transitionTimelineText, { color: colors.primary }]}>
-            {TRANSITIONS[transition.type]?.name?.charAt(0) || 'T'}
+            {TRANSITIONS[transition.type as TransitionType]?.name?.charAt(0) || 'T'}
           </Text>
         </View>
       </TouchableOpacity>
     );
-  };
-
-  // Build timeline items array with photos and transitions
-  const renderTimelineItems = () => {
-    const items = [];
-
-    photos.forEach((photo, index) => {
-      // Only add transition if it actually exists
-      const transition = transitions?.find(t => t.order === index);
-      if (transition) {
-        items.push(renderTransition(transition, index));
-      }
-
-      // Add photo
-      items.push(renderPhoto(photo, index));
-    });
-
-    return items;
   };
 
   return (
@@ -905,7 +949,27 @@ const PhotoTimeline: React.FC<PhotoTimelineProps> = ({ photos, transitions, acti
       contentContainerStyle={styles.timelineContent}
       scrollEnabled={draggedIndex === null}
     >
-      {renderTimelineItems()}
+      {photos.map((photo, index) => {
+        const transition = transitions?.find(t => t.order === index);
+        return (
+          <React.Fragment key={`timeline-item-${photo.id}`}>
+            {transition && renderTransition(transition, index)}
+            <PhotoTimelineItem
+              photo={photo}
+              index={index}
+              isActive={index === activeIndex}
+              isDragged={index === draggedIndex}
+              draggedIndex={draggedIndex}
+              positions={positions}
+              onSelectPhoto={onSelectPhoto}
+              onDragEnd={onDragEnd}
+              setDraggedIndex={setDraggedIndex}
+              setCurrentTargetIndex={setCurrentTargetIndex}
+              photosLength={photos.length}
+            />
+          </React.Fragment>
+        );
+      })}
     </ScrollView>
   );
 };
@@ -929,6 +993,27 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
+    flexDirection: 'column',
+  },
+  undoRedoContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: SPACING.xs,
+  },
+  undoRedoButton: {
+    width: 36,
+    height: 36,
+    borderRadius: 18,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginHorizontal: SPACING.xs,
+  },
+  undoRedoDisabled: {
+    opacity: 0.3,
+  },
+  undoRedoText: {
+    fontSize: 24,
+    fontWeight: '400',
   },
   headerTitle: {
     ...TYPOGRAPHY.h3,

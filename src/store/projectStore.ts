@@ -22,6 +22,8 @@ interface ProjectState {
   currentProjectId: string | null;
   isLoading: boolean;
   error: string | null;
+  history: Project[][];
+  historyIndex: number;
 
   // Actions
   createProject: (title?: string) => Promise<Project>;
@@ -39,6 +41,13 @@ interface ProjectState {
   removeTransition: (projectId: string, transitionId: string) => void;
   updateTransition: (projectId: string, transitionId: string, updates: Partial<Transition>) => void;
 
+  // Undo/Redo
+  undo: () => void;
+  redo: () => void;
+  canUndo: () => boolean;
+  canRedo: () => boolean;
+  saveToHistory: () => void;
+
   // Selectors
   getCurrentProject: () => Project | undefined;
   getProjectById: (id: string) => Project | undefined;
@@ -51,6 +60,8 @@ export const useProjectStore = create<ProjectState>()(
       currentProjectId: null,
       isLoading: false,
       error: null,
+      history: [],
+      historyIndex: -1,
       
       createProject: async (title = 'Untitled Project') => {
         const newProject: Project = {
@@ -74,6 +85,7 @@ export const useProjectStore = create<ProjectState>()(
       },
       
       updateProject: (id, updates) => {
+        get().saveToHistory();
         set((state) => ({
           projects: state.projects.map((project) =>
             project.id === id
@@ -273,6 +285,55 @@ export const useProjectStore = create<ProjectState>()(
         get().updateProject(projectId, {
           transitions: updatedTransitions,
         });
+      },
+
+      // Undo/Redo
+      saveToHistory: () => {
+        const state = get();
+        const newHistory = state.history.slice(0, state.historyIndex + 1);
+        newHistory.push(JSON.parse(JSON.stringify(state.projects)));
+
+        // Keep only last 20 states
+        if (newHistory.length > 20) {
+          newHistory.shift();
+        }
+
+        set({
+          history: newHistory,
+          historyIndex: newHistory.length - 1,
+        });
+      },
+
+      undo: () => {
+        const state = get();
+        if (state.historyIndex > 0) {
+          const previousState = state.history[state.historyIndex - 1];
+          set({
+            projects: JSON.parse(JSON.stringify(previousState)),
+            historyIndex: state.historyIndex - 1,
+          });
+        }
+      },
+
+      redo: () => {
+        const state = get();
+        if (state.historyIndex < state.history.length - 1) {
+          const nextState = state.history[state.historyIndex + 1];
+          set({
+            projects: JSON.parse(JSON.stringify(nextState)),
+            historyIndex: state.historyIndex + 1,
+          });
+        }
+      },
+
+      canUndo: () => {
+        const state = get();
+        return state.historyIndex > 0;
+      },
+
+      canRedo: () => {
+        const state = get();
+        return state.historyIndex < state.history.length - 1;
       },
 
       // Selectors

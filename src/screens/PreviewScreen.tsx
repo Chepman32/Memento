@@ -36,7 +36,7 @@ const PreviewScreen: React.FC = () => {
   const project = getProjectById(projectId);
 
   const [currentPhotoIndex, setCurrentPhotoIndex] = useState(0);
-  const [isPlaying, setIsPlaying] = useState(false);
+  const [isPlaying, setIsPlaying] = useState(true); // Start with autoplay
   const [progress, setProgress] = useState(0);
   const [isTransitioning, setIsTransitioning] = useState(false);
 
@@ -86,8 +86,8 @@ const PreviewScreen: React.FC = () => {
     animationRef.current = setTimeout(() => {
       const nextIndex = (currentPhotoIndex + 1) % project.photos.length;
 
-      // Check if there's a transition for the next photo
-      const transition = project.transitions?.find(t => t.order === nextIndex);
+      // Check if there's a transition between current and next photo
+      const transition = project.transitions?.find(t => t.order === currentPhotoIndex);
 
       if (transition) {
         // Start transition
@@ -108,8 +108,8 @@ const PreviewScreen: React.FC = () => {
       }
 
       if (nextIndex === 0) {
-        // Loop completed
-        setIsPlaying(false);
+        // Loop completed - continue playing
+        // setIsPlaying(false); // Commented out to keep autoplay looping
       }
     }, duration);
   };
@@ -159,7 +159,7 @@ const PreviewScreen: React.FC = () => {
   const currentPhoto = project.photos[currentPhotoIndex];
   const nextPhotoIndex = (currentPhotoIndex + 1) % project.photos.length;
   const nextPhoto = project.photos[nextPhotoIndex];
-  const currentTransition = project.transitions?.find(t => t.order === nextPhotoIndex);
+  const currentTransition = project.transitions?.find(t => t.order === currentPhotoIndex);
 
   const progressWidth = progressAnim.interpolate({
     inputRange: [0, 1],
