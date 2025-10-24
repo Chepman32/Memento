@@ -17,7 +17,8 @@ import { IconButton } from '../components/common';
 import { haptics } from '../utils/hapticFeedback';
 import { sounds } from '../utils/soundEffects';
 import { SPACING, SCREEN_WIDTH, SCREEN_HEIGHT } from '../constants/theme';
-import { TransitionType } from '../types/project.types';
+import { TRANSITIONS } from '../constants/transitions';
+import { TransitionType, Transition } from '../types/project.types';
 
 type PreviewScreenRouteProp = RouteProp<RootStackParamList, 'Preview'>;
 type PreviewScreenNavigationProp = StackNavigationProp<RootStackParamList, 'Preview'>;
@@ -40,7 +41,6 @@ const PreviewScreen: React.FC = () => {
   const [isTransitioning, setIsTransitioning] = useState(false);
 
   const animationRef = useRef<NodeJS.Timeout | null>(null);
-  const transitionRef = useRef<NodeJS.Timeout | null>(null);
   const progressAnim = useRef(new RNAnimated.Value(0)).current;
   const transitionAnim = useRef(new RNAnimated.Value(0)).current;
 
@@ -48,9 +48,6 @@ const PreviewScreen: React.FC = () => {
     return () => {
       if (animationRef.current) {
         clearTimeout(animationRef.current);
-      }
-      if (transitionRef.current) {
-        clearTimeout(transitionRef.current);
       }
     };
   }, []);
@@ -65,6 +62,50 @@ const PreviewScreen: React.FC = () => {
     }
   }, [isPlaying, currentPhotoIndex, project]);
 
+  const getTransitionForIndex = (index: number): Transition | null => {
+    if (!project) return null;
+
+    const explicit = project.transitions?.find(t => t.order === index);
+    if (explicit) {
+      return explicit;
+    }
+
+    const fallbackType =
+      project.photos[index]?.transition || project.settings?.defaultTransition;
+
+    if (!fallbackType) {
+      return null;
+    }
+
+    const config = TRANSITIONS[fallbackType];
+
+    return {
+      id: `fallback-${project.photos[index]?.id ?? index}-${fallbackType}`,
+      type: fallbackType,
+      duration: config?.duration ? config.duration / 1000 : 0.6,
+      order: index,
+    };
+  };
+
+  const getTransitionDurationMs = (transition: Transition | null): number => {
+    if (!transition) {
+      return 0;
+    }
+
+    if (transition.duration && transition.duration > 5) {
+      // Duration already in ms
+      return transition.duration;
+    }
+
+    if (transition.duration && transition.duration > 0) {
+      // Treat stored duration as seconds
+      return transition.duration * 1000;
+    }
+
+    const config = TRANSITIONS[transition.type];
+    return config?.duration ?? 600;
+  };
+
   const playSlideshow = () => {
     if (!project) return;
 
@@ -72,7 +113,6 @@ const PreviewScreen: React.FC = () => {
     if (!currentPhoto) return;
 
     const duration = currentPhoto.duration * 1000;
-
     // Animate progress bar
     progressAnim.setValue(0);
     RNAnimated.timing(progressAnim, {
@@ -84,9 +124,8 @@ const PreviewScreen: React.FC = () => {
     // Move to next photo with transition
     animationRef.current = setTimeout(() => {
       const nextIndex = (currentPhotoIndex + 1) % project.photos.length;
-
-      // Check if there's a transition between current and next photo
-      const transition = project.transitions?.find(t => t.order === currentPhotoIndex);
+      const transition = getTransitionForIndex(currentPhotoIndex);
+      const transitionDuration = getTransitionDurationMs(transition);
 
       if (transition) {
         // Start transition
@@ -95,11 +134,13 @@ const PreviewScreen: React.FC = () => {
 
         RNAnimated.timing(transitionAnim, {
           toValue: 1,
-          duration: transition.duration * 1000, // Transition duration
+          duration: transitionDuration, // Transition duration in ms
           useNativeDriver: true,
-        }).start(() => {
+        }).start(({ finished }) => {
           setIsTransitioning(false);
-          setCurrentPhotoIndex(nextIndex);
+          if (finished) {
+            setCurrentPhotoIndex(nextIndex);
+          }
         });
       } else {
         // No transition, just switch
@@ -117,20 +158,6 @@ const PreviewScreen: React.FC = () => {
     haptics.medium();
     sounds.tap();
     setIsPlaying(!isPlaying);
-  };
-
-  const handlePrevious = () => {
-    if (!project) return;
-    haptics.light();
-    setIsPlaying(false);
-    setCurrentPhotoIndex((currentPhotoIndex - 1 + project.photos.length) % project.photos.length);
-  };
-
-  const handleNext = () => {
-    if (!project) return;
-    haptics.light();
-    setIsPlaying(false);
-    setCurrentPhotoIndex((currentPhotoIndex + 1) % project.photos.length);
   };
 
   const handleExport = () => {
@@ -158,7 +185,7 @@ const PreviewScreen: React.FC = () => {
   const currentPhoto = project.photos[currentPhotoIndex];
   const nextPhotoIndex = (currentPhotoIndex + 1) % project.photos.length;
   const nextPhoto = project.photos[nextPhotoIndex];
-  const currentTransition = project.transitions?.find(t => t.order === currentPhotoIndex);
+  const currentTransition = getTransitionForIndex(currentPhotoIndex);
 
   const progressWidth = progressAnim.interpolate({
     inputRange: [0, 1],
@@ -494,23 +521,11 @@ const PreviewScreen: React.FC = () => {
 
         <View style={styles.playbackControls}>
           <IconButton
-            icon={<Text style={styles.controlIcon}>⏮</Text>}
-            onPress={handlePrevious}
-            size={44}
-            style={styles.controlButton}
-          />
-          <IconButton
             icon={<Text style={styles.controlIcon}>{isPlaying ? '⏸' : '▶️'}</Text>}
             onPress={handlePlayPause}
             size={60}
             variant="filled"
             style={[styles.playButton, { backgroundColor: colors.primary }]}
-          />
-          <IconButton
-            icon={<Text style={styles.controlIcon}>⏭</Text>}
-            onPress={handleNext}
-            size={44}
-            style={styles.controlButton}
           />
         </View>
 
@@ -641,11 +656,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginBottom: SPACING.sm,
   },
-  controlButton: {
-    backgroundColor: 'rgba(255,255,255,0.2)',
-  },
   playButton: {
-    marginHorizontal: SPACING.md,
+    marginHorizontal: 0,
   },
   controlIcon: {
     fontSize: 24,
