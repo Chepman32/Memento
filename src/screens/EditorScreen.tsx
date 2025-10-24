@@ -47,6 +47,7 @@ export const EditorScreen = () => {
     reorderPhotos,
     setCurrentProject,
     addPhotos,
+    removePhoto,
     addTransition,
     removeTransition,
     updateTransition,
@@ -233,6 +234,23 @@ export const EditorScreen = () => {
     }
   };
 
+  const handleRemovePhoto = () => {
+    if (!currentProject || !activePhoto) return;
+
+    const remainingPhotoCount = currentProject.photos.length - 1;
+    removePhoto(currentProject.id, activePhoto.id);
+    haptics.light();
+    sounds.tap();
+
+    if (remainingPhotoCount <= 0) {
+      setActivePhotoIndex(0);
+      return;
+    }
+
+    const nextIndex = Math.min(activePhotoIndex, remainingPhotoCount - 1);
+    setActivePhotoIndex(nextIndex);
+  };
+
   const handleTabChange = (tab: 'duration' | 'transitions') => {
     setActiveTab(tab);
     haptics.light();
@@ -319,6 +337,17 @@ export const EditorScreen = () => {
               >
                 <Text style={[styles.undoRedoText, { color: canRedo() ? colors.text : colors.textSecondary }]}>↷</Text>
               </TouchableOpacity>
+              {activePhoto && (
+                <TouchableOpacity
+                  style={[
+                    styles.removePhotoButton,
+                    { borderColor: colors.error, backgroundColor: colors.error + '20' },
+                  ]}
+                  onPress={handleRemovePhoto}
+                >
+                  <Text style={[styles.removePhotoText, { color: colors.error }]}>Remove</Text>
+                </TouchableOpacity>
+              )}
             </View>
             <SaveIndicator status={saveStatus} lastSaved={lastSaved} />
           </View>
@@ -988,6 +1017,20 @@ const styles = StyleSheet.create({
   undoRedoText: {
     fontSize: 24,
     fontWeight: '400',
+  },
+  removePhotoButton: {
+    height: 36,
+    paddingHorizontal: SPACING.sm,
+    borderRadius: 18,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginLeft: SPACING.sm,
+    borderWidth: 1,
+  },
+  removePhotoText: {
+    fontSize: 14,
+    fontWeight: '600',
+    letterSpacing: 0.2,
   },
   headerTitle: {
     ...TYPOGRAPHY.h3,
