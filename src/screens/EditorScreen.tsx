@@ -27,7 +27,7 @@ type EditorScreenNavigationProp = StackNavigationProp<RootStackParamList, 'Edito
 
 const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get('window');
 const PREVIEW_WIDTH = SCREEN_WIDTH - SPACING.sm * 2;
-const PREVIEW_HEIGHT = SCREEN_HEIGHT * 0.5; // Increased to 50% of screen height for preview
+const PREVIEW_HEIGHT = SCREEN_HEIGHT * 0.55; // Expand preview area to occupy more vertical space
 const TIMELINE_HEIGHT = 80;
 const THUMBNAIL_SIZE = 60;
 
@@ -946,7 +946,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'space-between',
     paddingHorizontal: SPACING.md,
-    paddingBottom: SPACING.sm,
+    paddingBottom: SPACING.xs,
   },
   backIcon: {
     fontSize: 28,
@@ -983,18 +983,19 @@ const styles = StyleSheet.create({
     fontWeight: '600',
   },
   topHalf: {
-    flex: 2, // Increased from 1 to 2 to make it larger
+    flex: 2.5, // Give preview more vertical room relative to controls
     paddingBottom: SPACING.xs,
   },
   bottomHalf: {
-    flex: 1, // Kept at 1, making it smaller relative to top half
+    flex: 0.9, // Trim bottom panel height to reclaim space for preview
     borderTopLeftRadius: RADII.lg,
     borderTopRightRadius: RADII.lg,
     overflow: 'hidden',
   },
   previewContainer: {
     flex: 1,
-    margin: SPACING.sm,
+    marginHorizontal: SPACING.sm,
+    marginTop: SPACING.xs,
     marginBottom: SPACING.xs,
     borderRadius: RADII.sm,
     overflow: 'hidden',
@@ -1014,7 +1015,7 @@ const styles = StyleSheet.create({
   },
   tab: {
     flex: 1,
-    paddingVertical: SPACING.sm, // Reduced padding
+    paddingVertical: SPACING.xs,
     alignItems: 'center',
   },
   tabText: {
@@ -1022,11 +1023,12 @@ const styles = StyleSheet.create({
     fontWeight: '600',
   },
   tabContent: {
-    padding: SPACING.sm, // Reduced padding
+    paddingHorizontal: SPACING.sm,
+    paddingTop: SPACING.xs,
     paddingBottom: SPACING.xs,
   },
   scrollContent: {
-    flex: 1,
+    flexGrow: 0,
   },
   controlGroup: {
     marginBottom: SPACING.sm,
@@ -1065,7 +1067,7 @@ const styles = StyleSheet.create({
   sliderContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginTop: SPACING.sm,
+    marginTop: SPACING.xs,
   },
   sliderTrackWrapper: {
     flex: 1,
@@ -1213,8 +1215,8 @@ const styles = StyleSheet.create({
   },
   footer: {
     flexDirection: 'row',
-    padding: SPACING.sm,
-    paddingTop: SPACING.xs,
+    paddingHorizontal: SPACING.sm,
+    paddingVertical: SPACING.xs,
     borderTopWidth: 1,
   },
   button: {
@@ -1222,7 +1224,7 @@ const styles = StyleSheet.create({
     borderRadius: RADII.md,
     justifyContent: 'center',
     alignItems: 'center',
-    marginHorizontal: SPACING.md,
+    marginHorizontal: SPACING.sm,
   },
   primaryButton: {
     flex: 1,
