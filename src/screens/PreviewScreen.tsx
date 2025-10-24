@@ -16,7 +16,6 @@ import { useThemeStore } from '../store/themeStore';
 import { IconButton } from '../components/common';
 import { haptics } from '../utils/hapticFeedback';
 import { sounds } from '../utils/soundEffects';
-import { calculateTransition } from '../utils/transitionEffects';
 import { SPACING, SCREEN_WIDTH, SCREEN_HEIGHT } from '../constants/theme';
 import { TransitionType } from '../types/project.types';
 
@@ -166,42 +165,281 @@ const PreviewScreen: React.FC = () => {
     outputRange: ['0%', '100%'],
   });
 
-  // Calculate transition styles based on type
-  const getTransitionStyle = () => {
-    if (!isTransitioning || !currentTransition) return {};
+  // Calculate transition styles for current and next layers
+  const getLayerStyles = () => {
+    const hiddenNext = { opacity: 0 };
+    const defaultCurrent = { opacity: 1 };
 
-    const animValue = transitionAnim;
+    if (!nextPhoto) {
+      return { current: defaultCurrent, next: hiddenNext };
+    }
+
+    if (!isTransitioning || !currentTransition) {
+      return { current: defaultCurrent, next: hiddenNext };
+    }
+
+    const progress = transitionAnim;
+    const fadeOut = progress.interpolate({
+      inputRange: [0, 1],
+      outputRange: [1, 0],
+    });
+    const fadeIn = progress.interpolate({
+      inputRange: [0, 1],
+      outputRange: [0, 1],
+    });
 
     switch (currentTransition.type) {
       case TransitionType.FADE:
         return {
-          opacity: animValue.interpolate({
-            inputRange: [0, 1],
-            outputRange: [1, 0],
-          }),
+          current: { opacity: fadeOut },
+          next: { opacity: fadeIn },
         };
-      case TransitionType.SLIDE_LEFT:
+      case TransitionType.SLIDE_LEFT: {
+        const currentTranslate = progress.interpolate({
+          inputRange: [0, 1],
+          outputRange: [0, -PREVIEW_WIDTH],
+        });
+        const nextTranslate = progress.interpolate({
+          inputRange: [0, 1],
+          outputRange: [PREVIEW_WIDTH, 0],
+        });
         return {
-          transform: [{
-            translateX: animValue.interpolate({
-              inputRange: [0, 1],
-              outputRange: [0, -PREVIEW_WIDTH],
-            }),
-          }],
+          current: { transform: [{ translateX: currentTranslate }] },
+          next: { opacity: 1, transform: [{ translateX: nextTranslate }] },
         };
-      case TransitionType.SLIDE_RIGHT:
+      }
+      case TransitionType.SLIDE_RIGHT: {
+        const currentTranslate = progress.interpolate({
+          inputRange: [0, 1],
+          outputRange: [0, PREVIEW_WIDTH],
+        });
+        const nextTranslate = progress.interpolate({
+          inputRange: [0, 1],
+          outputRange: [-PREVIEW_WIDTH, 0],
+        });
         return {
-          transform: [{
-            translateX: animValue.interpolate({
-              inputRange: [0, 1],
-              outputRange: [0, PREVIEW_WIDTH],
-            }),
-          }],
+          current: { transform: [{ translateX: currentTranslate }] },
+          next: { opacity: 1, transform: [{ translateX: nextTranslate }] },
         };
+      }
+      case TransitionType.SLIDE_UP: {
+        const currentTranslate = progress.interpolate({
+          inputRange: [0, 1],
+          outputRange: [0, -PREVIEW_HEIGHT],
+        });
+        const nextTranslate = progress.interpolate({
+          inputRange: [0, 1],
+          outputRange: [PREVIEW_HEIGHT, 0],
+        });
+        return {
+          current: { transform: [{ translateY: currentTranslate }] },
+          next: { opacity: 1, transform: [{ translateY: nextTranslate }] },
+        };
+      }
+      case TransitionType.SLIDE_DOWN: {
+        const currentTranslate = progress.interpolate({
+          inputRange: [0, 1],
+          outputRange: [0, PREVIEW_HEIGHT],
+        });
+        const nextTranslate = progress.interpolate({
+          inputRange: [0, 1],
+          outputRange: [-PREVIEW_HEIGHT, 0],
+        });
+        return {
+          current: { transform: [{ translateY: currentTranslate }] },
+          next: { opacity: 1, transform: [{ translateY: nextTranslate }] },
+        };
+      }
+      case TransitionType.ZOOM: {
+        const currentScale = progress.interpolate({
+          inputRange: [0, 1],
+          outputRange: [1, 1.2],
+        });
+        const nextScale = progress.interpolate({
+          inputRange: [0, 1],
+          outputRange: [0.8, 1],
+        });
+        return {
+          current: { opacity: fadeOut, transform: [{ scale: currentScale }] },
+          next: { opacity: fadeIn, transform: [{ scale: nextScale }] },
+        };
+      }
+      case TransitionType.ROTATE: {
+        const currentRotate = progress.interpolate({
+          inputRange: [0, 1],
+          outputRange: ['0deg', '90deg'],
+        });
+        const nextRotate = progress.interpolate({
+          inputRange: [0, 1],
+          outputRange: ['-90deg', '0deg'],
+        });
+        return {
+          current: {
+            opacity: fadeOut,
+            transform: [{ perspective: 900 }, { rotateY: currentRotate }],
+          },
+          next: {
+            opacity: fadeIn,
+            transform: [{ perspective: 900 }, { rotateY: nextRotate }],
+          },
+        };
+      }
+      case TransitionType.CUBE: {
+        const currentRotate = progress.interpolate({
+          inputRange: [0, 1],
+          outputRange: ['0deg', '90deg'],
+        });
+        const nextRotate = progress.interpolate({
+          inputRange: [0, 1],
+          outputRange: ['-90deg', '0deg'],
+        });
+        const currentTranslate = progress.interpolate({
+          inputRange: [0, 1],
+          outputRange: [0, -PREVIEW_WIDTH / 2],
+        });
+        const nextTranslate = progress.interpolate({
+          inputRange: [0, 1],
+          outputRange: [PREVIEW_WIDTH / 2, 0],
+        });
+        return {
+          current: {
+            opacity: fadeOut,
+            transform: [
+              { perspective: 900 },
+              { translateX: currentTranslate },
+              { rotateY: currentRotate },
+            ],
+          },
+          next: {
+            opacity: fadeIn,
+            transform: [
+              { perspective: 900 },
+              { translateX: nextTranslate },
+              { rotateY: nextRotate },
+            ],
+          },
+        };
+      }
+      case TransitionType.FLIP: {
+        const currentRotate = progress.interpolate({
+          inputRange: [0, 1],
+          outputRange: ['0deg', '180deg'],
+        });
+        const nextRotate = progress.interpolate({
+          inputRange: [0, 1],
+          outputRange: ['-180deg', '0deg'],
+        });
+        return {
+          current: {
+            opacity: fadeOut,
+            transform: [{ perspective: 900 }, { rotateX: currentRotate }],
+          },
+          next: {
+            opacity: fadeIn,
+            transform: [{ perspective: 900 }, { rotateX: nextRotate }],
+          },
+        };
+      }
+      case TransitionType.DISSOLVE:
+        return {
+          current: {
+            opacity: fadeOut,
+            transform: [
+              {
+                scale: progress.interpolate({
+                  inputRange: [0, 1],
+                  outputRange: [1, 0.9],
+                }),
+              },
+            ],
+          },
+          next: {
+            opacity: fadeIn,
+            transform: [
+              {
+                scale: progress.interpolate({
+                  inputRange: [0, 1],
+                  outputRange: [1.1, 1],
+                }),
+              },
+            ],
+          },
+        };
+      case TransitionType.BLUR:
+        return {
+          current: {
+            opacity: fadeOut,
+            transform: [
+              {
+                translateX: progress.interpolate({
+                  inputRange: [0, 1],
+                  outputRange: [0, -40],
+                }),
+              },
+            ],
+          },
+          next: {
+            opacity: fadeIn,
+            transform: [
+              {
+                translateX: progress.interpolate({
+                  inputRange: [0, 1],
+                  outputRange: [40, 0],
+                }),
+              },
+            ],
+          },
+        };
+      case TransitionType.WIPE_CIRCLE:
+        return {
+          current: {
+            opacity: fadeOut,
+            transform: [
+              {
+                scale: progress.interpolate({
+                  inputRange: [0, 1],
+                  outputRange: [1, 1.2],
+                }),
+              },
+            ],
+          },
+          next: {
+            opacity: fadeIn,
+            transform: [
+              {
+                scale: progress.interpolate({
+                  inputRange: [0, 1],
+                  outputRange: [0.8, 1],
+                }),
+              },
+            ],
+          },
+        };
+      case TransitionType.PUSH: {
+        const currentTranslate = progress.interpolate({
+          inputRange: [0, 1],
+          outputRange: [0, -PREVIEW_WIDTH],
+        });
+        const nextTranslate = progress.interpolate({
+          inputRange: [0, 1],
+          outputRange: [PREVIEW_WIDTH, 0],
+        });
+        return {
+          current: { transform: [{ translateX: currentTranslate }] },
+          next: { opacity: 1, transform: [{ translateX: nextTranslate }] },
+        };
+      }
       default:
-        return {};
+        return {
+          current: { opacity: fadeOut },
+          next: { opacity: fadeIn },
+        };
     }
   };
+
+  const layerStyles = getLayerStyles();
+  const currentLayerStyle = layerStyles.current;
+  const nextLayerStyle = layerStyles.next;
 
   return (
     <SafeAreaView style={[styles.container, { backgroundColor: '#000000' }]}>
@@ -217,14 +455,25 @@ const PreviewScreen: React.FC = () => {
 
       {/* Preview canvas */}
       <View style={styles.previewContainer}>
-        {isTransitioning && nextPhoto && (
-          <RNAnimated.View style={[styles.photoLayer, { opacity: transitionAnim }]}>
-            <PhotoCanvas photo={nextPhoto} width={PREVIEW_WIDTH} height={PREVIEW_HEIGHT} />
+        <RNAnimated.View style={[styles.photoLayer, currentLayerStyle]}>
+          <PhotoCanvas
+            photo={currentPhoto}
+            width={PREVIEW_WIDTH}
+            height={PREVIEW_HEIGHT}
+          />
+        </RNAnimated.View>
+        {nextPhoto && (
+          <RNAnimated.View
+            pointerEvents="none"
+            style={[styles.photoLayer, nextLayerStyle]}
+          >
+            <PhotoCanvas
+              photo={nextPhoto}
+              width={PREVIEW_WIDTH}
+              height={PREVIEW_HEIGHT}
+            />
           </RNAnimated.View>
         )}
-        <RNAnimated.View style={[styles.photoLayer, getTransitionStyle()]}>
-          <PhotoCanvas photo={currentPhoto} width={PREVIEW_WIDTH} height={PREVIEW_HEIGHT} />
-        </RNAnimated.View>
       </View>
 
       {/* Progress bar */}
@@ -285,32 +534,55 @@ interface PhotoCanvasProps {
 
 const PhotoCanvas: React.FC<PhotoCanvasProps> = ({ photo, width, height }) => {
   const image = useImage(photo.uri);
+  const [size, setSize] = useState({ width, height });
+
+  useEffect(() => {
+    const intrinsicWidth = image?.width();
+    const intrinsicHeight = image?.height();
+
+    const sourceWidth =
+      intrinsicWidth && intrinsicHeight ? intrinsicWidth : photo.width;
+    const sourceHeight =
+      intrinsicWidth && intrinsicHeight ? intrinsicHeight : photo.height;
+
+    if (!sourceWidth || !sourceHeight) {
+      setSize({ width, height });
+      return;
+    }
+
+    const aspectRatio = sourceWidth / sourceHeight;
+    const containerAspect = width / height;
+
+    if (aspectRatio > containerAspect) {
+      setSize({
+        width,
+        height: width / aspectRatio,
+      });
+    } else {
+      setSize({
+        width: height * aspectRatio,
+        height,
+      });
+    }
+  }, [photo.uri, photo.width, photo.height, image, width, height]);
 
   if (!image) {
     return <View style={{ width, height, backgroundColor: '#000' }} />;
   }
 
-  // Calculate aspect-fit dimensions
-  const imageAspect = photo.width / photo.height;
-  const containerAspect = width / height;
-
-  let drawWidth, drawHeight, x, y;
-
-  if (imageAspect > containerAspect) {
-    drawWidth = width;
-    drawHeight = width / imageAspect;
-    x = 0;
-    y = (height - drawHeight) / 2;
-  } else {
-    drawHeight = height;
-    drawWidth = height * imageAspect;
-    x = (width - drawWidth) / 2;
-    y = 0;
-  }
+  const x = (width - size.width) / 2;
+  const y = (height - size.height) / 2;
 
   return (
     <Canvas style={{ width, height }}>
-      <Image image={image} x={x} y={y} width={drawWidth} height={drawHeight} fit="contain" />
+      <Image
+        image={image}
+        x={x}
+        y={y}
+        width={size.width}
+        height={size.height}
+        fit="contain"
+      />
     </Canvas>
   );
 };
