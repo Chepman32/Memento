@@ -8,10 +8,10 @@ export const IAP_PRODUCT_IDS = {
 
 // Free tier limits
 export const FREE_TIER_LIMITS = {
-  MAX_PHOTOS: 5,
-  MAX_TRANSITIONS: 6,
-  MAX_EFFECTS: 3,
-  MAX_EXPORT_QUALITY: '1080p' as const,
+  MAX_PHOTOS: 50,
+  MAX_TRANSITIONS: 13,
+  MAX_EFFECTS: 8,
+  MAX_EXPORT_QUALITY: '4K' as const,
 };
 
 // Premium tier limits

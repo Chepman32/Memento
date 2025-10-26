@@ -6,7 +6,6 @@ import { StackNavigationProp } from '@react-navigation/stack';
 import { RootStackParamList } from '../navigation/navigationTypes';
 import useProjectStore from '../store/projectStore';
 import { useThemeStore } from '../store/themeStore';
-import { usePurchaseStore } from '../store/purchaseStore';
 import { SPACING, RADII, TYPOGRAPHY, SHADOWS } from '../constants/theme';
 import { TRANSITIONS } from '../constants/transitions';
 import { Transition } from '../types/project.types';
@@ -14,7 +13,6 @@ import { Canvas, Image, useImage, ColorMatrix } from '@shopify/react-native-skia
 import { Gesture, GestureDetector, GestureHandlerRootView } from 'react-native-gesture-handler';
 import Animated, { runOnJS, useSharedValue, useAnimatedStyle, withSpring, SharedValue } from 'react-native-reanimated';
 import { TransitionType, PhotoEffect } from '../types/project.types';
-import { PremiumFeature } from '../types/purchase.types';
 import { haptics } from '../utils/hapticFeedback';
 import { sounds } from '../utils/soundEffects';
 import { IconButton } from '../components/common';
@@ -37,7 +35,6 @@ export const EditorScreen = () => {
   const { photos } = route.params;
 
   const { colors } = useThemeStore();
-  const { purchaseState, hasFeature } = usePurchaseStore();
   const {
     projects,
     currentProjectId,
@@ -128,13 +125,6 @@ export const EditorScreen = () => {
   // Apply transition effect - adds a transition object before the selected photo
   const handleTransitionChange = (transitionType: TransitionType) => {
     if (!currentProject) return;
-
-    // Check if premium transition
-    const transition = TRANSITIONS[transitionType];
-    if (transition.isPremium && !purchaseState.isPremium) {
-      navigation.navigate('Paywall');
-      return;
-    }
 
     // Check if transition already exists at this position
     const existingTransition = currentProject.transitions?.find(
@@ -294,7 +284,6 @@ export const EditorScreen = () => {
               <TransitionPicker
                 selectedTransition={currentTransition?.type || null}
                 onSelect={handleTransitionChange}
-                isPremium={purchaseState.isPremium}
               />
               {currentTransition && (
                 <TouchableOpacity
@@ -629,10 +618,9 @@ const Slider: React.FC<SliderProps> = ({ value, min, max, step, onValueChange, c
 interface TransitionPickerProps {
   selectedTransition: TransitionType | null;
   onSelect: (transition: TransitionType) => void;
-  isPremium: boolean;
 }
 
-const TransitionPicker: React.FC<TransitionPickerProps> = ({ selectedTransition, onSelect, isPremium }) => {
+const TransitionPicker: React.FC<TransitionPickerProps> = ({ selectedTransition, onSelect }) => {
   const { colors } = useThemeStore();
   const transitions = Object.values(TRANSITIONS);
 
@@ -644,8 +632,6 @@ const TransitionPicker: React.FC<TransitionPickerProps> = ({ selectedTransition,
     >
       {transitions.map((transition) => {
         const isSelected = selectedTransition === transition.id;
-        const isLocked = transition.isPremium && !isPremium;
-
         return (
           <TouchableOpacity
             key={transition.id}
@@ -662,11 +648,6 @@ const TransitionPicker: React.FC<TransitionPickerProps> = ({ selectedTransition,
               <Text style={[styles.transitionIconText, { color: colors.primary }]}>
                 {transition.name.charAt(0)}
               </Text>
-              {isLocked && (
-                <View style={styles.lockBadge}>
-                  <Text style={styles.lockIcon}>🔒</Text>
-                </View>
-              )}
             </View>
             <Text
               style={[
@@ -1185,20 +1166,6 @@ const styles = StyleSheet.create({
     fontSize: 11,
     maxWidth: 60,
     textAlign: 'center',
-  },
-  lockBadge: {
-    position: 'absolute',
-    top: -4,
-    right: -4,
-    backgroundColor: '#FFF',
-    borderRadius: 10,
-    width: 20,
-    height: 20,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  lockIcon: {
-    fontSize: 10,
   },
   effectContainer: {
     paddingVertical: SPACING.xs,

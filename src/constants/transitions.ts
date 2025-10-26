@@ -63,7 +63,7 @@ export const TRANSITIONS: Record<TransitionType, TransitionConfig> = {
     name: 'Rotate',
     description: '3D rotation effect',
     duration: 800,
-    isPremium: true,
+    isPremium: false,
     category: '3d',
   },
   [TransitionType.CUBE]: {
@@ -71,7 +71,7 @@ export const TRANSITIONS: Record<TransitionType, TransitionConfig> = {
     name: 'Cube',
     description: '3D cube rotation',
     duration: 800,
-    isPremium: true,
+    isPremium: false,
     category: '3d',
   },
   [TransitionType.FLIP]: {
@@ -79,7 +79,7 @@ export const TRANSITIONS: Record<TransitionType, TransitionConfig> = {
     name: 'Flip',
     description: 'Page flip effect',
     duration: 700,
-    isPremium: true,
+    isPremium: false,
     category: '3d',
   },
   [TransitionType.DISSOLVE]: {
@@ -87,7 +87,7 @@ export const TRANSITIONS: Record<TransitionType, TransitionConfig> = {
     name: 'Dissolve',
     description: 'Particle dissolve effect',
     duration: 900,
-    isPremium: true,
+    isPremium: false,
     category: 'creative',
   },
   [TransitionType.BLUR]: {
@@ -95,7 +95,7 @@ export const TRANSITIONS: Record<TransitionType, TransitionConfig> = {
     name: 'Blur',
     description: 'Motion blur transition',
     duration: 600,
-    isPremium: true,
+    isPremium: false,
     category: 'creative',
   },
   [TransitionType.WIPE_CIRCLE]: {
@@ -103,7 +103,7 @@ export const TRANSITIONS: Record<TransitionType, TransitionConfig> = {
     name: 'Circle Wipe',
     description: 'Circular wipe pattern',
     duration: 700,
-    isPremium: true,
+    isPremium: false,
     category: 'creative',
   },
   [TransitionType.PUSH]: {
@@ -111,7 +111,7 @@ export const TRANSITIONS: Record<TransitionType, TransitionConfig> = {
     name: 'Push',
     description: 'Push transition',
     duration: 600,
-    isPremium: true,
+    isPremium: false,
     category: 'slide',
   },
 };

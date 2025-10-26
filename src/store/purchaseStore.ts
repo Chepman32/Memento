@@ -3,9 +3,11 @@ import { persist, createJSONStorage } from 'zustand/middleware';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { PurchaseState, SubscriptionType, PremiumFeature } from '../types/purchase.types';
 
+const ALL_FEATURES = Object.values(PremiumFeature) as PremiumFeature[];
+
 const DEFAULT_PURCHASE_STATE: PurchaseState = {
   isPremium: false,
-  features: [],
+  features: ALL_FEATURES,
   isTrialActive: false,
 };
 
@@ -91,14 +93,11 @@ export const usePurchaseStore = create<PurchaseStoreState>()(
         const trialEndDate = new Date();
         trialEndDate.setDate(trialEndDate.getDate() + trialDays);
 
-        // Get all features for this subscription type
-        const features = Object.values(PremiumFeature);
-
         set({
           purchaseState: {
             isPremium: true,
             subscriptionType: type,
-            features,
+            features: ALL_FEATURES,
             isTrialActive: true,
             trialEndDate,
           },
@@ -106,15 +105,12 @@ export const usePurchaseStore = create<PurchaseStoreState>()(
       },
 
       activateSubscription: (type: SubscriptionType, expirationDate: Date) => {
-        // Get all features for this subscription type
-        const features = Object.values(PremiumFeature);
-
         set({
           purchaseState: {
             isPremium: true,
             subscriptionType: type,
             expirationDate,
-            features,
+            features: ALL_FEATURES,
             isTrialActive: false,
             trialEndDate: undefined,
           },

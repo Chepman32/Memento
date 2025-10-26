@@ -52,10 +52,6 @@ const ExportScreen: React.FC = () => {
   };
 
   const handleQualitySelect = (selectedQuality: ExportQuality) => {
-    if (selectedQuality === ExportQuality.HIGH && !hasFeature(PremiumFeature.EXPORT_4K)) {
-      navigation.navigate('Paywall');
-      return;
-    }
     haptics.selection();
     setQuality(selectedQuality);
   };

@@ -16,7 +16,6 @@ import { launchImageLibrary } from 'react-native-image-picker';
 import { check, request, PERMISSIONS, RESULTS, openSettings } from 'react-native-permissions';
 import { RootStackParamList } from '../navigation/navigationTypes';
 import { useThemeStore } from '../store/themeStore';
-import { usePurchaseStore } from '../store/purchaseStore';
 import { Button, IconButton } from '../components/common';
 import { haptics } from '../utils/hapticFeedback';
 import { sounds } from '../utils/soundEffects';
@@ -37,13 +36,12 @@ interface SelectedImage {
 const ImageSelectionScreen: React.FC = () => {
   const navigation = useNavigation<ImageSelectionNavigationProp>();
   const { colors } = useThemeStore();
-  const { purchaseState } = usePurchaseStore();
 
   const [selectedImages, setSelectedImages] = useState<SelectedImage[]>([]);
   const [permissionStatus, setPermissionStatus] = useState<string | null>(null);
   const [hasPermission, setHasPermission] = useState(true);
 
-  const maxPhotos = purchaseState.isPremium ? 50 : FREE_TIER_LIMITS.MAX_PHOTOS;
+  const maxPhotos = FREE_TIER_LIMITS.MAX_PHOTOS;
   const photoPermission =
     Platform.OS === 'ios' ? PERMISSIONS.IOS.PHOTO_LIBRARY : PERMISSIONS.ANDROID.READ_MEDIA_IMAGES;
 
@@ -234,13 +232,6 @@ const ImageSelectionScreen: React.FC = () => {
         <Text style={[styles.infoText, { color: colors.textSecondary }]}>
           {selectedImages.length} of {maxPhotos} selected
         </Text>
-        {!purchaseState.isPremium && selectedImages.length >= maxPhotos && (
-          <TouchableOpacity onPress={() => navigation.navigate('Paywall')}>
-            <Text style={[styles.upgradeText, { color: colors.primary }]}>
-              Upgrade for more photos
-            </Text>
-          </TouchableOpacity>
-        )}
       </View>
 
       {/* Selected images grid */}
@@ -266,7 +257,6 @@ const ImageSelectionScreen: React.FC = () => {
           onPress={handleSelectImages}
           variant="outlined"
           style={styles.addButton}
-          disabled={selectedImages.length >= maxPhotos}
         />
         <Button
           title={`Continue (${selectedImages.length})`}
@@ -307,10 +297,6 @@ const styles = StyleSheet.create({
   },
   infoText: {
     ...TYPOGRAPHY.body2,
-  },
-  upgradeText: {
-    ...TYPOGRAPHY.body2,
-    fontWeight: '600',
   },
   grid: {
     padding: SPACING.md,
