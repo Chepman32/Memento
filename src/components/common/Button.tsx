@@ -56,9 +56,8 @@ export const Button: React.FC<ButtonProps> = ({
         height: 36,
       },
       medium: {
-        paddingHorizontal: SPACING.lg,
-        paddingVertical: SPACING.md,
-        height: 48,
+
+        height: 60,
       },
       large: {
         paddingHorizontal: SPACING.xl,
@@ -123,14 +122,17 @@ export const Button: React.FC<ButtonProps> = ({
       small: {
         fontSize: 14,
         fontWeight: '600',
+        lineHeight: 22,
       },
       medium: {
         fontSize: 16,
         fontWeight: '600',
+        lineHeight: 24,
       },
       large: {
         fontSize: 18,
         fontWeight: '600',
+        lineHeight: 28,
       },
     };
 

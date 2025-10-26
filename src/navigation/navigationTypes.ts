@@ -1,7 +1,7 @@
 export type RootStackParamList = {
   Splash: undefined;
   Home: undefined;
-  ImageSelection: undefined;
+  ImageSelection: { autoOpenPicker?: boolean } | undefined;
   Editor: { photos: string[] };
   Preview: { projectId: string };
   Export: { projectId: string };

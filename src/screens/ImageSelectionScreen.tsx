@@ -10,7 +10,7 @@ import {
   Alert,
   Linking,
 } from 'react-native';
-import { useNavigation } from '@react-navigation/native';
+import { useNavigation, useRoute, RouteProp, useFocusEffect } from '@react-navigation/native';
 import { StackNavigationProp } from '@react-navigation/stack';
 import { launchImageLibrary } from 'react-native-image-picker';
 import { check, request, PERMISSIONS, RESULTS, openSettings } from 'react-native-permissions';
@@ -35,15 +35,18 @@ interface SelectedImage {
 
 const ImageSelectionScreen: React.FC = () => {
   const navigation = useNavigation<ImageSelectionNavigationProp>();
+  const route = useRoute<RouteProp<RootStackParamList, 'ImageSelection'>>();
   const { colors } = useThemeStore();
 
   const [selectedImages, setSelectedImages] = useState<SelectedImage[]>([]);
   const [permissionStatus, setPermissionStatus] = useState<string | null>(null);
   const [hasPermission, setHasPermission] = useState(true);
+  const [hasAutoOpened, setHasAutoOpened] = useState(false);
 
   const maxPhotos = FREE_TIER_LIMITS.MAX_PHOTOS;
   const photoPermission =
     Platform.OS === 'ios' ? PERMISSIONS.IOS.PHOTO_LIBRARY : PERMISSIONS.ANDROID.READ_MEDIA_IMAGES;
+  const autoOpenPicker = route.params?.autoOpenPicker ?? false;
 
   const refreshPermissionStatus = useCallback(async () => {
     const status = await check(photoPermission);
@@ -95,7 +98,7 @@ const ImageSelectionScreen: React.FC = () => {
     return requested;
   }, [photoPermission, refreshPermissionStatus]);
 
-  const handleSelectImages = async () => {
+  const handleSelectImages = useCallback(async () => {
     const status = await ensurePermission();
 
     if (status !== RESULTS.GRANTED && status !== RESULTS.LIMITED) {
@@ -153,7 +156,7 @@ const ImageSelectionScreen: React.FC = () => {
           height: asset.height || 1080,
         }));
 
-        setSelectedImages([...selectedImages, ...newImages]);
+        setSelectedImages((prevImages) => [...prevImages, ...newImages]);
         sounds.success();
         haptics.success();
       }
@@ -161,15 +164,21 @@ const ImageSelectionScreen: React.FC = () => {
       console.error('Error selecting images:', error);
       Alert.alert('Error', 'Unable to load photos. Please try again.');
     }
-  };
+  }, [ensurePermission, maxPhotos, refreshPermissionStatus, selectedImages.length]);
 
-  const handleRemoveImage = useCallback(
-    (index: number) => {
-      haptics.light();
-      setSelectedImages(selectedImages.filter((_, i) => i !== index));
-    },
-    [selectedImages]
+  useFocusEffect(
+    useCallback(() => {
+      if (autoOpenPicker && !hasAutoOpened) {
+        setHasAutoOpened(true);
+        void handleSelectImages();
+      }
+    }, [autoOpenPicker, hasAutoOpened, handleSelectImages])
   );
+
+  const handleRemoveImage = useCallback((index: number) => {
+    haptics.light();
+    setSelectedImages((prevImages) => prevImages.filter((_, i) => i !== index));
+  }, []);
 
   const handleContinue = () => {
     if (selectedImages.length < 2) {
@@ -259,7 +268,7 @@ const ImageSelectionScreen: React.FC = () => {
           style={styles.addButton}
         />
         <Button
-          title={`Continue (${selectedImages.length})`}
+          title={`Continue`} b
           onPress={handleContinue}
           variant="primary"
           style={styles.continueButton}

@@ -34,7 +34,7 @@ const HomeScreen: React.FC = () => {
   const handleCreateNew = useCallback(() => {
     haptics.medium();
     sounds.tap();
-    navigation.navigate('ImageSelection');
+    navigation.navigate('ImageSelection', { autoOpenPicker: true });
   }, [navigation]);
 
   const handleOpenProject = useCallback(
