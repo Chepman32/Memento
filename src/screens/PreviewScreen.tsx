@@ -36,13 +36,15 @@ const PreviewScreen: React.FC = () => {
   const project = getProjectById(projectId);
 
   const [currentPhotoIndex, setCurrentPhotoIndex] = useState(0);
-  const [isPlaying, setIsPlaying] = useState(true); // Start with autoplay
-  const [progress, setProgress] = useState(0);
   const [isTransitioning, setIsTransitioning] = useState(false);
+  const [isPlaying, setIsPlaying] = useState(true); // Start with autoplay
 
   const animationRef = useRef<NodeJS.Timeout | null>(null);
   const progressAnim = useRef(new RNAnimated.Value(0)).current;
   const transitionAnim = useRef(new RNAnimated.Value(0)).current;
+  const justTransitioned = useRef(false); // Track if we just came from a transition
+  const transitionFromIndexRef = useRef<number | null>(null); // Which slide is transitioning out
+  const slideStartTimeRef = useRef<number | null>(null); // Track start timestamp for debugging
 
   useEffect(() => {
     return () => {
@@ -53,14 +55,28 @@ const PreviewScreen: React.FC = () => {
   }, []);
 
   useEffect(() => {
-    if (isPlaying && project) {
-      playSlideshow();
-    } else {
-      if (animationRef.current) {
-        clearTimeout(animationRef.current);
+    // Only start slideshow if we're playing and not currently transitioning
+    if (isPlaying && project && !isTransitioning) {
+      // If we just transitioned, wait a bit before starting the next photo
+      if (justTransitioned.current) {
+        justTransitioned.current = false;
+        const timer = setTimeout(() => {
+          playSlideshow();
+        }, 100);
+        return () => clearTimeout(timer);
+      } else {
+        playSlideshow();
       }
     }
-  }, [isPlaying, currentPhotoIndex, project]);
+
+    // Clean up timer when we stop playing
+    return () => {
+      if (!isPlaying && animationRef.current) {
+        clearTimeout(animationRef.current);
+        animationRef.current = null;
+      }
+    };
+  }, [isPlaying, currentPhotoIndex, isTransitioning, project]);
 
   const getTransitionForIndex = (index: number): Transition | null => {
     if (!project) return null;
@@ -109,10 +125,34 @@ const PreviewScreen: React.FC = () => {
   const playSlideshow = () => {
     if (!project) return;
 
-    const currentPhoto = project.photos[currentPhotoIndex];
-    if (!currentPhoto) return;
+    const activePhoto = project.photos[currentPhotoIndex];
+    if (!activePhoto) return;
 
-    const duration = currentPhoto.duration * 1000;
+    // Clear any existing timer first
+    if (animationRef.current) {
+      clearTimeout(animationRef.current);
+      animationRef.current = null;
+    }
+
+    const fallbackSeconds =
+      Number(project.settings?.defaultDuration) > 0 ? Number(project.settings?.defaultDuration) : 3;
+
+    const rawDurationSeconds = Number(activePhoto.duration);
+    const durationSeconds =
+      Number.isFinite(rawDurationSeconds) && rawDurationSeconds > 0 ? rawDurationSeconds : fallbackSeconds;
+
+    if (!Number.isFinite(rawDurationSeconds) || rawDurationSeconds <= 0) {
+      console.warn(
+        `[Preview] Invalid photo duration "${activePhoto.duration}" at index ${currentPhotoIndex}. Using fallback ${durationSeconds}s.`
+      );
+    }
+
+    slideStartTimeRef.current = Date.now();
+    console.log(
+      `[Preview] Play photo index=${currentPhotoIndex} | rawDuration=${activePhoto.duration} | durationSeconds=${durationSeconds}`
+    );
+
+    const duration = durationSeconds * 1000;
     // Animate progress bar
     progressAnim.setValue(0);
     RNAnimated.timing(progressAnim, {
@@ -123,13 +163,22 @@ const PreviewScreen: React.FC = () => {
 
     // Move to next photo with transition
     animationRef.current = setTimeout(() => {
-      const nextIndex = (currentPhotoIndex + 1) % project.photos.length;
-      const transition = getTransitionForIndex(currentPhotoIndex);
+      const fromIndex = currentPhotoIndex;
+      const nextIndex = (fromIndex + 1) % project.photos.length;
+      const transition = getTransitionForIndex(fromIndex);
       const transitionDuration = getTransitionDurationMs(transition);
 
-      if (transition) {
-        // Start transition
+      const now = Date.now();
+      const elapsed = slideStartTimeRef.current ? now - slideStartTimeRef.current : NaN;
+      console.log(
+        `[Preview] Advance from index=${fromIndex} to next=${nextIndex} | elapsedMs=${Number.isNaN(elapsed) ? 'n/a' : elapsed} | photoDurationMs=${duration} | transitionDurationMs=${transitionDuration}`
+      );
+
+      if (transition && transitionDuration > 0) {
+        // Start transition - remember outgoing slide and flag transition
+        transitionFromIndexRef.current = fromIndex;
         setIsTransitioning(true);
+        setCurrentPhotoIndex(nextIndex);
         transitionAnim.setValue(0);
 
         RNAnimated.timing(transitionAnim, {
@@ -137,14 +186,23 @@ const PreviewScreen: React.FC = () => {
           duration: transitionDuration, // Transition duration in ms
           useNativeDriver: true,
         }).start(({ finished }) => {
-          setIsTransitioning(false);
           if (finished) {
-            setCurrentPhotoIndex(nextIndex);
+            // Clear the timer reference since we're done with it
+            animationRef.current = null;
+            // Mark that we just transitioned
+            justTransitioned.current = true;
+            // Update the index and clear transition flag
+            setIsTransitioning(false);
+            transitionFromIndexRef.current = null;
           }
         });
       } else {
         // No transition, just switch
+        animationRef.current = null;
+        transitionFromIndexRef.current = fromIndex;
         setCurrentPhotoIndex(nextIndex);
+        transitionFromIndexRef.current = null;
+        justTransitioned.current = true;
       }
 
       if (nextIndex === 0) {
@@ -182,10 +240,27 @@ const PreviewScreen: React.FC = () => {
     );
   }
 
-  const currentPhoto = project.photos[currentPhotoIndex];
-  const nextPhotoIndex = (currentPhotoIndex + 1) % project.photos.length;
-  const nextPhoto = project.photos[nextPhotoIndex];
-  const currentTransition = getTransitionForIndex(currentPhotoIndex);
+  const upcomingIndex = (currentPhotoIndex + 1) % project.photos.length;
+
+  const basePhoto =
+    isTransitioning && transitionFromIndexRef.current !== null
+      ? project.photos[transitionFromIndexRef.current]
+      : project.photos[currentPhotoIndex];
+
+  const overlayPhoto = isTransitioning
+    ? project.photos[currentPhotoIndex]
+    : project.photos[upcomingIndex];
+
+  const transitionIndex =
+    isTransitioning && transitionFromIndexRef.current !== null
+      ? transitionFromIndexRef.current
+      : null;
+  const currentTransition = transitionIndex !== null ? getTransitionForIndex(transitionIndex) : null;
+
+  // Debug logging
+  console.log(
+    `[Render] activeIndex=${currentPhotoIndex}, upcomingIndex=${upcomingIndex}, isTransitioning=${isTransitioning}, transitionFrom=${transitionFromIndexRef.current}`
+  );
 
   const progressWidth = progressAnim.interpolate({
     inputRange: [0, 1],
@@ -197,7 +272,7 @@ const PreviewScreen: React.FC = () => {
     const hiddenNext = { opacity: 0 };
     const defaultCurrent = { opacity: 1 };
 
-    if (!nextPhoto) {
+    if (!overlayPhoto) {
       return { current: defaultCurrent, next: hiddenNext };
     }
 
@@ -482,20 +557,22 @@ const PreviewScreen: React.FC = () => {
 
       {/* Preview canvas */}
       <View style={styles.previewContainer}>
-        <RNAnimated.View style={[styles.photoLayer, currentLayerStyle]}>
-          <PhotoCanvas
-            photo={currentPhoto}
-            width={PREVIEW_WIDTH}
-            height={PREVIEW_HEIGHT}
-          />
-        </RNAnimated.View>
-        {nextPhoto && (
+        {basePhoto && (
+          <RNAnimated.View style={[styles.photoLayer, currentLayerStyle]}>
+            <PhotoCanvas
+              photo={basePhoto}
+              width={PREVIEW_WIDTH}
+              height={PREVIEW_HEIGHT}
+            />
+          </RNAnimated.View>
+        )}
+        {overlayPhoto && (
           <RNAnimated.View
             pointerEvents="none"
             style={[styles.photoLayer, nextLayerStyle]}
           >
             <PhotoCanvas
-              photo={nextPhoto}
+              photo={overlayPhoto}
               width={PREVIEW_WIDTH}
               height={PREVIEW_HEIGHT}
             />
