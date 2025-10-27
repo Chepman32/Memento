@@ -1,4 +1,7 @@
-import { Project } from '../types/project.types';
+import RNFS from 'react-native-fs';
+import videoEncoder from './videoEncoder';
+import { executeFfmpeg } from './ffmpegBridge';
+import { Project, ExportQuality, ResolutionPreset } from '../types/project.types';
 
 export interface GifConfig {
   project: Project;
@@ -19,6 +22,22 @@ export interface GifResult {
 }
 
 const MAX_GIF_SIZE = 10 * 1024 * 1024; // 10MB
+
+const pickResolutionPreset = (width: number, height: number): ResolutionPreset => {
+  if (width === height) {
+    return ResolutionPreset.SQUARE;
+  }
+
+  if (width > height) {
+    const aspect = width / Math.max(height, 1);
+    if (aspect >= 2.1) {
+      return ResolutionPreset.CINEMA;
+    }
+    return ResolutionPreset.LANDSCAPE;
+  }
+
+  return ResolutionPreset.PORTRAIT;
+};
 
 export const gifGenerator = {
   /**
@@ -102,35 +121,117 @@ export const gifGenerator = {
     return settings;
   },
 
-  /**
-   * Create GIF from project (placeholder - FFmpeg removed)
-   * TODO: Implement GIF generation with alternative solution
-   */
   createGif: async (config: GifConfig): Promise<GifResult> => {
-    // FFmpeg has been removed due to library retirement
-    // This is a placeholder that simulates GIF creation
-    return new Promise((resolve) => {
-      const duration = config.project.photos.reduce(
-        (sum, photo) => sum + photo.duration,
-        0
-      );
+    const timeline = videoEncoder.buildTimeline(config.project);
 
-      const simulationTime = 2000; // 2 seconds simulation
-      let progress = 0;
+    if (!timeline.photoSegments.length) {
+      return {
+        success: false,
+        error: 'Cannot export: the project has no photos.',
+      };
+    }
 
-      const interval = setInterval(() => {
-        progress += 10;
-        config.onProgress?.(progress);
+    config.onProgress?.(0);
 
-        if (progress >= 100) {
-          clearInterval(interval);
-          resolve({
-            success: false,
-            error: 'GIF creation not available. FFmpeg library has been removed. Please use an alternative solution.',
-          });
+    const baseDir =
+      RNFS.CachesDirectoryPath ??
+      RNFS.TemporaryDirectoryPath ??
+      RNFS.DocumentDirectoryPath;
+
+    if (!baseDir) {
+      return {
+        success: false,
+        error: 'No writable directory available for GIF export.',
+      };
+    }
+
+    const tempVideoPath = `${baseDir}/memento_gif_${Date.now()}.mp4`;
+    const colors = Math.min(Math.max(config.colors, 2), 256);
+    const resolution = pickResolutionPreset(config.width, config.height);
+    const estimatedDurationMs = Math.max(timeline.totalDurationMs, 1000);
+
+    try {
+      const videoCommand = videoEncoder.buildFFmpegCommand({
+        project: config.project,
+        outputPath: tempVideoPath,
+        quality: ExportQuality.MEDIUM,
+        resolution,
+        includeWatermark: false,
+        fps: config.fps,
+      });
+
+      const videoResult = await executeFfmpeg({
+        command: videoCommand,
+        estimatedDurationMs,
+        onProgress: progress => {
+          if (config.onProgress) {
+            const mapped = Math.min(progress, 100) * 0.7;
+            config.onProgress(mapped);
+          }
+        },
+        logTag: 'FFmpeg-GIF-MP4',
+      });
+
+      if (!videoResult.success) {
+        return {
+          success: false,
+          error: videoResult.error ?? 'Failed to prepare GIF frames.',
+        };
+      }
+
+      const baseFilter = `fps=${config.fps},scale=${config.width}:${config.height}:flags=lanczos`;
+      const gifCommand = config.optimize
+        ? `-y -i "${tempVideoPath}" -filter_complex "[0:v]${baseFilter},split [a][b];[a]palettegen=stats_mode=diff:max_colors=${colors}[p];[b][p]paletteuse=new=1" -loop 0 "${config.outputPath}"`
+        : `-y -i "${tempVideoPath}" -vf "${baseFilter}" -loop 0 "${config.outputPath}"`;
+
+      const gifResult = await executeFfmpeg({
+        command: gifCommand,
+        estimatedDurationMs,
+        onProgress: progress => {
+          if (config.onProgress) {
+            const mapped = 70 + (Math.min(progress, 100) * 0.3);
+            config.onProgress(mapped > 100 ? 100 : mapped);
+          }
+        },
+        logTag: 'FFmpeg-GIF',
+      });
+
+      if (!gifResult.success) {
+        return {
+          success: false,
+          error: gifResult.error ?? 'GIF export failed.',
+        };
+      }
+
+      config.onProgress?.(100);
+
+      let fileSize = 0;
+      try {
+        const stat = await RNFS.stat(config.outputPath);
+        fileSize = Number(stat?.size ?? 0);
+      } catch {
+        fileSize = 0;
+      }
+
+      return {
+        success: true,
+        outputPath: config.outputPath,
+        fileSize,
+      };
+    } catch (error) {
+      return {
+        success: false,
+        error: error instanceof Error ? error.message : String(error),
+      };
+    } finally {
+      try {
+        if (await RNFS.exists(tempVideoPath)) {
+          await RNFS.unlink(tempVideoPath);
         }
-      }, simulationTime / 10);
-    });
+      } catch (cleanupError) {
+        console.warn('[GIF] Failed to remove temporary video', cleanupError);
+      }
+    }
   },
 
   /**

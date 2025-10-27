@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useMemo } from 'react';
 import {
   View,
   Text,
@@ -17,14 +17,20 @@ import { IconButton } from '../components/common';
 import { haptics } from '../utils/hapticFeedback';
 import { sounds } from '../utils/soundEffects';
 import { SPACING, SCREEN_WIDTH, SCREEN_HEIGHT } from '../constants/theme';
-import { TRANSITIONS } from '../constants/transitions';
-import { TransitionType, Transition } from '../types/project.types';
+import { buildTimeline, TimelineDescription, TransitionSegment, PhotoSegment } from '../utils/videoEncoder';
+import { TransitionType } from '../types/project.types';
 
 type PreviewScreenRouteProp = RouteProp<RootStackParamList, 'Preview'>;
 type PreviewScreenNavigationProp = StackNavigationProp<RootStackParamList, 'Preview'>;
 
 const PREVIEW_WIDTH = SCREEN_WIDTH;
 const PREVIEW_HEIGHT = SCREEN_HEIGHT - 120; // Maximize height, only leave room for controls
+const EMPTY_TIMELINE: TimelineDescription = {
+  photoSegments: [],
+  transitionSegments: [],
+  segments: [],
+  totalDurationMs: 0,
+};
 
 const PreviewScreen: React.FC = () => {
   const navigation = useNavigation<PreviewScreenNavigationProp>();
@@ -34,193 +40,148 @@ const PreviewScreen: React.FC = () => {
   const { colors } = useThemeStore();
   const { getProjectById } = useProjectStore();
   const project = getProjectById(projectId);
+  const photos = project?.photos ?? [];
+  const totalPhotos = photos.length;
 
-  const [currentPhotoIndex, setCurrentPhotoIndex] = useState(0);
-  const [isTransitioning, setIsTransitioning] = useState(false);
   const [isPlaying, setIsPlaying] = useState(true); // Start with autoplay
+  const [playbackPositionMs, setPlaybackPositionMs] = useState(0);
 
-  const animationRef = useRef<NodeJS.Timeout | null>(null);
   const progressAnim = useRef(new RNAnimated.Value(0)).current;
   const transitionAnim = useRef(new RNAnimated.Value(0)).current;
-  const justTransitioned = useRef(false); // Track if we just came from a transition
-  const transitionFromIndexRef = useRef<number | null>(null); // Which slide is transitioning out
-  const slideStartTimeRef = useRef<number | null>(null); // Track start timestamp for debugging
+  const rafRef = useRef<number | null>(null);
+  const pausedAtRef = useRef(0);
+  const playbackStartRef = useRef(Date.now());
+
+  const timeline = useMemo<TimelineDescription>(
+    () => (project ? buildTimeline(project) : EMPTY_TIMELINE),
+    [project]
+  );
+
+  const totalDurationMs = timeline.totalDurationMs;
 
   useEffect(() => {
-    return () => {
-      if (animationRef.current) {
-        clearTimeout(animationRef.current);
-      }
-    };
-  }, []);
+    pausedAtRef.current = 0;
+    setPlaybackPositionMs(0);
+    progressAnim.setValue(0);
+    transitionAnim.setValue(0);
+  }, [projectId, totalDurationMs, progressAnim, transitionAnim]);
 
   useEffect(() => {
-    // Only start slideshow if we're playing and not currently transitioning
-    if (isPlaying && project && !isTransitioning) {
-      // If we just transitioned, wait a bit before starting the next photo
-      if (justTransitioned.current) {
-        justTransitioned.current = false;
-        const timer = setTimeout(() => {
-          playSlideshow();
-        }, 100);
-        return () => clearTimeout(timer);
-      } else {
-        playSlideshow();
+    if (!project || totalDurationMs <= 0) {
+      if (rafRef.current !== null) {
+        cancelAnimationFrame(rafRef.current);
+        rafRef.current = null;
       }
+      return;
     }
 
-    // Clean up timer when we stop playing
+    if (rafRef.current !== null) {
+      cancelAnimationFrame(rafRef.current);
+      rafRef.current = null;
+    }
+
+    if (!isPlaying) {
+      return;
+    }
+
+    const runFrame = () => {
+      const elapsed = Date.now() - playbackStartRef.current;
+      const nextPosition = totalDurationMs ? elapsed % totalDurationMs : 0;
+      setPlaybackPositionMs(nextPosition);
+      rafRef.current = requestAnimationFrame(runFrame);
+    };
+
+    playbackStartRef.current = Date.now() - pausedAtRef.current;
+    rafRef.current = requestAnimationFrame(runFrame);
+
     return () => {
-      if (!isPlaying && animationRef.current) {
-        clearTimeout(animationRef.current);
-        animationRef.current = null;
+      if (rafRef.current !== null) {
+        cancelAnimationFrame(rafRef.current);
+        rafRef.current = null;
       }
     };
-  }, [isPlaying, currentPhotoIndex, isTransitioning, project]);
+  }, [isPlaying, project, totalDurationMs]);
 
-  const getTransitionForIndex = (index: number): Transition | null => {
-    if (!project) return null;
-
-    const explicit = project.transitions?.find(t => t.order === index);
-    if (explicit) {
-      return explicit;
-    }
-
-    const fallbackType =
-      project.photos[index]?.transition || project.settings?.defaultTransition;
-
-    if (!fallbackType) {
+  const activeTransitionSegment = useMemo<TransitionSegment | null>(() => {
+    if (!timeline.transitionSegments.length) {
       return null;
     }
 
-    const config = TRANSITIONS[fallbackType];
-
-    return {
-      id: `fallback-${project.photos[index]?.id ?? index}-${fallbackType}`,
-      type: fallbackType,
-      duration: config?.duration ? config.duration / 1000 : 0.6,
-      order: index,
-    };
-  };
-
-  const getTransitionDurationMs = (transition: Transition | null): number => {
-    if (!transition) {
-      return 0;
-    }
-
-    if (transition.duration && transition.duration > 5) {
-      // Duration already in ms
-      return transition.duration;
-    }
-
-    if (transition.duration && transition.duration > 0) {
-      // Treat stored duration as seconds
-      return transition.duration * 1000;
-    }
-
-    const config = TRANSITIONS[transition.type];
-    return config?.duration ?? 600;
-  };
-
-  const playSlideshow = () => {
-    if (!project) return;
-
-    const activePhoto = project.photos[currentPhotoIndex];
-    if (!activePhoto) return;
-
-    // Clear any existing timer first
-    if (animationRef.current) {
-      clearTimeout(animationRef.current);
-      animationRef.current = null;
-    }
-
-    const fallbackSeconds =
-      Number(project.settings?.defaultDuration) > 0 ? Number(project.settings?.defaultDuration) : 3;
-
-    const rawDurationSeconds = Number(activePhoto.duration);
-    const durationSeconds =
-      Number.isFinite(rawDurationSeconds) && rawDurationSeconds > 0 ? rawDurationSeconds : fallbackSeconds;
-
-    if (!Number.isFinite(rawDurationSeconds) || rawDurationSeconds <= 0) {
-      console.warn(
-        `[Preview] Invalid photo duration "${activePhoto.duration}" at index ${currentPhotoIndex}. Using fallback ${durationSeconds}s.`
-      );
-    }
-
-    slideStartTimeRef.current = Date.now();
-    console.log(
-      `[Preview] Play photo index=${currentPhotoIndex} | rawDuration=${activePhoto.duration} | durationSeconds=${durationSeconds}`
+    return (
+      timeline.transitionSegments.find(
+        segment => playbackPositionMs >= segment.startMs && playbackPositionMs < segment.endMs
+      ) ?? null
     );
+  }, [timeline.transitionSegments, playbackPositionMs]);
 
-    const duration = durationSeconds * 1000;
-    // Animate progress bar
-    progressAnim.setValue(0);
-    RNAnimated.timing(progressAnim, {
-      toValue: 1,
-      duration,
-      useNativeDriver: false,
-    }).start();
+  const activePhotoSegment = useMemo<PhotoSegment | null>(() => {
+    if (!timeline.photoSegments.length) {
+      return null;
+    }
 
-    // Move to next photo with transition
-    animationRef.current = setTimeout(() => {
-      const fromIndex = currentPhotoIndex;
-      const nextIndex = (fromIndex + 1) % project.photos.length;
-      const transition = getTransitionForIndex(fromIndex);
-      const transitionDuration = getTransitionDurationMs(transition);
+    let candidate: PhotoSegment | null = timeline.photoSegments[0];
 
-      const now = Date.now();
-      const elapsed = slideStartTimeRef.current ? now - slideStartTimeRef.current : NaN;
-      console.log(
-        `[Preview] Advance from index=${fromIndex} to next=${nextIndex} | elapsedMs=${Number.isNaN(elapsed) ? 'n/a' : elapsed} | photoDurationMs=${duration} | transitionDurationMs=${transitionDuration}`
-      );
-
-      if (transition && transitionDuration > 0) {
-        // Start transition - remember outgoing slide and flag transition
-        transitionFromIndexRef.current = fromIndex;
-        setIsTransitioning(true);
-        setCurrentPhotoIndex(nextIndex);
-        transitionAnim.setValue(0);
-
-        RNAnimated.timing(transitionAnim, {
-          toValue: 1,
-          duration: transitionDuration, // Transition duration in ms
-          useNativeDriver: true,
-        }).start(({ finished }) => {
-          if (finished) {
-            // Clear the timer reference since we're done with it
-            animationRef.current = null;
-            // Mark that we just transitioned
-            justTransitioned.current = true;
-            // Update the index and clear transition flag
-            setIsTransitioning(false);
-            transitionFromIndexRef.current = null;
-          }
-        });
+    for (let index = 0; index < timeline.photoSegments.length; index += 1) {
+      const segment = timeline.photoSegments[index];
+      if (segment.startMs <= playbackPositionMs) {
+        candidate = segment;
       } else {
-        // No transition, just switch
-        animationRef.current = null;
-        transitionFromIndexRef.current = fromIndex;
-        setCurrentPhotoIndex(nextIndex);
-        transitionFromIndexRef.current = null;
-        justTransitioned.current = true;
+        break;
       }
+    }
 
-      if (nextIndex === 0) {
-        // Loop completed - continue playing
-        // setIsPlaying(false); // Commented out to keep autoplay looping
-      }
-    }, duration);
-  };
+    return candidate;
+  }, [timeline.photoSegments, playbackPositionMs]);
+
+  const isTransitioning = Boolean(activeTransitionSegment);
+
+  useEffect(() => {
+    if (!totalDurationMs) {
+      progressAnim.setValue(0);
+      return;
+    }
+
+    const normalized = Math.min(Math.max(playbackPositionMs / totalDurationMs, 0), 1);
+    progressAnim.setValue(normalized);
+  }, [playbackPositionMs, totalDurationMs, progressAnim]);
+
+  useEffect(() => {
+    if (!activeTransitionSegment) {
+      transitionAnim.setValue(0);
+      return;
+    }
+
+    const { startMs, durationMs } = activeTransitionSegment;
+    const progress = durationMs > 0 ? (playbackPositionMs - startMs) / durationMs : 0;
+    transitionAnim.setValue(Math.min(Math.max(progress, 0), 1));
+  }, [activeTransitionSegment, playbackPositionMs, transitionAnim]);
+
+  const outgoingIndex = isTransitioning
+    ? activeTransitionSegment?.fromIndex ?? activePhotoSegment?.index ?? 0
+    : activePhotoSegment?.index ?? 0;
+  const incomingIndex = isTransitioning
+    ? activeTransitionSegment?.toIndex ?? outgoingIndex
+    : totalPhotos > 0
+        ? (outgoingIndex + 1) % totalPhotos
+        : 0;
 
   const handlePlayPause = () => {
     haptics.medium();
     sounds.tap();
-    setIsPlaying(!isPlaying);
+    setIsPlaying(prev => {
+      if (prev) {
+        pausedAtRef.current = playbackPositionMs;
+      } else {
+        playbackStartRef.current = Date.now() - pausedAtRef.current;
+      }
+      return !prev;
+    });
   };
 
   const handleExport = () => {
     haptics.medium();
     sounds.tap();
+    pausedAtRef.current = playbackPositionMs;
     setIsPlaying(false);
     navigation.navigate('Export', { projectId });
   };
@@ -230,7 +191,7 @@ const PreviewScreen: React.FC = () => {
     navigation.goBack();
   };
 
-  if (!project || project.photos.length === 0) {
+  if (!project || totalPhotos === 0) {
     return (
       <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]}>
         <View style={styles.errorContainer}>
@@ -240,27 +201,16 @@ const PreviewScreen: React.FC = () => {
     );
   }
 
-  const upcomingIndex = (currentPhotoIndex + 1) % project.photos.length;
+  const resolvedOutgoingIndex = Math.max(0, Math.min(outgoingIndex, totalPhotos - 1));
+  const resolvedIncomingIndex =
+    totalPhotos > 1 ? (incomingIndex + totalPhotos) % totalPhotos : resolvedOutgoingIndex;
 
-  const basePhoto =
-    isTransitioning && transitionFromIndexRef.current !== null
-      ? project.photos[transitionFromIndexRef.current]
-      : project.photos[currentPhotoIndex];
-
-  const overlayPhoto = isTransitioning
-    ? project.photos[currentPhotoIndex]
-    : project.photos[upcomingIndex];
-
-  const transitionIndex =
-    isTransitioning && transitionFromIndexRef.current !== null
-      ? transitionFromIndexRef.current
-      : null;
-  const currentTransition = transitionIndex !== null ? getTransitionForIndex(transitionIndex) : null;
-
-  // Debug logging
-  console.log(
-    `[Render] activeIndex=${currentPhotoIndex}, upcomingIndex=${upcomingIndex}, isTransitioning=${isTransitioning}, transitionFrom=${transitionFromIndexRef.current}`
-  );
+  const basePhoto = photos[resolvedOutgoingIndex];
+  const overlayPhoto = totalPhotos > 1 ? photos[resolvedIncomingIndex] : basePhoto;
+  const currentTransitionType = isTransitioning
+    ? activeTransitionSegment?.transition.type ?? null
+    : null;
+  const displayIndex = resolvedOutgoingIndex;
 
   const progressWidth = progressAnim.interpolate({
     inputRange: [0, 1],
@@ -276,7 +226,7 @@ const PreviewScreen: React.FC = () => {
       return { current: defaultCurrent, next: hiddenNext };
     }
 
-    if (!isTransitioning || !currentTransition) {
+    if (!isTransitioning || !currentTransitionType) {
       return { current: defaultCurrent, next: hiddenNext };
     }
 
@@ -290,7 +240,7 @@ const PreviewScreen: React.FC = () => {
       outputRange: [0, 1],
     });
 
-    switch (currentTransition.type) {
+    switch (currentTransitionType) {
       case TransitionType.FADE:
         return {
           current: { opacity: fadeOut },
@@ -591,7 +541,7 @@ const PreviewScreen: React.FC = () => {
       <View style={styles.controls}>
         <View style={styles.photoInfo}>
           <Text style={[styles.photoCounter, { color: '#FFFFFF' }]}>
-            {currentPhotoIndex + 1} / {project.photos.length}
+            {displayIndex + 1} / {totalPhotos}
           </Text>
           <Text style={[styles.projectTitle, { color: '#FFFFFF' }]}>{project.title}</Text>
         </View>
