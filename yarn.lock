@@ -2874,53 +2874,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"Memento@workspace:.":
-  version: 0.0.0-use.local
-  resolution: "Memento@workspace:."
-  dependencies:
-    "@babel/core": "npm:^7.25.2"
-    "@babel/preset-env": "npm:^7.25.3"
-    "@babel/runtime": "npm:^7.25.0"
-    "@react-native-async-storage/async-storage": "npm:^2.2.0"
-    "@react-native-community/cli": "npm:20.0.0"
-    "@react-native-community/cli-platform-android": "npm:20.0.0"
-    "@react-native-community/cli-platform-ios": "npm:20.0.0"
-    "@react-native/babel-preset": "npm:0.82.0"
-    "@react-native/eslint-config": "npm:0.82.0"
-    "@react-native/metro-config": "npm:0.82.0"
-    "@react-native/new-app-screen": "npm:0.82.0"
-    "@react-native/typescript-config": "npm:0.82.0"
-    "@react-navigation/bottom-tabs": "npm:^7.4.9"
-    "@react-navigation/native": "npm:^7.1.18"
-    "@react-navigation/stack": "npm:^7.4.10"
-    "@shopify/react-native-skia": "npm:^2.3.4"
-    "@types/jest": "npm:^29.5.13"
-    "@types/react": "npm:^19.1.1"
-    "@types/react-test-renderer": "npm:^19.1.0"
-    eslint: "npm:^8.19.0"
-    i18next: "npm:^25.6.0"
-    jest: "npm:^29.6.3"
-    prettier: "npm:2.8.8"
-    react: "npm:19.1.1"
-    react-i18next: "npm:^16.1.0"
-    react-native: "npm:0.82.0"
-    react-native-fs: "npm:^2.20.0"
-    react-native-gesture-handler: "npm:^2.28.0"
-    react-native-haptic-feedback: "npm:^2.3.3"
-    react-native-image-picker: "npm:^8.2.1"
-    react-native-localize: "npm:^3.5.4"
-    react-native-permissions: "npm:^5.4.2"
-    react-native-reanimated: "npm:^3.10.0"
-    react-native-safe-area-context: "npm:^5.6.1"
-    react-native-screens: "npm:^4.17.1"
-    react-native-sound: "npm:^0.13.0"
-    react-native-video: "npm:^6.17.0"
-    react-test-renderer: "npm:19.1.1"
-    typescript: "npm:^5.8.3"
-    zustand: "npm:^5.0.8"
-  languageName: unknown
-  linkType: soft
-
 "abbrev@npm:^3.0.0":
   version: 3.0.1
   resolution: "abbrev@npm:3.0.1"
@@ -4807,6 +4760,16 @@ __metadata:
     picomatch:
       optional: true
   checksum: 10c0/e345083c4306b3aed6cb8ec551e26c36bab5c511e99ea4576a16750ddc8d3240e63826cc624f5ae17ad4dc82e68a253213b60d556c11bfad064b7607847ed07f
+  languageName: node
+  linkType: hard
+
+"ffmpeg-kit-react-native@npm:^6.0.2":
+  version: 6.0.2
+  resolution: "ffmpeg-kit-react-native@npm:6.0.2"
+  peerDependencies:
+    react: "*"
+    react-native: "*"
+  checksum: 10c0/bccb585d89b8f5a53cf20c0c8a034a0bf9dc768916eca41f5b000fea2bea49a8a22e73d9a83585c8a019bd4af98f3a91ce00cabdc7f5400729524e498b53a774
   languageName: node
   linkType: hard
 
@@ -8538,6 +8501,54 @@ __metadata:
   checksum: 10c0/c317b21ec9e3d3968f3d5b548cbfc2eae331f58a03f1352621020799cbe695b3611ee972726f8f32d4ca530065a5ec9c74c97fde711c1f41b4a1585876b2c191
   languageName: node
   linkType: hard
+
+"slidemint@workspace:.":
+  version: 0.0.0-use.local
+  resolution: "slidemint@workspace:."
+  dependencies:
+    "@babel/core": "npm:^7.25.2"
+    "@babel/preset-env": "npm:^7.25.3"
+    "@babel/runtime": "npm:^7.25.0"
+    "@react-native-async-storage/async-storage": "npm:^2.2.0"
+    "@react-native-community/cli": "npm:20.0.0"
+    "@react-native-community/cli-platform-android": "npm:20.0.0"
+    "@react-native-community/cli-platform-ios": "npm:20.0.0"
+    "@react-native/babel-preset": "npm:0.82.0"
+    "@react-native/eslint-config": "npm:0.82.0"
+    "@react-native/metro-config": "npm:0.82.0"
+    "@react-native/new-app-screen": "npm:0.82.0"
+    "@react-native/typescript-config": "npm:0.82.0"
+    "@react-navigation/bottom-tabs": "npm:^7.4.9"
+    "@react-navigation/native": "npm:^7.1.18"
+    "@react-navigation/stack": "npm:^7.4.10"
+    "@shopify/react-native-skia": "npm:^2.3.4"
+    "@types/jest": "npm:^29.5.13"
+    "@types/react": "npm:^19.1.1"
+    "@types/react-test-renderer": "npm:^19.1.0"
+    eslint: "npm:^8.19.0"
+    ffmpeg-kit-react-native: "npm:^6.0.2"
+    i18next: "npm:^25.6.0"
+    jest: "npm:^29.6.3"
+    prettier: "npm:2.8.8"
+    react: "npm:19.1.1"
+    react-i18next: "npm:^16.1.0"
+    react-native: "npm:0.82.0"
+    react-native-fs: "npm:^2.20.0"
+    react-native-gesture-handler: "npm:^2.28.0"
+    react-native-haptic-feedback: "npm:^2.3.3"
+    react-native-image-picker: "npm:^8.2.1"
+    react-native-localize: "npm:^3.5.4"
+    react-native-permissions: "npm:^5.4.2"
+    react-native-reanimated: "npm:^3.10.0"
+    react-native-safe-area-context: "npm:^5.6.1"
+    react-native-screens: "npm:^4.17.1"
+    react-native-sound: "npm:^0.13.0"
+    react-native-video: "npm:^6.17.0"
+    react-test-renderer: "npm:19.1.1"
+    typescript: "npm:^5.8.3"
+    zustand: "npm:^5.0.8"
+  languageName: unknown
+  linkType: soft
 
 "smart-buffer@npm:^4.2.0":
   version: 4.2.0

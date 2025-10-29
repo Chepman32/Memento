@@ -1,11 +1,11 @@
 
 Software Design Document (SDD)
 
-Memento - Animated Slideshow Creator
+SlideMint - Animated Slideshow Creator
 
 1. Executive Summary
 
-Memento is a premium iOS mobile application that transforms user photos into captivating animated slideshows with seamless export capabilities. The app leverages cutting-edge React Native animations, works entirely offline, and provides an intuitive gesture-based interface that feels fluid and natural.
+SlideMint is a premium iOS mobile application that transforms user photos into captivating animated slideshows with seamless export capabilities. The app leverages cutting-edge React Native animations, works entirely offline, and provides an intuitive gesture-based interface that feels fluid and natural.
 
 2. Technical Stack
 
@@ -63,7 +63,7 @@ Architecture: arm64, arm64e (Apple Silicon ready)
 
 Project Structure
 
-memento/ ├── src/ │   ├── components/ │   │   ├── common/ │   │   │   ├── Button.tsx │   │   │   ├── Card.tsx │   │   │   ├── IconButton.tsx │   │   │   ├── AnimatedBackground.tsx │   │   │   ├── GradientOverlay.tsx │   │   │   └── LoadingSpinner.tsx │   │   ├── slideshow/ │   │   │   ├── ImageGrid.tsx │   │   │   ├── ImageCard.tsx │   │   │   ├── TransitionPicker.tsx │   │   │   ├── DurationSlider.tsx │   │   │   ├── EffectPicker.tsx │   │   │   └── PreviewPlayer.tsx │   │   ├── splash/ │   │   │   ├── PhysicsLogo.tsx │   │   │   └── TwistingText.tsx │   │   └── settings/ │   │       ├── ThemeSelector.tsx │   │       ├── ToggleSwitch.tsx │   │       └── SettingsRow.tsx │   ├── screens/ │   │   ├── SplashScreen.tsx │   │   ├── HomeScreen.tsx │   │   ├── ImageSelectionScreen.tsx │   │   ├── EditorScreen.tsx │   │   ├── PreviewScreen.tsx │   │   ├── ExportScreen.tsx │   │   ├── SettingsScreen.tsx │   │   └── PaywallScreen.tsx │   ├── navigation/ │   │   ├── RootNavigator.tsx │   │   ├── MainNavigator.tsx │   │   └── navigationTypes.ts │   ├── store/ │   │   ├── themeStore.ts │   │   ├── projectStore.ts │   │   ├── settingsStore.ts │   │   └── purchaseStore.ts │   ├── utils/ │   │   ├── imageProcessor.ts │   │   ├── videoEncoder.ts │   │   ├── gifGenerator.ts │   │   ├── transitionEffects.ts │   │   ├── hapticFeedback.ts │   │   └── soundEffects.ts │   ├── constants/ │   │   ├── theme.ts │   │   ├── animations.ts │   │   ├── transitions.ts │   │   └── iap.ts │   ├── locales/ │   │   ├── en.json │   │   ├── ru.json │   │   ├── es.json │   │   ├── de.json │   │   ├── fr.json │   │   ├── pt.json │   │   ├── ja.json │   │   ├── zh.json │   │   ├── ko.json │   │   └── uk.json │   ├── assets/ │   │   ├── sounds/ │   │   └── fonts/ │   └── types/ │       ├── theme.types.ts │       ├── project.types.ts │       └── navigation.types.ts ├── ios/ ├── android/ ├── README.md ├── package.json └── tsconfig.json 
+slidemint/ ├── src/ │   ├── components/ │   │   ├── common/ │   │   │   ├── Button.tsx │   │   │   ├── Card.tsx │   │   │   ├── IconButton.tsx │   │   │   ├── AnimatedBackground.tsx │   │   │   ├── GradientOverlay.tsx │   │   │   └── LoadingSpinner.tsx │   │   ├── slideshow/ │   │   │   ├── ImageGrid.tsx │   │   │   ├── ImageCard.tsx │   │   │   ├── TransitionPicker.tsx │   │   │   ├── DurationSlider.tsx │   │   │   ├── EffectPicker.tsx │   │   │   └── PreviewPlayer.tsx │   │   ├── splash/ │   │   │   ├── PhysicsLogo.tsx │   │   │   └── TwistingText.tsx │   │   └── settings/ │   │       ├── ThemeSelector.tsx │   │       ├── ToggleSwitch.tsx │   │       └── SettingsRow.tsx │   ├── screens/ │   │   ├── SplashScreen.tsx │   │   ├── HomeScreen.tsx │   │   ├── ImageSelectionScreen.tsx │   │   ├── EditorScreen.tsx │   │   ├── PreviewScreen.tsx │   │   ├── ExportScreen.tsx │   │   ├── SettingsScreen.tsx │   │   └── PaywallScreen.tsx │   ├── navigation/ │   │   ├── RootNavigator.tsx │   │   ├── MainNavigator.tsx │   │   └── navigationTypes.ts │   ├── store/ │   │   ├── themeStore.ts │   │   ├── projectStore.ts │   │   ├── settingsStore.ts │   │   └── purchaseStore.ts │   ├── utils/ │   │   ├── imageProcessor.ts │   │   ├── videoEncoder.ts │   │   ├── gifGenerator.ts │   │   ├── transitionEffects.ts │   │   ├── hapticFeedback.ts │   │   └── soundEffects.ts │   ├── constants/ │   │   ├── theme.ts │   │   ├── animations.ts │   │   ├── transitions.ts │   │   └── iap.ts │   ├── locales/ │   │   ├── en.json │   │   ├── ru.json │   │   ├── es.json │   │   ├── de.json │   │   ├── fr.json │   │   ├── pt.json │   │   ├── ja.json │   │   ├── zh.json │   │   ├── ko.json │   │   └── uk.json │   ├── assets/ │   │   ├── sounds/ │   │   └── fonts/ │   └── types/ │       ├── theme.types.ts │       ├── project.types.ts │       └── navigation.types.ts ├── ios/ ├── android/ ├── README.md ├── package.json └── tsconfig.json 
 
 4. Detailed Screen Specifications
 
@@ -115,7 +115,7 @@ Animation sequence:
 
 Option B: Rapidly Twisting Text
 
-"MEMENTO" letters as individual Skia paths
+"SLIDEMINT" letters as individual Skia paths
 
 Animation sequence:
 
@@ -945,7 +945,7 @@ Animated gradient background (shifts with theme)
 
 App icon (80pt) with subtle float animation (translateY ±8pt, 4s duration)
 
-App name: "Memento"
+App name: "SlideMint"
 
 Version number: "v1.0.0" (small text)
 
@@ -1793,7 +1793,7 @@ Ukrainian (uk): Українська
 
 Translation Keys Structure
 
-{   "common": {     "cancel": "Cancel",     "done": "Done",     "save": "Save",     "delete": "Delete",     "edit": "Edit",     "share": "Share",     "close": "Close",     "back": "Back",     "next": "Next",     "previous": "Previous",     "continue": "Continue"   },   "home": {     "title": "Memento",     "emptyStateTitle": "Create Your First Memory",     "emptyStateSubtitle": "Turn photos into magical slideshows",     "getStartedButton": "Get Started",     "yourProjects": "Your Projects",     "createNewProject": "Create New Project"   },   "imageSelection": {     "title": "Select Photos",     "permissionRequired": "Photos Access Required",     "permissionMessage": "We need permission to access your photos",     "grantAccess": "Grant Access",     "selectedCount": "{{count}} selected",     "createSlideshow": "Create Slideshow ({{count}} photos)",     "maximumReached": "Maximum {{count}} photos allowed"   },   "editor": {     "title": "Edit Slideshow",     "transition": "Transition",     "duration": "Photo Duration",     "effects": "Photo Effects",     "music": "Background Music",     "preview": "Preview",     "export": "Export"   },   "export": {     "title": "Export Your Memory",     "quality": "Quality",     "format": "Format",     "resolution": "Resolution",     "saveToPhotos": "Save to Photos",     "share": "Share",     "exporting": "Exporting...",     "success": "Exported Successfully!",     "error": "Export Failed"   },   "settings": {     "title": "Settings",     "appearance": "Appearance",     "theme": "Theme",     "soundEffects": "Sound Effects",     "hapticFeedback": "Haptic Feedback",     "language": "Language",     "storage": "Storage",     "clearCache": "Clear Cache",     "premium": "Premium",     "about": "About"   },   "themes": {     "light": "Light",     "dark": "Dark",     "solar": "Solar",     "mono": "Mono"   },   "premium": {     "title": "Upgrade to Premium",     "unlimitedPhotos": "Unlimited Photos",     "premiumTransitions": "Premium Transitions",     "customMusic": "Custom Music",     "export4K": "4K Export",     "noWatermark": "No Watermark",     "subscribe": "Subscribe Now",     "monthlyPlan": "Monthly Plan",     "annualPlan": "Annual Plan",     "freeTrial": "Start Free Trial",     "restore": "Restore Purchases"   } } 
+{   "common": {     "cancel": "Cancel",     "done": "Done",     "save": "Save",     "delete": "Delete",     "edit": "Edit",     "share": "Share",     "close": "Close",     "back": "Back",     "next": "Next",     "previous": "Previous",     "continue": "Continue"   },   "home": {     "title": "SlideMint",     "emptyStateTitle": "Create Your First Memory",     "emptyStateSubtitle": "Turn photos into magical slideshows",     "getStartedButton": "Get Started",     "yourProjects": "Your Projects",     "createNewProject": "Create New Project"   },   "imageSelection": {     "title": "Select Photos",     "permissionRequired": "Photos Access Required",     "permissionMessage": "We need permission to access your photos",     "grantAccess": "Grant Access",     "selectedCount": "{{count}} selected",     "createSlideshow": "Create Slideshow ({{count}} photos)",     "maximumReached": "Maximum {{count}} photos allowed"   },   "editor": {     "title": "Edit Slideshow",     "transition": "Transition",     "duration": "Photo Duration",     "effects": "Photo Effects",     "music": "Background Music",     "preview": "Preview",     "export": "Export"   },   "export": {     "title": "Export Your Memory",     "quality": "Quality",     "format": "Format",     "resolution": "Resolution",     "saveToPhotos": "Save to Photos",     "share": "Share",     "exporting": "Exporting...",     "success": "Exported Successfully!",     "error": "Export Failed"   },   "settings": {     "title": "Settings",     "appearance": "Appearance",     "theme": "Theme",     "soundEffects": "Sound Effects",     "hapticFeedback": "Haptic Feedback",     "language": "Language",     "storage": "Storage",     "clearCache": "Clear Cache",     "premium": "Premium",     "about": "About"   },   "themes": {     "light": "Light",     "dark": "Dark",     "solar": "Solar",     "mono": "Mono"   },   "premium": {     "title": "Upgrade to Premium",     "unlimitedPhotos": "Unlimited Photos",     "premiumTransitions": "Premium Transitions",     "customMusic": "Custom Music",     "export4K": "4K Export",     "noWatermark": "No Watermark",     "subscribe": "Subscribe Now",     "monthlyPlan": "Monthly Plan",     "annualPlan": "Annual Plan",     "freeTrial": "Start Free Trial",     "restore": "Restore Purchases"   } } 
 
 Language Detection
 
@@ -1813,7 +1813,7 @@ Subscription Products:
 
 Monthly Subscription:
 
-Product ID: com.memento.premium.monthly
+Product ID: com.slidemint.premium.monthly
 
 Price: $4.99/month
 
@@ -1825,7 +1825,7 @@ Features: All premium features
 
 Annual Subscription:
 
-Product ID: com.memento.premium.annual
+Product ID: com.slidemint.premium.annual
 
 Price: $29.99/year
 
@@ -2575,7 +2575,7 @@ iOS Build Configuration
 
 Development:
 
-Bundle ID: com.memento.app.dev
+Bundle ID: com.slidemint.app.dev
 
 Code signing: Development
 
@@ -2583,7 +2583,7 @@ Entitlements: Photo library access
 
 Staging:
 
-Bundle ID: com.memento.app.staging
+Bundle ID: com.slidemint.app.staging
 
 Code signing: AdHoc/Enterprise
 
@@ -2591,7 +2591,7 @@ TestFlight distribution
 
 Production:
 
-Bundle ID: com.memento.app
+Bundle ID: com.slidemint.app
 
 Code signing: App Store
 
@@ -2601,13 +2601,13 @@ App Store Connect configuration
 
 App Store Metadata
 
-App Name: Memento - Animated Slideshows
+App Name: SlideMint - Animated Slideshows
 
 Subtitle: Turn Photos into Magic
 
 Description:
 
-Transform your favorite photos into stunning animated slideshows with Memento. Add professional transitions, effects, and music to create unforgettable memories.  Features: • Beautiful animated transitions • Professional photo effects • Background music support • 4K video export • Animated GIF creation • Gesture-based interface • Works completely offline • Multiple theme options  Perfect for: • Birthday celebrations • Travel memories • Family moments • Special occasions • Social media content  Premium features unlock unlimited photos, exclusive transitions, custom music, and more.  Download Memento today and start creating! 
+Transform your favorite photos into stunning animated slideshows with SlideMint. Add professional transitions, effects, and music to create unforgettable memories.  Features: • Beautiful animated transitions • Professional photo effects • Background music support • 4K video export • Animated GIF creation • Gesture-based interface • Works completely offline • Multiple theme options  Perfect for: • Birthday celebrations • Travel memories • Family moments • Special occasions • Social media content  Premium features unlock unlimited photos, exclusive transitions, custom music, and more.  Download SlideMint today and start creating! 
 
 Keywords: slideshow, video maker, photo editor, gif creator, memories, animations, transitions, photo video
 
@@ -2857,11 +2857,11 @@ External display support
 
 21. README.md Content
 
-# Memento - Animated Slideshow Creator  Transform your photos into captivating animated slideshows with professional transitions, effects, and music.  ## Project Overview  Memento is a premium iOS application built with React Native that allows users to create stunning animated slideshows from their photos. The app features an intuitive gesture-based interface, impressive animations powered by react-native-reanimated and react-native-skia, and works completely offline.  ### Key Features  - 📸 Multi-photo slideshow creation - 🎬 13+ professional transition effects - 🎨 Advanced photo effects and filters - 🎵 Background music support (Premium) - 📹 Export as video (up to 4K) or animated GIF - 🎯 Gesture-oriented UX - 🌓 4 beautiful themes (Light, Dark, Solar, Mono) - 🌍 10 language translations - 💎 Premium features via In-App Purchase - ✈️ Works completely offline  ### Technical Stack  - **Framework**: React Native + TypeScript - **Animations**: react-native-reanimated v3, react-native-skia - **State Management**: Zustand - **Navigation**: React Navigation v6 - **Video/GIF**: ffmpeg-kit-react-native, react-native-gif-creator - **IAP**: react-native-iap - **Localization**: i18next  ## Project Structure  
+# SlideMint - Animated Slideshow Creator  Transform your photos into captivating animated slideshows with professional transitions, effects, and music.  ## Project Overview  SlideMint is a premium iOS application built with React Native that allows users to create stunning animated slideshows from their photos. The app features an intuitive gesture-based interface, impressive animations powered by react-native-reanimated and react-native-skia, and works completely offline.  ### Key Features  - 📸 Multi-photo slideshow creation - 🎬 13+ professional transition effects - 🎨 Advanced photo effects and filters - 🎵 Background music support (Premium) - 📹 Export as video (up to 4K) or animated GIF - 🎯 Gesture-oriented UX - 🌓 4 beautiful themes (Light, Dark, Solar, Mono) - 🌍 10 language translations - 💎 Premium features via In-App Purchase - ✈️ Works completely offline  ### Technical Stack  - **Framework**: React Native + TypeScript - **Animations**: react-native-reanimated v3, react-native-skia - **State Management**: Zustand - **Navigation**: React Navigation v6 - **Video/GIF**: ffmpeg-kit-react-native, react-native-gif-creator - **IAP**: react-native-iap - **Localization**: i18next  ## Project Structure  
 
-memento/ ├── src/ │ ├── components/ # Reusable UI components │ ├── screens/ # Main app screens │ ├── navigation/ # Navigation configuration │ ├── store/ # State management (Zustand) │ ├── utils/ # Helper functions │ ├── constants/ # App constants and configs │ ├── locales/ # Translation files │ ├── assets/ # Sounds, fonts │ └── types/ # TypeScript types ├── ios/ # iOS native code ├── README.md └── package.json
+slidemint/ ├── src/ │ ├── components/ # Reusable UI components │ ├── screens/ # Main app screens │ ├── navigation/ # Navigation configuration │ ├── store/ # State management (Zustand) │ ├── utils/ # Helper functions │ ├── constants/ # App constants and configs │ ├── locales/ # Translation files │ ├── assets/ # Sounds, fonts │ └── types/ # TypeScript types ├── ios/ # iOS native code ├── README.md └── package.json
 
- ## Development Roadmap  ### Phase 1: Core Features ✅ COMPLETED - [x] Project structure setup - [x] Splash screen with physics animations - [x] Home screen with project management - [x] Image selection with multi-picker - [x] Editor screen with timeline - [x] Transition effects implementation (13 types) - [x] Photo effects (8 types) - [x] Preview screen with playback controls - [x] Export to video (720p, 1080p, 4K) - [x] Export to animated GIF - [x] Settings screen - [x] Theme system (4 themes) - [x] Sound effects and haptic feedback - [x] Localization (10 languages) - [x] In-App Purchase integration - [x] Paywall screen  ### Phase 2: Polish & Optimization 🚧 IN PROGRESS - [ ] Performance optimization   - [ ] Image loading optimization   - [ ] Animation performance tuning   - [ ] Memory management improvements   - [ ] Bundle size reduction - [ ] Gesture refinements   - [ ] Improve swipe-to-delete   - [ ] Enhanced drag-to-reorder   - [ ] Timeline scrubbing smoothness - [ ] UI/UX improvements   - [ ] Loading states polish   - [ ] Error handling improvements   - [ ] Accessibility enhancements   - [ ] Icon refinements - [ ] Testing   - [ ] Unit tests for utilities   - [ ] Component tests   - [ ] E2E critical path tests   - [ ] Performance benchmarks  ### Phase 3: Advanced Features 📋 TODO - [ ] Music integration   - [ ] Music library browser   - [ ] Custom music upload   - [ ] Audio trimming   - [ ] Fade in/out controls - [ ] Text overlays   - [ ] Text editor modal   - [ ] Font selection   - [ ] Animation options   - [ ] Positioning tools - [ ] Advanced transitions   - [ ] 3D cube transitions   - [ ] Particle effects   - [ ] Custom wipes   - [ ] Transition timing curves - [ ] Cloud features   - [ ] iCloud sync   - [ ] Project backup   - [ ] Cross-device sync  ### Phase 4: Platform Expansion 🔮 FUTURE - [ ] Android version - [ ] iPad-optimized UI - [ ] macOS app (Catalyst) - [ ] Apple Watch companion app - [ ] Widgets (iOS 14+) - [ ] Shortcuts integration - [ ] SharePlay support  ## Installation & Setup  ### Prerequisites - Node.js 18+ - React Native CLI - Xcode 15+ (for iOS) - CocoaPods  ### Steps ```bash # Clone repository git clone https://github.com/yourorg/memento.git cd memento  # Install dependencies npm install  # Install iOS pods cd ios && pod install && cd ..  # Run on iOS npm run ios  # Run on Android (future) npm run android 
+ ## Development Roadmap  ### Phase 1: Core Features ✅ COMPLETED - [x] Project structure setup - [x] Splash screen with physics animations - [x] Home screen with project management - [x] Image selection with multi-picker - [x] Editor screen with timeline - [x] Transition effects implementation (13 types) - [x] Photo effects (8 types) - [x] Preview screen with playback controls - [x] Export to video (720p, 1080p, 4K) - [x] Export to animated GIF - [x] Settings screen - [x] Theme system (4 themes) - [x] Sound effects and haptic feedback - [x] Localization (10 languages) - [x] In-App Purchase integration - [x] Paywall screen  ### Phase 2: Polish & Optimization 🚧 IN PROGRESS - [ ] Performance optimization   - [ ] Image loading optimization   - [ ] Animation performance tuning   - [ ] Memory management improvements   - [ ] Bundle size reduction - [ ] Gesture refinements   - [ ] Improve swipe-to-delete   - [ ] Enhanced drag-to-reorder   - [ ] Timeline scrubbing smoothness - [ ] UI/UX improvements   - [ ] Loading states polish   - [ ] Error handling improvements   - [ ] Accessibility enhancements   - [ ] Icon refinements - [ ] Testing   - [ ] Unit tests for utilities   - [ ] Component tests   - [ ] E2E critical path tests   - [ ] Performance benchmarks  ### Phase 3: Advanced Features 📋 TODO - [ ] Music integration   - [ ] Music library browser   - [ ] Custom music upload   - [ ] Audio trimming   - [ ] Fade in/out controls - [ ] Text overlays   - [ ] Text editor modal   - [ ] Font selection   - [ ] Animation options   - [ ] Positioning tools - [ ] Advanced transitions   - [ ] 3D cube transitions   - [ ] Particle effects   - [ ] Custom wipes   - [ ] Transition timing curves - [ ] Cloud features   - [ ] iCloud sync   - [ ] Project backup   - [ ] Cross-device sync  ### Phase 4: Platform Expansion 🔮 FUTURE - [ ] Android version - [ ] iPad-optimized UI - [ ] macOS app (Catalyst) - [ ] Apple Watch companion app - [ ] Widgets (iOS 14+) - [ ] Shortcuts integration - [ ] SharePlay support  ## Installation & Setup  ### Prerequisites - Node.js 18+ - React Native CLI - Xcode 15+ (for iOS) - CocoaPods  ### Steps ```bash # Clone repository git clone https://github.com/yourorg/slidemint.git cd slidemint  # Install dependencies npm install  # Install iOS pods cd ios && pod install && cd ..  # Run on iOS npm run ios  # Run on Android (future) npm run android 
 
 Environment Variables
 
@@ -2895,7 +2895,7 @@ Memory usage: < 200MB typical
 
 Accessibility
 
-Memento is designed to be accessible to all users:
+SlideMint is designed to be accessible to all users:
 
 Full VoiceOver support
 
@@ -2925,13 +2925,13 @@ This is a proprietary project. For bug reports or feature requests, please conta
 
 License
 
-Copyright © 2025 Memento. All rights reserved.
+Copyright © 2025 SlideMint. All rights reserved.
 
 Contact
 
-Support: support@memento.app
+Support: support@slidemint.app
 
-Website: https://memento.app
+Website: https://slidemint.app
 
 App Store: [Link to App Store]
 
@@ -2941,4 +2941,4 @@ Version: 1.0.0 Last Updated: October 2025 Status: Production Ready 🚀
 
 feat: Add music library browser fix: Resolve video export crash on iOS 14 refactor: Optimize image loading pipeline docs: Update README with setup instructions test: Add unit tests for transition effects style: Format code with Prettier perf: Improve animation performance chore: Update dependencies
 
- ### Code Review Checklist  - [ ] Code follows project style guide - [ ] TypeScript types are properly defined - [ ] No console.logs in production code - [ ] Performance impact considered - [ ] Accessibility requirements met - [ ] Error handling implemented - [ ] Tests added/updated - [ ] Documentation updated - [ ] No breaking changes (or documented)  ### Release Process  1. **Version Bump**: Update version in package.json 2. **Changelog**: Update CHANGELOG.md 3. **Build**: Create release build 4. **Test**: Run full test suite 5. **Submit**: Upload to App Store Connect 6. **Tag**: Create git tag (v1.0.0) 7. **Monitor**: Watch crash reports and reviews  ---  ## 23. Monitoring & Analytics  ### Performance Monitoring  **Metrics to Track**: - App launch time - Screen load times - Animation frame rates - Memory usage - Battery usage - Network requests (if any)  **Tools**: - Xcode Instruments - React Native Performance Monitor - Custom performance logging  ### User Analytics  **Events to Track** (privacy-respecting): - Screen views - Feature usage - Export completions - Purchase funnel - Error occurrences  **No Tracking**: - Personal information - Photo content - User behavior across apps  ### Crash Reporting  **Implementation**: - Integrate Sentry or similar - Capture React errors - Capture native crashes - Include breadcrumbs - User privacy protected  ---  ## 24. Compliance & Legal  ### App Store Guidelines  **Compliance**: - Human Interface Guidelines followed - No private API usage - Content policy compliance - Age rating: 4+ (no objectionable content)  ### Required Disclosures  **App Privacy Details**: - Data collected: None - Data linked to user: None - Data used to track: None - Photos: Used only on-device  **Terms of Service**: - Usage terms - Acceptable use policy - Content ownership - Account termination  **Privacy Policy**: - Data collection practices - Usage of information - Third-party services - User rights - Contact information  ### COPPA Compliance  - No data collection from minors - Parental controls not required - Age-appropriate content - No targeted advertising  ---  ## 25. Support & Maintenance  ### Customer Support  **Support Channels**: - In-app help center - Email support: support@memento.app - FAQ section in settings - Video tutorials (future)  **Response Times**: - Critical bugs: 24 hours - Feature requests: 1 week - General inquiries: 48 hours  ### Maintenance Schedule  **Weekly**: - Monitor crash reports - Review user feedback - Check App Store reviews  **Monthly**: - Update dependencies - Performance review - Feature prioritization  **Quarterly**: - Major feature releases - Comprehensive testing - Documentation updates  ---  ## Conclusion  This Software Design Document provides a comprehensive blueprint for **Memento**, a production-ready iOS application that transforms photos into animated slideshows. The app leverages cutting-edge React Native technologies, prioritizes user experience with gesture-based interactions, and maintains high performance through optimized animations and efficient processing pipelines.  The document covers all aspects of the application from splash screen animations to export functionality, ensuring every screen, component, and interaction is thoroughly specified. With support for multiple themes, languages, and premium features via IAP, Memento is positioned as a premium offering in the photo and video app category.  **Total Development Scope**: Production-ready application with all features fully specified and implementable using standard React Native tools and libraries. 
+ ### Code Review Checklist  - [ ] Code follows project style guide - [ ] TypeScript types are properly defined - [ ] No console.logs in production code - [ ] Performance impact considered - [ ] Accessibility requirements met - [ ] Error handling implemented - [ ] Tests added/updated - [ ] Documentation updated - [ ] No breaking changes (or documented)  ### Release Process  1. **Version Bump**: Update version in package.json 2. **Changelog**: Update CHANGELOG.md 3. **Build**: Create release build 4. **Test**: Run full test suite 5. **Submit**: Upload to App Store Connect 6. **Tag**: Create git tag (v1.0.0) 7. **Monitor**: Watch crash reports and reviews  ---  ## 23. Monitoring & Analytics  ### Performance Monitoring  **Metrics to Track**: - App launch time - Screen load times - Animation frame rates - Memory usage - Battery usage - Network requests (if any)  **Tools**: - Xcode Instruments - React Native Performance Monitor - Custom performance logging  ### User Analytics  **Events to Track** (privacy-respecting): - Screen views - Feature usage - Export completions - Purchase funnel - Error occurrences  **No Tracking**: - Personal information - Photo content - User behavior across apps  ### Crash Reporting  **Implementation**: - Integrate Sentry or similar - Capture React errors - Capture native crashes - Include breadcrumbs - User privacy protected  ---  ## 24. Compliance & Legal  ### App Store Guidelines  **Compliance**: - Human Interface Guidelines followed - No private API usage - Content policy compliance - Age rating: 4+ (no objectionable content)  ### Required Disclosures  **App Privacy Details**: - Data collected: None - Data linked to user: None - Data used to track: None - Photos: Used only on-device  **Terms of Service**: - Usage terms - Acceptable use policy - Content ownership - Account termination  **Privacy Policy**: - Data collection practices - Usage of information - Third-party services - User rights - Contact information  ### COPPA Compliance  - No data collection from minors - Parental controls not required - Age-appropriate content - No targeted advertising  ---  ## 25. Support & Maintenance  ### Customer Support  **Support Channels**: - In-app help center - Email support: support@slidemint.app - FAQ section in settings - Video tutorials (future)  **Response Times**: - Critical bugs: 24 hours - Feature requests: 1 week - General inquiries: 48 hours  ### Maintenance Schedule  **Weekly**: - Monitor crash reports - Review user feedback - Check App Store reviews  **Monthly**: - Update dependencies - Performance review - Feature prioritization  **Quarterly**: - Major feature releases - Comprehensive testing - Documentation updates  ---  ## Conclusion  This Software Design Document provides a comprehensive blueprint for **SlideMint**, a production-ready iOS application that transforms photos into animated slideshows. The app leverages cutting-edge React Native technologies, prioritizes user experience with gesture-based interactions, and maintains high performance through optimized animations and efficient processing pipelines.  The document covers all aspects of the application from splash screen animations to export functionality, ensuring every screen, component, and interaction is thoroughly specified. With support for multiple themes, languages, and premium features via IAP, SlideMint is positioned as a premium offering in the photo and video app category.  **Total Development Scope**: Production-ready application with all features fully specified and implementable using standard React Native tools and libraries. 

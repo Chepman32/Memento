@@ -353,7 +353,7 @@ export const useProjectStore = create<ProjectState>()(
       },
     }),
     {
-      name: 'memento-projects',
+      name: 'slidemint-projects',
       storage: createJSONStorage(() => AsyncStorage),
       partialize: (state) => ({
         projects: state.projects,

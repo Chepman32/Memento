@@ -132,7 +132,7 @@ const HomeScreen: React.FC = () => {
       {/* Header */}
       <View style={styles.header}>
         <View>
-          <Text style={[styles.headerTitle, { color: colors.text }]}>Memento</Text>
+          <Text style={[styles.headerTitle, { color: colors.text }]}>SlideMint</Text>
           {purchaseState.isPremium && (
             <Text style={[styles.premiumBadge, { color: colors.primary }]}>⭐ Premium</Text>
           )}

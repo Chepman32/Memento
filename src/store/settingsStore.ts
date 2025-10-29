@@ -65,7 +65,7 @@ export const useSettingsStore = create<SettingsState>()(
       },
     }),
     {
-      name: 'memento-settings',
+      name: 'slidemint-settings',
       storage: createJSONStorage(() => AsyncStorage),
     }
   )

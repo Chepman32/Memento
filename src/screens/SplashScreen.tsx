@@ -86,7 +86,7 @@ const SplashScreen: React.FC = () => {
 
       {/* App name */}
       <Animated.View style={[styles.titleContainer, animatedLogoStyle]}>
-        <Text style={[styles.title, { color: colors.text }]}>Memento</Text>
+        <Text style={[styles.title, { color: colors.text }]}>SlideMint</Text>
         <Text style={[styles.subtitle, { color: colors.textSecondary }]}>
           Turn photos into memories
         </Text>

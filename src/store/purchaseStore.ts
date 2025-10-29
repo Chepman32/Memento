@@ -124,7 +124,7 @@ export const usePurchaseStore = create<PurchaseStoreState>()(
       },
     }),
     {
-      name: 'memento-purchase',
+      name: 'slidemint-purchase',
       storage: createJSONStorage(() => AsyncStorage),
     }
   )

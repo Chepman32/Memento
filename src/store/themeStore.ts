@@ -29,7 +29,7 @@ export const useThemeStore = create<ThemeState>()(
       },
     }),
     {
-      name: 'memento-theme',
+      name: 'slidemint-theme',
       storage: createJSONStorage(() => AsyncStorage),
     }
   )

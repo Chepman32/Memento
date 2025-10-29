@@ -75,7 +75,7 @@ const ExportScreen: React.FC = () => {
       const outputDir = RNFS.TemporaryDirectoryPath;
 
       const timestamp = Date.now();
-      const filename = `memento_${timestamp}.${format === 'video' ? 'mp4' : 'gif'}`;
+      const filename = `slidemint_${timestamp}.${format === 'video' ? 'mp4' : 'gif'}`;
       const outputPath = `${outputDir}${filename}`;
 
       if (format === 'video') {

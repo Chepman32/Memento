@@ -34,7 +34,7 @@ export interface ProductConfig {
 
 export const SUBSCRIPTION_PRODUCTS: Record<SubscriptionType, ProductConfig> = {
   [SubscriptionType.MONTHLY]: {
-    id: 'com.memento.premium.monthly',
+    id: 'com.slidemint.premium.monthly',
     type: SubscriptionType.MONTHLY,
     price: '4.99',
     currency: 'USD',
@@ -50,7 +50,7 @@ export const SUBSCRIPTION_PRODUCTS: Record<SubscriptionType, ProductConfig> = {
     ],
   },
   [SubscriptionType.ANNUAL]: {
-    id: 'com.memento.premium.annual',
+    id: 'com.slidemint.premium.annual',
     type: SubscriptionType.ANNUAL,
     price: '29.99',
     currency: 'USD',

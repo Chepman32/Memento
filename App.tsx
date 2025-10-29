@@ -1,5 +1,5 @@
 /**
- * Memento App
+ * SlideMint App
  * Turn photos into beautiful memory slideshows
  * @format
  */

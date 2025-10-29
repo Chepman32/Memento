@@ -145,7 +145,7 @@ export const gifGenerator = {
       };
     }
 
-    const tempVideoPath = `${baseDir}/memento_gif_${Date.now()}.mp4`;
+    const tempVideoPath = `${baseDir}/slidemint_gif_${Date.now()}.mp4`;
     const colors = Math.min(Math.max(config.colors, 2), 256);
     const resolution = pickResolutionPreset(config.width, config.height);
     const estimatedDurationMs = Math.max(timeline.totalDurationMs, 1000);

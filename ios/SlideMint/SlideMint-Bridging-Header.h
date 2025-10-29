@@ -1,6 +1,6 @@
 //
-//  Memento-Bridging-Header.h
-//  Memento
+//  SlideMint-Bridging-Header.h
+//  SlideMint
 //
 
 #import <React/RCTBridgeModule.h>
