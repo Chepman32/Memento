@@ -13,7 +13,26 @@ export enum ExportLocation {
   ASK = 'ask',
 }
 
-export type LanguageCode = 'en' | 'ru' | 'es' | 'de' | 'fr' | 'pt' | 'ja' | 'zh' | 'ko' | 'uk';
+export type LanguageCode =
+  | 'en'
+  | 'ru'
+  | 'es'
+  | 'sp'
+  | 'de'
+  | 'fr'
+  | 'pt'
+  | 'por'
+  | 'ja'
+  | 'jp'
+  | 'zh'
+  | 'zh-cn'
+  | 'zh-hans'
+  | 'ko'
+  | 'uk'
+  | 'ua'
+  | 'it'
+  | 'pl'
+  | 'hi';
 
 export interface AppSettings {
   theme: Theme;

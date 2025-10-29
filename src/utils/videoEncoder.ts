@@ -306,7 +306,9 @@ export const videoEncoder = {
     const inputs = timeline.photoSegments
       .map((segment, index) => {
         const seconds = formatSeconds(segment.durationMs / 1000);
-        return `-loop 1 -t ${seconds} -i "${segment.uri}"`;
+        // Remove file:// prefix for FFmpeg
+        const cleanUri = segment.uri.replace(/^file:\/\//, '');
+        return `-loop 1 -t ${seconds} -i "${cleanUri}"`;
       })
       .join(' ');
 
@@ -360,11 +362,12 @@ export const videoEncoder = {
 
     const filterComplex = filters.join(';');
 
+    // Use h264_videotoolbox (hardware encoder) instead of libx264 on iOS
     return (
       `${inputs} ` +
       `-filter_complex "${filterComplex}" ` +
       `-map "[outv]" ` +
-      `-c:v libx264 -preset medium -crf 23 -b:v ${bitrate} -pix_fmt yuv420p ` +
+      `-c:v h264_videotoolbox -b:v ${bitrate} -pix_fmt yuv420p ` +
       `-r ${fps} -movflags +faststart -y "${outputPath}"`
     )
       .replace(/\s+/g, ' ')

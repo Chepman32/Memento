@@ -10,6 +10,7 @@ import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { RootNavigator } from './src/navigation/RootNavigator';
 import { useThemeStore } from './src/store/themeStore';
+import { Theme } from './src/types/theme.types';
 import './src/i18n';
 
 // Ignore specific warnings
@@ -22,7 +23,7 @@ function App() {
 
   useEffect(() => {
     // Set status bar style based on theme
-    const isDark = theme === 'dark';
+    const isDark = theme === Theme.DARK;
     StatusBar.setBarStyle(isDark ? 'light-content' : 'dark-content');
   }, [theme]);
 
@@ -30,7 +31,7 @@ function App() {
     <GestureHandlerRootView style={{ flex: 1 }}>
       <SafeAreaProvider>
         <StatusBar
-          barStyle={theme === 'dark' ? 'light-content' : 'dark-content'}
+          barStyle={theme === Theme.DARK ? 'light-content' : 'dark-content'}
           backgroundColor={colors.background}
         />
         <RootNavigator />

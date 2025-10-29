@@ -123,40 +123,23 @@
   "settings": {
     "title": "Settings",
     "appearance": "Appearance",
-    "feedback": "Feedback",
     "theme": "Theme",
     "soundEffects": "Sound Effects",
     "hapticFeedback": "Haptic Feedback",
     "hapticStrength": "Haptic Strength",
     "language": "Language",
     "storage": "Storage",
-    "cache": "Cache",
     "clearCache": "Clear Cache",
-    "clear": "Clear",
     "cacheSize": "Cache size: {{size}}",
-    "confirmClearCacheMessage": "Are you sure you want to clear the cache?",
-    "cacheClearedDescription": "Cache cleared successfully.",
     "premium": "Premium",
-    "premiumActive": "⭐ Premium Active",
-    "subscription": {
-      "monthly": "Monthly Plan",
-      "annual": "Annual Plan"
-    },
-    "renewsOn": "Renews on {{date}}",
     "about": "About",
-    "versionLabel": "Version",
     "version": "Version {{version}}",
     "rateApp": "Rate App",
     "shareApp": "Share App",
     "helpSupport": "Help & Support",
     "privacyPolicy": "Privacy Policy",
     "termsOfService": "Terms of Service",
-    "licenses": "Open Source Licenses",
-    "hapticStrengthOptions": {
-      "light": "Light",
-      "medium": "Medium",
-      "heavy": "Strong"
-    }
+    "licenses": "Open Source Licenses"
   },
   "themes": {
     "light": "Light",

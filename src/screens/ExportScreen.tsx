@@ -19,6 +19,7 @@ import { haptics } from '../utils/hapticFeedback';
 import { sounds } from '../utils/soundEffects';
 import { videoEncoder } from '../utils/videoEncoder';
 import { gifGenerator } from '../utils/gifGenerator';
+import { photoLibrary } from '../utils/photoLibrary';
 import { ExportQuality, ResolutionPreset } from '../types/project.types';
 import { PremiumFeature } from '../types/purchase.types';
 import { SPACING, RADII, TYPOGRAPHY } from '../constants/theme';
@@ -70,9 +71,12 @@ const ExportScreen: React.FC = () => {
     setExportProgress(0);
 
     try {
+      // Use TemporaryDirectoryPath for FFmpeg output
+      const outputDir = RNFS.TemporaryDirectoryPath;
+
       const timestamp = Date.now();
       const filename = `memento_${timestamp}.${format === 'video' ? 'mp4' : 'gif'}`;
-      const outputPath = `${RNFS.DocumentDirectoryPath}/${filename}`;
+      const outputPath = `${outputDir}${filename}`;
 
       if (format === 'video') {
         const result = await videoEncoder.encodeVideo({
@@ -87,11 +91,38 @@ const ExportScreen: React.FC = () => {
         });
 
         if (result.success) {
-          sounds.exportComplete();
-          haptics.success();
-          Alert.alert('Export Complete', 'Your video has been saved successfully!', [
-            { text: 'OK', onPress: () => navigation.goBack() },
-          ]);
+          // Save to photo library
+          try {
+            await photoLibrary.saveToPhotoLibrary(outputPath);
+            sounds.exportComplete();
+            haptics.success();
+
+            Alert.alert('Export Complete', 'Your video has been saved to the gallery!', [
+              {
+                text: 'OK',
+                onPress: () => navigation.goBack()
+              },
+              {
+                text: 'Show in Gallery',
+                onPress: async () => {
+                  try {
+                    await photoLibrary.openPhotosApp();
+                    navigation.goBack();
+                  } catch (error) {
+                    console.error('Failed to open Photos app:', error);
+                    navigation.goBack();
+                  }
+                },
+              },
+            ]);
+          } catch (saveError) {
+            console.error('Failed to save to photo library:', saveError);
+            Alert.alert(
+              'Export Complete',
+              'Video exported but could not be saved to gallery. Please check permissions.',
+              [{ text: 'OK', onPress: () => navigation.goBack() }]
+            );
+          }
         } else {
           throw new Error(result.error || 'Export failed');
         }
@@ -110,13 +141,42 @@ const ExportScreen: React.FC = () => {
         });
 
         if (result.success) {
-          sounds.exportComplete();
-          haptics.success();
-          Alert.alert(
-            'Export Complete',
-            `GIF saved (${gifGenerator.formatFileSize(result.fileSize || 0)})`,
-            [{ text: 'OK', onPress: () => navigation.goBack() }]
-          );
+          // Save to photo library
+          try {
+            await photoLibrary.saveToPhotoLibrary(outputPath);
+            sounds.exportComplete();
+            haptics.success();
+
+            Alert.alert(
+              'Export Complete',
+              `GIF saved to gallery (${gifGenerator.formatFileSize(result.fileSize || 0)})`,
+              [
+                {
+                  text: 'OK',
+                  onPress: () => navigation.goBack()
+                },
+                {
+                  text: 'Show in Gallery',
+                  onPress: async () => {
+                    try {
+                      await photoLibrary.openPhotosApp();
+                      navigation.goBack();
+                    } catch (error) {
+                      console.error('Failed to open Photos app:', error);
+                      navigation.goBack();
+                    }
+                  },
+                },
+              ]
+            );
+          } catch (saveError) {
+            console.error('Failed to save to photo library:', saveError);
+            Alert.alert(
+              'Export Complete',
+              `GIF exported (${gifGenerator.formatFileSize(result.fileSize || 0)}) but could not be saved to gallery. Please check permissions.`,
+              [{ text: 'OK', onPress: () => navigation.goBack() }]
+            );
+          }
         } else {
           throw new Error(result.error || 'GIF creation failed');
         }

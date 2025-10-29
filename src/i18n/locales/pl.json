@@ -1,23 +1,23 @@
 {
   "common": {
-    "cancel": "Cancel",
-    "done": "Done",
-    "save": "Save",
-    "delete": "Delete",
-    "edit": "Edit",
-    "share": "Share",
-    "close": "Close",
-    "back": "Back",
-    "next": "Next",
-    "previous": "Previous",
-    "continue": "Continue",
+    "cancel": "Anuluj",
+    "done": "Gotowe",
+    "save": "Zapisz",
+    "delete": "Usuń",
+    "edit": "Edytuj",
+    "share": "Udostępnij",
+    "close": "Zamknij",
+    "back": "Wstecz",
+    "next": "Dalej",
+    "previous": "Poprzedni",
+    "continue": "Kontynuuj",
     "ok": "OK",
-    "yes": "Yes",
-    "no": "No",
-    "loading": "Loading...",
-    "retry": "Retry",
-    "error": "Error",
-    "success": "Success"
+    "yes": "Tak",
+    "no": "Nie",
+    "loading": "Ładowanie...",
+    "retry": "Spróbuj ponownie",
+    "error": "Błąd",
+    "success": "Sukces"
   },
   "home": {
     "title": "Memento",
@@ -121,53 +121,53 @@
     "tooLarge": "File size may exceed {{size}}MB"
   },
   "settings": {
-    "title": "Settings",
-    "appearance": "Appearance",
-    "feedback": "Feedback",
-    "theme": "Theme",
-    "soundEffects": "Sound Effects",
-    "hapticFeedback": "Haptic Feedback",
-    "hapticStrength": "Haptic Strength",
+    "title": "Ustawienia",
+    "appearance": "Wygląd",
+    "feedback": "Informacje zwrotne",
+    "theme": "Motyw",
+    "soundEffects": "Efekty dźwiękowe",
+    "hapticFeedback": "Wibracje",
+    "hapticStrength": "Siła wibracji",
     "language": "Language",
-    "storage": "Storage",
-    "cache": "Cache",
-    "clearCache": "Clear Cache",
-    "clear": "Clear",
-    "cacheSize": "Cache size: {{size}}",
-    "confirmClearCacheMessage": "Are you sure you want to clear the cache?",
-    "cacheClearedDescription": "Cache cleared successfully.",
+    "storage": "Pamięć",
+    "cache": "Pamięć podręczna",
+    "clearCache": "Wyczyść pamięć podręczną",
+    "clear": "Wyczyść",
+    "cacheSize": "Rozmiar pamięci podręcznej: {{size}}",
+    "confirmClearCacheMessage": "Czy na pewno chcesz wyczyścić pamięć podręczną?",
+    "cacheClearedDescription": "Pamięć podręczna została wyczyszczona.",
     "premium": "Premium",
-    "premiumActive": "⭐ Premium Active",
+    "premiumActive": "⭐ Premium aktywne",
     "subscription": {
-      "monthly": "Monthly Plan",
-      "annual": "Annual Plan"
+      "monthly": "Plan miesięczny",
+      "annual": "Plan roczny"
     },
-    "renewsOn": "Renews on {{date}}",
-    "about": "About",
-    "versionLabel": "Version",
-    "version": "Version {{version}}",
+    "renewsOn": "Odnowienie {{date}}",
+    "about": "Informacje",
+    "versionLabel": "Wersja",
+    "version": "Wersja {{version}}",
     "rateApp": "Rate App",
     "shareApp": "Share App",
     "helpSupport": "Help & Support",
-    "privacyPolicy": "Privacy Policy",
-    "termsOfService": "Terms of Service",
+    "privacyPolicy": "Polityka prywatności",
+    "termsOfService": "Regulamin",
     "licenses": "Open Source Licenses",
     "hapticStrengthOptions": {
-      "light": "Light",
-      "medium": "Medium",
-      "heavy": "Strong"
+      "light": "Lekka",
+      "medium": "Średnia",
+      "heavy": "Mocna"
     }
   },
   "themes": {
-    "light": "Light",
-    "dark": "Dark",
-    "solar": "Solar",
-    "mono": "Mono",
+    "light": "Jasny",
+    "dark": "Ciemny",
+    "solar": "Słoneczny",
+    "mono": "Monochromatyczny",
     "description": {
-      "light": "Clean and bright",
-      "dark": "Easy on the eyes",
-      "solar": "Warm and vibrant",
-      "mono": "Simple grayscale"
+      "light": "Czysty i jasny",
+      "dark": "Przyjazny dla oczu",
+      "solar": "Ciepły i żywy",
+      "mono": "Prosta skala szarości"
     }
   },
   "premium": {
@@ -232,6 +232,6 @@
     "projectDeleted": "Project deleted",
     "exported": "Exported successfully",
     "purchaseComplete": "Purchase complete",
-    "cacheCleared": "Cache cleared"
+    "cacheCleared": "Pamięć podręczna wyczyszczona"
   }
 }

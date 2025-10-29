@@ -11,6 +11,7 @@ import {
 } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { StackNavigationProp } from '@react-navigation/stack';
+import { useTranslation } from 'react-i18next';
 import { RootStackParamList } from '../navigation/navigationTypes';
 import { useThemeStore } from '../store/themeStore';
 import { useSettingsStore } from '../store/settingsStore';
@@ -20,15 +21,18 @@ import { haptics } from '../utils/hapticFeedback';
 import { sounds } from '../utils/soundEffects';
 import { Theme } from '../types/theme.types';
 import { HapticStrength } from '../types/settings.types';
-import { SPACING, RADII, TYPOGRAPHY } from '../constants/theme';
+import { SPACING, RADII, TYPOGRAPHY, THEME_COLORS } from '../constants/theme';
 
 type SettingsScreenNavigationProp = StackNavigationProp<RootStackParamList, 'Settings'>;
 
 const SettingsScreen: React.FC = () => {
   const navigation = useNavigation<SettingsScreenNavigationProp>();
+  const { t } = useTranslation();
   const { colors, theme, setTheme } = useThemeStore();
   const { settings, updateSettings, clearCache } = useSettingsStore();
   const { purchaseState } = usePurchaseStore();
+  const themeOptions = [Theme.LIGHT, Theme.DARK, Theme.SOLAR, Theme.MONO];
+  const hapticStrengthOptions = [HapticStrength.LIGHT, HapticStrength.MEDIUM, HapticStrength.HEAVY];
 
   const handleClose = () => {
     haptics.light();
@@ -58,21 +62,21 @@ const SettingsScreen: React.FC = () => {
   };
 
   const handleClearCache = () => {
-    Alert.alert('Clear Cache', 'Are you sure you want to clear the cache?', [
-      { text: 'Cancel', style: 'cancel' },
+    Alert.alert(t('settings.clearCache'), t('settings.confirmClearCacheMessage'), [
+      { text: t('common.cancel'), style: 'cancel' },
       {
-        text: 'Clear',
+        text: t('settings.clear'),
         style: 'destructive',
         onPress: async () => {
           await clearCache();
           haptics.success();
-          Alert.alert('Success', 'Cache cleared successfully');
+          Alert.alert(t('success.cacheCleared'), t('settings.cacheClearedDescription'));
         },
       },
     ]);
   };
 
-  const formatCacheSize = (bytes: number): string => {
+  const formatCacheSizeValue = (bytes: number): string => {
     if (bytes === 0) return '0 MB';
     const mb = bytes / (1024 * 1024);
     return `${mb.toFixed(1)} MB`;
@@ -85,59 +89,67 @@ const SettingsScreen: React.FC = () => {
         <TouchableOpacity onPress={handleClose}>
           <Text style={[styles.closeButton, { color: colors.text }]}>×</Text>
         </TouchableOpacity>
-        <Text style={[styles.headerTitle, { color: colors.text }]}>Settings</Text>
+        <Text style={[styles.headerTitle, { color: colors.text }]}>{t('settings.title')}</Text>
         <View style={{ width: 44 }} />
       </View>
 
       <ScrollView contentContainerStyle={styles.content}>
         {/* Appearance */}
         <View style={styles.section}>
-          <Text style={[styles.sectionTitle, { color: colors.text }]}>Appearance</Text>
+          <Text style={[styles.sectionTitle, { color: colors.text }]}>
+            {t('settings.appearance')}
+          </Text>
 
           {/* Theme selection */}
           <Card style={styles.card}>
-            <Text style={[styles.cardLabel, { color: colors.textSecondary }]}>Theme</Text>
+            <Text style={[styles.cardLabel, { color: colors.textSecondary }]}>
+              {t('settings.theme')}
+            </Text>
             <View style={styles.themeGrid}>
-              {Object.values(Theme).map((themeOption) => (
-                <TouchableOpacity
-                  key={themeOption}
-                  style={[
-                    styles.themeOption,
-                    { borderColor: theme === themeOption ? colors.primary : colors.border },
-                  ]}
-                  onPress={() => handleThemeChange(themeOption)}
-                >
-                  <View
+              {themeOptions.map((themeOption) => {
+                const themeColors = THEME_COLORS[themeOption];
+                return (
+                  <TouchableOpacity
+                    key={themeOption}
                     style={[
-                      styles.themePreview,
-                      {
-                        backgroundColor:
-                          themeOption === Theme.LIGHT
-                            ? '#FFFFFF'
-                            : themeOption === Theme.DARK
-                            ? '#000000'
-                            : themeOption === Theme.SOLAR
-                            ? '#FFF8DC'
-                            : '#E8E8E8',
-                      },
+                      styles.themeOption,
+                      { borderColor: theme === themeOption ? colors.primary : colors.border },
                     ]}
-                  />
-                  <Text style={[styles.themeLabel, { color: colors.text }]}>
-                    {themeOption.charAt(0).toUpperCase() + themeOption.slice(1)}
-                  </Text>
-                </TouchableOpacity>
-              ))}
+                    onPress={() => handleThemeChange(themeOption)}
+                  >
+                    <View
+                      style={[
+                        styles.themePreview,
+                        {
+                          backgroundColor: themeColors.background,
+                          borderColor: themeColors.border,
+                        },
+                      ]}
+                    />
+                    <Text style={[styles.themeLabel, { color: colors.text }]}>
+                      {t(`themes.${themeOption}`)}
+                    </Text>
+                    <Text style={[styles.themeDescription, { color: colors.textSecondary }]}>
+                      {t(`themes.description.${themeOption}`)}
+                    </Text>
+                  </TouchableOpacity>
+                );
+              })}
             </View>
           </Card>
         </View>
 
         {/* Sound & Haptics */}
         <View style={styles.section}>
-          <Text style={[styles.sectionTitle, { color: colors.text }]}>Feedback</Text>
+          <Text style={[styles.sectionTitle, { color: colors.text }]}>
+            {t('settings.feedback')}
+          </Text>
 
           <Card style={styles.card}>
             <View style={styles.settingRow}>
-              <Text style={[styles.settingLabel, { color: colors.text }]}>Sound Effects</Text>
+              <Text style={[styles.settingLabel, { color: colors.text }]}>
+                {t('settings.soundEffects')}
+              </Text>
               <Switch
                 value={settings.soundEnabled}
                 onValueChange={handleToggleSound}
@@ -149,7 +161,9 @@ const SettingsScreen: React.FC = () => {
 
           <Card style={styles.card}>
             <View style={styles.settingRow}>
-              <Text style={[styles.settingLabel, { color: colors.text }]}>Haptic Feedback</Text>
+              <Text style={[styles.settingLabel, { color: colors.text }]}>
+                {t('settings.hapticFeedback')}
+              </Text>
               <Switch
                 value={settings.hapticEnabled}
                 onValueChange={handleToggleHaptic}
@@ -161,9 +175,11 @@ const SettingsScreen: React.FC = () => {
 
           {settings.hapticEnabled && (
             <Card style={styles.card}>
-              <Text style={[styles.cardLabel, { color: colors.textSecondary }]}>Haptic Strength</Text>
+              <Text style={[styles.cardLabel, { color: colors.textSecondary }]}>
+                {t('settings.hapticStrength')}
+              </Text>
               <View style={styles.strengthOptions}>
-                {Object.values(HapticStrength).map((strength) => (
+                {hapticStrengthOptions.map((strength) => (
                   <TouchableOpacity
                     key={strength}
                     style={[
@@ -185,7 +201,7 @@ const SettingsScreen: React.FC = () => {
                         },
                       ]}
                     >
-                      {strength.charAt(0).toUpperCase() + strength.slice(1)}
+                      {t(`settings.hapticStrengthOptions.${strength}`)}
                     </Text>
                   </TouchableOpacity>
                 ))}
@@ -196,21 +212,27 @@ const SettingsScreen: React.FC = () => {
 
         {/* Storage */}
         <View style={styles.section}>
-          <Text style={[styles.sectionTitle, { color: colors.text }]}>Storage</Text>
+          <Text style={[styles.sectionTitle, { color: colors.text }]}>
+            {t('settings.storage')}
+          </Text>
 
           <Card style={styles.card}>
             <View style={styles.settingRow}>
               <View>
-                <Text style={[styles.settingLabel, { color: colors.text }]}>Cache</Text>
+                <Text style={[styles.settingLabel, { color: colors.text }]}>
+                  {t('settings.cache')}
+                </Text>
                 <Text style={[styles.settingSubtext, { color: colors.textSecondary }]}>
-                  {formatCacheSize(settings.cacheSize)}
+                  {t('settings.cacheSize', { size: formatCacheSizeValue(settings.cacheSize) })}
                 </Text>
               </View>
               <TouchableOpacity
                 style={[styles.clearButton, { borderColor: colors.error }]}
                 onPress={handleClearCache}
               >
-                <Text style={[styles.clearButtonText, { color: colors.error }]}>Clear</Text>
+                <Text style={[styles.clearButtonText, { color: colors.error }]}>
+                  {t('settings.clear')}
+                </Text>
               </TouchableOpacity>
             </View>
           </Card>
@@ -219,19 +241,25 @@ const SettingsScreen: React.FC = () => {
         {/* Premium */}
         {purchaseState.isPremium && (
           <View style={styles.section}>
-            <Text style={[styles.sectionTitle, { color: colors.text }]}>Premium</Text>
+            <Text style={[styles.sectionTitle, { color: colors.text }]}>
+              {t('settings.premium')}
+            </Text>
 
             <Card style={[styles.card, { backgroundColor: colors.primary + '20' }]}>
               <View style={styles.premiumInfo}>
                 <Text style={[styles.premiumTitle, { color: colors.primary }]}>
-                  ⭐ Premium Active
+                  {t('settings.premiumActive')}
                 </Text>
                 <Text style={[styles.premiumText, { color: colors.text }]}>
-                  {purchaseState.subscriptionType === 'monthly' ? 'Monthly' : 'Annual'} Plan
+                  {purchaseState.subscriptionType === 'monthly'
+                    ? t('settings.subscription.monthly')
+                    : t('settings.subscription.annual')}
                 </Text>
                 {purchaseState.expirationDate && (
                   <Text style={[styles.premiumSubtext, { color: colors.textSecondary }]}>
-                    Renews on {new Date(purchaseState.expirationDate).toLocaleDateString()}
+                    {t('settings.renewsOn', {
+                      date: new Date(purchaseState.expirationDate).toLocaleDateString(),
+                    })}
                   </Text>
                 )}
               </View>
@@ -241,25 +269,35 @@ const SettingsScreen: React.FC = () => {
 
         {/* About */}
         <View style={styles.section}>
-          <Text style={[styles.sectionTitle, { color: colors.text }]}>About</Text>
+          <Text style={[styles.sectionTitle, { color: colors.text }]}>
+            {t('settings.about')}
+          </Text>
 
           <Card style={styles.card}>
             <TouchableOpacity style={styles.settingRow}>
-              <Text style={[styles.settingLabel, { color: colors.text }]}>Version</Text>
-              <Text style={[styles.settingValue, { color: colors.textSecondary }]}>1.0.0</Text>
+              <Text style={[styles.settingLabel, { color: colors.text }]}>
+                {t('settings.versionLabel')}
+              </Text>
+              <Text style={[styles.settingValue, { color: colors.textSecondary }]}>
+                {t('settings.version', { version: '1.0.0' })}
+              </Text>
             </TouchableOpacity>
           </Card>
 
           <Card style={styles.card}>
             <TouchableOpacity style={styles.settingRow}>
-              <Text style={[styles.settingLabel, { color: colors.text }]}>Privacy Policy</Text>
+              <Text style={[styles.settingLabel, { color: colors.text }]}>
+                {t('settings.privacyPolicy')}
+              </Text>
               <Text style={[styles.settingValue, { color: colors.textSecondary }]}>→</Text>
             </TouchableOpacity>
           </Card>
 
           <Card style={styles.card}>
             <TouchableOpacity style={styles.settingRow}>
-              <Text style={[styles.settingLabel, { color: colors.text }]}>Terms of Service</Text>
+              <Text style={[styles.settingLabel, { color: colors.text }]}>
+                {t('settings.termsOfService')}
+              </Text>
               <Text style={[styles.settingValue, { color: colors.textSecondary }]}>→</Text>
             </TouchableOpacity>
           </Card>
@@ -345,6 +383,11 @@ const styles = StyleSheet.create({
   themeLabel: {
     ...TYPOGRAPHY.caption,
     fontWeight: '600',
+  },
+  themeDescription: {
+    ...TYPOGRAPHY.caption,
+    marginTop: 2,
+    textAlign: 'center',
   },
   strengthOptions: {
     flexDirection: 'row',
