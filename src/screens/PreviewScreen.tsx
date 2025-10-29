@@ -205,8 +205,14 @@ const PreviewScreen: React.FC = () => {
   const resolvedIncomingIndex =
     totalPhotos > 1 ? (incomingIndex + totalPhotos) % totalPhotos : resolvedOutgoingIndex;
 
+  const isEntranceTransition = Boolean(activeTransitionSegment?.isEntrance);
   const basePhoto = photos[resolvedOutgoingIndex];
-  const overlayPhoto = totalPhotos > 1 ? photos[resolvedIncomingIndex] : basePhoto;
+  const overlayPhoto =
+    isTransitioning && isEntranceTransition
+      ? null
+      : totalPhotos > 1
+          ? photos[resolvedIncomingIndex]
+          : basePhoto;
   const currentTransitionType = isTransitioning
     ? activeTransitionSegment?.transition.type ?? null
     : null;
@@ -218,13 +224,9 @@ const PreviewScreen: React.FC = () => {
   });
 
   // Calculate transition styles for current and next layers
-  const getLayerStyles = () => {
+  const getLayerStyles = (isEntrance: boolean, hasOverlay: boolean) => {
     const hiddenNext = { opacity: 0 };
     const defaultCurrent = { opacity: 1 };
-
-    if (!overlayPhoto) {
-      return { current: defaultCurrent, next: hiddenNext };
-    }
 
     if (!isTransitioning || !currentTransitionType) {
       return { current: defaultCurrent, next: hiddenNext };
@@ -240,12 +242,15 @@ const PreviewScreen: React.FC = () => {
       outputRange: [0, 1],
     });
 
+    let currentStyle: any = defaultCurrent;
+    let nextStyle: any = hiddenNext;
+
     switch (currentTransitionType) {
-      case TransitionType.FADE:
-        return {
-          current: { opacity: fadeOut },
-          next: { opacity: fadeIn },
-        };
+      case TransitionType.FADE: {
+        currentStyle = { opacity: fadeOut };
+        nextStyle = { opacity: fadeIn };
+        break;
+      }
       case TransitionType.SLIDE_LEFT: {
         const currentTranslate = progress.interpolate({
           inputRange: [0, 1],
@@ -255,10 +260,9 @@ const PreviewScreen: React.FC = () => {
           inputRange: [0, 1],
           outputRange: [PREVIEW_WIDTH, 0],
         });
-        return {
-          current: { transform: [{ translateX: currentTranslate }] },
-          next: { opacity: 1, transform: [{ translateX: nextTranslate }] },
-        };
+        currentStyle = { transform: [{ translateX: currentTranslate }] };
+        nextStyle = { opacity: 1, transform: [{ translateX: nextTranslate }] };
+        break;
       }
       case TransitionType.SLIDE_RIGHT: {
         const currentTranslate = progress.interpolate({
@@ -269,10 +273,9 @@ const PreviewScreen: React.FC = () => {
           inputRange: [0, 1],
           outputRange: [-PREVIEW_WIDTH, 0],
         });
-        return {
-          current: { transform: [{ translateX: currentTranslate }] },
-          next: { opacity: 1, transform: [{ translateX: nextTranslate }] },
-        };
+        currentStyle = { transform: [{ translateX: currentTranslate }] };
+        nextStyle = { opacity: 1, transform: [{ translateX: nextTranslate }] };
+        break;
       }
       case TransitionType.SLIDE_UP: {
         const currentTranslate = progress.interpolate({
@@ -283,10 +286,9 @@ const PreviewScreen: React.FC = () => {
           inputRange: [0, 1],
           outputRange: [PREVIEW_HEIGHT, 0],
         });
-        return {
-          current: { transform: [{ translateY: currentTranslate }] },
-          next: { opacity: 1, transform: [{ translateY: nextTranslate }] },
-        };
+        currentStyle = { transform: [{ translateY: currentTranslate }] };
+        nextStyle = { opacity: 1, transform: [{ translateY: nextTranslate }] };
+        break;
       }
       case TransitionType.SLIDE_DOWN: {
         const currentTranslate = progress.interpolate({
@@ -297,10 +299,9 @@ const PreviewScreen: React.FC = () => {
           inputRange: [0, 1],
           outputRange: [-PREVIEW_HEIGHT, 0],
         });
-        return {
-          current: { transform: [{ translateY: currentTranslate }] },
-          next: { opacity: 1, transform: [{ translateY: nextTranslate }] },
-        };
+        currentStyle = { transform: [{ translateY: currentTranslate }] };
+        nextStyle = { opacity: 1, transform: [{ translateY: nextTranslate }] };
+        break;
       }
       case TransitionType.ZOOM: {
         const currentScale = progress.interpolate({
@@ -311,10 +312,9 @@ const PreviewScreen: React.FC = () => {
           inputRange: [0, 1],
           outputRange: [0.8, 1],
         });
-        return {
-          current: { opacity: fadeOut, transform: [{ scale: currentScale }] },
-          next: { opacity: fadeIn, transform: [{ scale: nextScale }] },
-        };
+        currentStyle = { opacity: fadeOut, transform: [{ scale: currentScale }] };
+        nextStyle = { opacity: fadeIn, transform: [{ scale: nextScale }] };
+        break;
       }
       case TransitionType.ROTATE: {
         const currentRotate = progress.interpolate({
@@ -325,16 +325,15 @@ const PreviewScreen: React.FC = () => {
           inputRange: [0, 1],
           outputRange: ['-90deg', '0deg'],
         });
-        return {
-          current: {
-            opacity: fadeOut,
-            transform: [{ perspective: 900 }, { rotateY: currentRotate }],
-          },
-          next: {
-            opacity: fadeIn,
-            transform: [{ perspective: 900 }, { rotateY: nextRotate }],
-          },
+        currentStyle = {
+          opacity: fadeOut,
+          transform: [{ perspective: 900 }, { rotateY: currentRotate }],
         };
+        nextStyle = {
+          opacity: fadeIn,
+          transform: [{ perspective: 900 }, { rotateY: nextRotate }],
+        };
+        break;
       }
       case TransitionType.CUBE: {
         const currentRotate = progress.interpolate({
@@ -353,24 +352,23 @@ const PreviewScreen: React.FC = () => {
           inputRange: [0, 1],
           outputRange: [PREVIEW_WIDTH / 2, 0],
         });
-        return {
-          current: {
-            opacity: fadeOut,
-            transform: [
-              { perspective: 900 },
-              { translateX: currentTranslate },
-              { rotateY: currentRotate },
-            ],
-          },
-          next: {
-            opacity: fadeIn,
-            transform: [
-              { perspective: 900 },
-              { translateX: nextTranslate },
-              { rotateY: nextRotate },
-            ],
-          },
+        currentStyle = {
+          opacity: fadeOut,
+          transform: [
+            { perspective: 900 },
+            { translateX: currentTranslate },
+            { rotateY: currentRotate },
+          ],
         };
+        nextStyle = {
+          opacity: fadeIn,
+          transform: [
+            { perspective: 900 },
+            { translateX: nextTranslate },
+            { rotateY: nextRotate },
+          ],
+        };
+        break;
       }
       case TransitionType.FLIP: {
         const currentRotate = progress.interpolate({
@@ -381,92 +379,95 @@ const PreviewScreen: React.FC = () => {
           inputRange: [0, 1],
           outputRange: ['-180deg', '0deg'],
         });
-        return {
-          current: {
-            opacity: fadeOut,
-            transform: [{ perspective: 900 }, { rotateX: currentRotate }],
-          },
-          next: {
-            opacity: fadeIn,
-            transform: [{ perspective: 900 }, { rotateX: nextRotate }],
-          },
+        currentStyle = {
+          opacity: fadeOut,
+          transform: [{ perspective: 900 }, { rotateX: currentRotate }],
         };
+        nextStyle = {
+          opacity: fadeIn,
+          transform: [{ perspective: 900 }, { rotateX: nextRotate }],
+        };
+        break;
       }
-      case TransitionType.DISSOLVE:
-        return {
-          current: {
-            opacity: fadeOut,
-            transform: [
-              {
-                scale: progress.interpolate({
-                  inputRange: [0, 1],
-                  outputRange: [1, 0.9],
-                }),
-              },
-            ],
-          },
-          next: {
-            opacity: fadeIn,
-            transform: [
-              {
-                scale: progress.interpolate({
-                  inputRange: [0, 1],
-                  outputRange: [1.1, 1],
-                }),
-              },
-            ],
-          },
+      case TransitionType.DISSOLVE: {
+        currentStyle = {
+          opacity: fadeOut,
+          transform: [
+            {
+              scale: progress.interpolate({
+                inputRange: [0, 1],
+                outputRange: [1, 0.9],
+              }),
+            },
+          ],
         };
-      case TransitionType.BLUR:
-        return {
-          current: {
-            opacity: fadeOut,
-            transform: [
-              {
-                translateX: progress.interpolate({
-                  inputRange: [0, 1],
-                  outputRange: [0, -40],
-                }),
-              },
-            ],
-          },
-          next: {
-            opacity: fadeIn,
-            transform: [
-              {
-                translateX: progress.interpolate({
-                  inputRange: [0, 1],
-                  outputRange: [40, 0],
-                }),
-              },
-            ],
-          },
+        nextStyle = {
+          opacity: fadeIn,
+          transform: [
+            {
+              scale: progress.interpolate({
+                inputRange: [0, 1],
+                outputRange: [1.1, 1],
+              }),
+            },
+          ],
         };
-      case TransitionType.WIPE_CIRCLE:
-        return {
-          current: {
-            opacity: fadeOut,
-            transform: [
-              {
-                scale: progress.interpolate({
-                  inputRange: [0, 1],
-                  outputRange: [1, 1.2],
-                }),
-              },
-            ],
-          },
-          next: {
-            opacity: fadeIn,
-            transform: [
-              {
-                scale: progress.interpolate({
-                  inputRange: [0, 1],
-                  outputRange: [0.8, 1],
-                }),
-              },
-            ],
-          },
+        break;
+      }
+      case TransitionType.BLUR: {
+        currentStyle = {
+          opacity: fadeOut,
+          transform: [
+            {
+              translateX: progress.interpolate({
+                inputRange: [0, 1],
+                outputRange: [0, -40],
+              }),
+            },
+          ],
         };
+        nextStyle = {
+          opacity: fadeIn,
+          transform: [
+            {
+              translateX: progress.interpolate({
+                inputRange: [0, 1],
+                outputRange: [40, 0],
+              }),
+            },
+          ],
+        };
+        break;
+      }
+      case TransitionType.WIPE_CIRCLE: {
+        const maskScale = progress.interpolate({
+          inputRange: [0, 1],
+          outputRange: [0, 1],
+        });
+        currentStyle = {
+          opacity: fadeOut,
+          transform: [
+            {
+              scale: progress.interpolate({
+                inputRange: [0, 1],
+                outputRange: [1, 1.2],
+              }),
+            },
+          ],
+        };
+        nextStyle = {
+          opacity: fadeIn,
+          transform: [
+            {
+              scale: progress.interpolate({
+                inputRange: [0, 1],
+                outputRange: [0.8, 1],
+              }),
+            },
+          ],
+        };
+        break;
+      }
       case TransitionType.PUSH: {
         const currentTranslate = progress.interpolate({
           inputRange: [0, 1],
@@ -476,20 +477,39 @@ const PreviewScreen: React.FC = () => {
           inputRange: [0, 1],
           outputRange: [PREVIEW_WIDTH, 0],
         });
-        return {
-          current: { transform: [{ translateX: currentTranslate }] },
-          next: { opacity: 1, transform: [{ translateX: nextTranslate }] },
-        };
+        currentStyle = { transform: [{ translateX: currentTranslate }] };
+        nextStyle = { opacity: 1, transform: [{ translateX: nextTranslate }] };
+        break;
       }
-      default:
-        return {
-          current: { opacity: fadeOut },
-          next: { opacity: fadeIn },
-        };
+      default: {
+        currentStyle = { opacity: fadeOut };
+        nextStyle = { opacity: fadeIn };
+        break;
+      }
     }
+
+    if (isEntrance) {
+      const incomingStyle = nextStyle || defaultCurrent;
+      return {
+        current: incomingStyle,
+        next: hiddenNext,
+      };
+    }
+
+    if (!hasOverlay) {
+      return {
+        current: currentStyle,
+        next: hiddenNext,
+      };
+    }
+
+    return {
+      current: currentStyle,
+      next: nextStyle,
+    };
   };
 
-  const layerStyles = getLayerStyles();
+  const layerStyles = getLayerStyles(isEntranceTransition, Boolean(overlayPhoto));
   const currentLayerStyle = layerStyles.current;
   const nextLayerStyle = layerStyles.next;
 

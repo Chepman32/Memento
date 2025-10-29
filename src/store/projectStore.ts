@@ -244,16 +244,14 @@ export const useProjectStore = create<ProjectState>()(
           id: generateId(),
           type: transitionType,
           duration: 1, // Default 1 second transition
-          order: photoIndex, // Insert before the photo at photoIndex
+          order: photoIndex, // Attach to the photo at photoIndex
         };
 
-        // Update order of existing transitions that come after
-        const updatedTransitions = project.transitions.map(t =>
-          t.order >= photoIndex ? { ...t, order: t.order + 1 } : t
-        );
+        // Replace any existing transition at the same index but keep others untouched
+        const preservedTransitions = project.transitions.filter(t => t.order !== photoIndex);
 
         get().updateProject(projectId, {
-          transitions: [...updatedTransitions, newTransition].sort((a, b) => a.order - b.order),
+          transitions: [...preservedTransitions, newTransition].sort((a, b) => a.order - b.order),
         });
       },
 
@@ -265,12 +263,10 @@ export const useProjectStore = create<ProjectState>()(
         if (!transitionToRemove) return;
 
         // Remove transition and update orders
-        const updatedTransitions = project.transitions
-          .filter(t => t.id !== transitionId)
-          .map(t => (t.order > transitionToRemove.order ? { ...t, order: t.order - 1 } : t));
+        const updatedTransitions = project.transitions.filter(t => t.id !== transitionId);
 
         get().updateProject(projectId, {
-          transitions: updatedTransitions,
+          transitions: updatedTransitions.sort((a, b) => a.order - b.order),
         });
       },
 

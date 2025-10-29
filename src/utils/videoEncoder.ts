@@ -47,6 +47,7 @@ export interface TransitionSegment {
     type: TransitionType;
     durationMs: number;
   };
+  isEntrance?: boolean;
 }
 
 export type TimelineSegment = PhotoSegment | TransitionSegment;
@@ -120,12 +121,32 @@ const resolveTransitionDurationMs = (transition: Transition | undefined | null):
   return DEFAULT_TRANSITION_DURATION_MS;
 };
 
-const findTransitionForIndex = (project: Project, index: number): { type: TransitionType; durationMs: number } | null => {
-  const explicit = project.transitions?.find(t => t.order === index);
+// Get entrance transition for a photo (transition BEFORE the photo)
+const findEntranceTransitionForPhoto = (project: Project, photoIndex: number): { type: TransitionType; durationMs: number } | null => {
+  // The entrance transition for photo at index i is stored at transition.order = i
+  const explicit = project.transitions?.find(t => t.order === photoIndex);
+
+  if (!explicit?.type) {
+    return null;
+  }
+
+  const durationMs = resolveTransitionDurationMs(explicit);
+
+  return {
+    type: explicit.type,
+    durationMs: durationMs > 0 ? durationMs : DEFAULT_TRANSITION_DURATION_MS,
+  };
+};
+
+// Get transition between two photos
+const findTransitionBetweenPhotos = (project: Project, fromIndex: number, toIndex: number): { type: TransitionType; durationMs: number } | null => {
+  // Transition between photos is stored at the toIndex
+  // e.g., transition between photo 0 and photo 1 is at transition.order = 1
+  const explicit = project.transitions?.find(t => t.order === toIndex);
 
   const transitionType =
     explicit?.type ??
-    project.photos[index]?.transition ??
+    project.photos[fromIndex]?.transition ??
     project.settings?.defaultTransition;
 
   if (!transitionType) {
@@ -194,6 +215,44 @@ export const buildTimeline = (project: Project): TimelineDescription => {
     coercePositiveNumber(photo.duration, defaultDurationSeconds) * 1000
   );
 
+  // Handle optional entrance transition for the very first photo
+  if (project.photos.length > 0) {
+    const entranceTransition = findEntranceTransitionForPhoto(project, 0);
+    if (entranceTransition) {
+      const firstPhotoDurationMs = Math.max(100, normalizedDurations[0]);
+      let entranceDurationMs = clampTransitionDuration(
+        entranceTransition.durationMs,
+        firstPhotoDurationMs,
+        firstPhotoDurationMs
+      );
+
+      if (entranceDurationMs > 0 && entranceDurationMs < MIN_TRANSITION_DURATION_MS) {
+        entranceDurationMs = MIN_TRANSITION_DURATION_MS;
+      }
+
+      entranceDurationMs = Math.min(entranceDurationMs, firstPhotoDurationMs);
+
+      if (entranceDurationMs > 0) {
+        const entranceSegment: TransitionSegment = {
+          type: 'transition',
+          fromIndex: -1,
+          toIndex: 0,
+          startMs: 0,
+          endMs: entranceDurationMs,
+          durationMs: entranceDurationMs,
+          transition: {
+            type: entranceTransition.type,
+            durationMs: entranceDurationMs,
+          },
+          isEntrance: true,
+        };
+
+        transitionSegments.push(entranceSegment);
+        segments.push(entranceSegment);
+      }
+    }
+  }
+
   let timelineCursorMs = 0;
 
   project.photos.forEach((photo, index) => {
@@ -202,7 +261,7 @@ export const buildTimeline = (project: Project): TimelineDescription => {
     const endMs = startMs + durationMs;
 
     const nextPhotoExists = index < project.photos.length - 1;
-    const rawTransition = nextPhotoExists ? findTransitionForIndex(project, index) : null;
+    const rawTransition = nextPhotoExists ? findTransitionBetweenPhotos(project, index, index + 1) : null;
 
     let transitionDurationMs = 0;
 
@@ -303,7 +362,22 @@ export const videoEncoder = {
     const bitrate = QUALITY_BITRATES[quality];
     const fps = config.fps ?? (quality === '4K' ? 60 : 30);
 
-    const inputs = timeline.photoSegments
+    // Check if there's an entrance transition for the first photo
+    const firstPhotoEntranceTransition = findEntranceTransitionForPhoto(project, 0);
+    let hasBlackFrame = false;
+    let blackFrameDuration = 0;
+
+    let inputs = '';
+
+    // Add black frame if there's an entrance transition
+    if (firstPhotoEntranceTransition) {
+      hasBlackFrame = true;
+      blackFrameDuration = firstPhotoEntranceTransition.durationMs / 1000;
+      inputs = `-f lavfi -t ${formatSeconds(blackFrameDuration)} -i color=c=black:s=${dimensions.width}x${dimensions.height} `;
+    }
+
+    // Add photo inputs
+    inputs += timeline.photoSegments
       .map((segment, index) => {
         const seconds = formatSeconds(segment.durationMs / 1000);
         // Remove file:// prefix for FFmpeg
@@ -314,21 +388,44 @@ export const videoEncoder = {
 
     const filters: string[] = [];
 
+    // Adjust input indices if we have a black frame
+    const inputOffset = hasBlackFrame ? 1 : 0;
+
+    // Scale all inputs (including black frame if present)
+    if (hasBlackFrame) {
+      filters.push(`[0:v]setsar=1[vblack]`);
+    }
+
     timeline.photoSegments.forEach((segment, index) => {
+      const inputIndex = index + inputOffset;
       filters.push(
-        `[${index}:v]scale=${dimensions.width}:${dimensions.height}:force_original_aspect_ratio=decrease,pad=${dimensions.width}:${dimensions.height}:(ow-iw)/2:(oh-ih)/2,setsar=1[v${index}]`
+        `[${inputIndex}:v]scale=${dimensions.width}:${dimensions.height}:force_original_aspect_ratio=decrease,pad=${dimensions.width}:${dimensions.height}:(ow-iw)/2:(oh-ih)/2,setsar=1[v${index}]`
       );
     });
 
     let finalLabel = 'v0';
+    let cumulativeSeconds = 0;
+
+    // Apply entrance transition if we have a black frame
+    if (hasBlackFrame && firstPhotoEntranceTransition) {
+      const ffmpegTransition = mapTransitionToFfmpeg(firstPhotoEntranceTransition.type);
+      filters.push(
+        `[vblack][v0]xfade=transition=${ffmpegTransition}:duration=${formatSeconds(
+          blackFrameDuration
+        )}:offset=0[ventry]`
+      );
+      finalLabel = 'ventry';
+      cumulativeSeconds = timeline.photoSegments[0].durationMs / 1000;
+    } else {
+      cumulativeSeconds = timeline.photoSegments[0].durationMs / 1000;
+    }
 
     if (timeline.photoSegments.length > 1) {
       const transitionsByIndex = new Map<number, TransitionSegment>(
         timeline.transitionSegments.map(segment => [segment.fromIndex, segment])
       );
 
-      let currentLabel = 'v0';
-      let cumulativeSeconds = timeline.photoSegments[0].durationMs / 1000;
+      let currentLabel = finalLabel;
 
       timeline.photoSegments.slice(0, -1).forEach((_, index) => {
         const nextLabel = `v${index + 1}`;
