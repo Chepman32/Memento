@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef, useMemo } from 'react';
+import React, { useState, useEffect, useRef, useMemo, useCallback } from 'react';
 import {
   View,
   Text,
@@ -11,13 +11,14 @@ import {
 import { useNavigation, useRoute, RouteProp } from '@react-navigation/native';
 import { StackNavigationProp } from '@react-navigation/stack';
 import { Canvas, Image as SkiaImage, useImage } from '@shopify/react-native-skia';
+import FeatherIcon from 'react-native-vector-icons/Feather';
 import { RootStackParamList } from '../navigation/navigationTypes';
 import useProjectStore from '../store/projectStore';
 import { useThemeStore } from '../store/themeStore';
 import { IconButton } from '../components/common';
 import { haptics } from '../utils/hapticFeedback';
 import { sounds } from '../utils/soundEffects';
-import { SPACING, SCREEN_WIDTH, SCREEN_HEIGHT } from '../constants/theme';
+import { SPACING, SCREEN_WIDTH, SCREEN_HEIGHT, SHADOWS } from '../constants/theme';
 import { buildTimeline, TimelineDescription, TransitionSegment, PhotoSegment } from '../utils/videoEncoder';
 import { TransitionType } from '../types/project.types';
 
@@ -33,6 +34,7 @@ const EMPTY_TIMELINE: TimelineDescription = {
   totalDurationMs: 0,
 };
 const WATERMARK_ICON = require('../assets/icons/icon.png');
+const CONTROL_ICON_COLOR = '#FFFFFF';
 
 const PreviewScreen: React.FC = () => {
   const navigation = useNavigation<PreviewScreenNavigationProp>();
@@ -137,6 +139,66 @@ const PreviewScreen: React.FC = () => {
 
   const isTransitioning = Boolean(activeTransitionSegment);
 
+  const transitionsIntoPhoto = useMemo(() => {
+    const map = new Map<
+      number,
+      {
+        entrance?: TransitionSegment;
+        regular?: TransitionSegment;
+      }
+    >();
+
+    timeline.transitionSegments.forEach(segment => {
+      if (segment.toIndex === undefined || segment.toIndex < 0) {
+        return;
+      }
+
+      const existing = map.get(segment.toIndex) ?? {};
+
+      if (segment.isEntrance) {
+        if (!existing.entrance || segment.endMs > existing.entrance.endMs) {
+          existing.entrance = segment;
+        }
+      } else if (!existing.regular || segment.endMs > existing.regular.endMs) {
+        existing.regular = segment;
+      }
+
+      map.set(segment.toIndex, existing);
+    });
+
+    return map;
+  }, [timeline.transitionSegments]);
+
+  const seekToPhoto = useCallback(
+    (targetIndex: number) => {
+      const targetSegment = timeline.photoSegments[targetIndex];
+      if (!targetSegment) {
+        return;
+      }
+
+      const transitionInfo = transitionsIntoPhoto.get(targetIndex);
+      let newPosition = targetSegment.startMs;
+
+      if (transitionInfo?.entrance) {
+        newPosition = Math.max(newPosition, transitionInfo.entrance.endMs);
+      }
+      if (transitionInfo?.regular) {
+        newPosition = Math.max(newPosition, transitionInfo.regular.endMs);
+      }
+
+      if (newPosition >= targetSegment.endMs) {
+        newPosition = Math.max(targetSegment.startMs, targetSegment.endMs - 1);
+      }
+
+      const clamped = Math.max(0, Math.min(newPosition, Math.max(totalDurationMs - 1, 0)));
+
+      setPlaybackPositionMs(clamped);
+      pausedAtRef.current = clamped;
+      playbackStartRef.current = Date.now() - clamped;
+    },
+    [timeline.photoSegments, transitionsIntoPhoto, totalDurationMs]
+  );
+
   useEffect(() => {
     if (!totalDurationMs) {
       progressAnim.setValue(0);
@@ -178,6 +240,80 @@ const PreviewScreen: React.FC = () => {
       }
       return !prev;
     });
+  };
+
+  const handleNext = () => {
+    haptics.medium();
+    sounds.tap();
+    if (timeline.photoSegments.length === 0) return;
+
+    if (rafRef.current !== null) {
+      cancelAnimationFrame(rafRef.current);
+      rafRef.current = null;
+    }
+
+    // Pause playback when navigating
+    if (isPlaying) {
+      setIsPlaying(false);
+    }
+
+    // Find the next photo segment
+    let currentSegmentIndex = timeline.photoSegments.findIndex(
+      segment => playbackPositionMs >= segment.startMs && playbackPositionMs < segment.endMs
+    );
+
+    // If we're not in any segment (e.g., in a transition), find the last passed segment
+    if (currentSegmentIndex === -1) {
+      currentSegmentIndex = timeline.photoSegments.findIndex(
+        segment => segment.startMs > playbackPositionMs
+      );
+      if (currentSegmentIndex === -1) {
+        currentSegmentIndex = timeline.photoSegments.length - 1;
+      } else {
+        currentSegmentIndex = Math.max(0, currentSegmentIndex - 1);
+      }
+    }
+
+    const nextSegmentIndex = (currentSegmentIndex + 1) % timeline.photoSegments.length;
+    seekToPhoto(nextSegmentIndex);
+  };
+
+  const handlePrev = () => {
+    haptics.medium();
+    sounds.tap();
+    if (timeline.photoSegments.length === 0) return;
+
+    if (rafRef.current !== null) {
+      cancelAnimationFrame(rafRef.current);
+      rafRef.current = null;
+    }
+
+    // Pause playback when navigating
+    if (isPlaying) {
+      setIsPlaying(false);
+    }
+
+    // Find the current photo segment
+    let currentSegmentIndex = timeline.photoSegments.findIndex(
+      segment => playbackPositionMs >= segment.startMs && playbackPositionMs < segment.endMs
+    );
+
+    // If we're not in any segment (e.g., in a transition), find the last passed segment
+    if (currentSegmentIndex === -1) {
+      currentSegmentIndex = timeline.photoSegments.findIndex(
+        segment => segment.startMs > playbackPositionMs
+      );
+      if (currentSegmentIndex === -1) {
+        currentSegmentIndex = timeline.photoSegments.length - 1;
+      } else {
+        currentSegmentIndex = Math.max(0, currentSegmentIndex - 1);
+      }
+    }
+
+    const prevSegmentIndex = currentSegmentIndex <= 0
+      ? timeline.photoSegments.length - 1
+      : currentSegmentIndex - 1;
+    seekToPhoto(prevSegmentIndex);
   };
 
   const handleExport = () => {
@@ -566,13 +702,39 @@ const PreviewScreen: React.FC = () => {
         </View>
 
         <View style={styles.playbackControls}>
-          <IconButton
-            icon={<Text style={styles.controlIcon}>{isPlaying ? '⏸' : '▶️'}</Text>}
+          <TouchableOpacity
+            onPress={handlePrev}
+            activeOpacity={0.7}
+            style={[styles.navButton, { backgroundColor: colors.primary }]}
+          >
+            <FeatherIcon
+              name="skip-back"
+              size={28}
+              color={CONTROL_ICON_COLOR}
+            />
+          </TouchableOpacity>
+          <TouchableOpacity
             onPress={handlePlayPause}
-            size={60}
-            variant="filled"
+            activeOpacity={0.7}
             style={[styles.playButton, { backgroundColor: colors.primary }]}
-          />
+          >
+            <FeatherIcon
+              name={isPlaying ? 'pause' : 'play'}
+              size={32}
+              color={CONTROL_ICON_COLOR}
+            />
+          </TouchableOpacity>
+          <TouchableOpacity
+            onPress={handleNext}
+            activeOpacity={0.7}
+            style={[styles.navButton, { backgroundColor: colors.primary }]}
+          >
+            <FeatherIcon
+              name="skip-forward"
+              size={28}
+              color={CONTROL_ICON_COLOR}
+            />
+          </TouchableOpacity>
         </View>
 
         <TouchableOpacity
@@ -721,12 +883,12 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   watermarkImage: {
-    width: 140,
-    height: 140,
+    width: 80,
+    height: 80,
   },
   watermarkText: {
     color: '#FFFFFF',
-    fontWeight: '800',
+    fontWeight: '600',
     letterSpacing: 1,
     textTransform: 'uppercase',
   },
@@ -763,13 +925,23 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     marginBottom: SPACING.sm,
+    gap: SPACING.md,
   },
   playButton: {
-    marginHorizontal: 0,
+    width: 60,
+    height: 60,
+    borderRadius: 30,
+    alignItems: 'center',
+    justifyContent: 'center',
+    ...SHADOWS.sm,
   },
-  controlIcon: {
-    fontSize: 24,
-    color: '#FFFFFF',
+  navButton: {
+    width: 50,
+    height: 50,
+    borderRadius: 25,
+    alignItems: 'center',
+    justifyContent: 'center',
+    ...SHADOWS.sm,
   },
   exportButton: {
     height: 44,
