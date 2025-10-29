@@ -271,16 +271,6 @@ export const EditorScreen = () => {
         return (
           <View style={styles.tabContent}>
             <View style={styles.controlGroup}>
-              <Text style={[styles.controlLabel, { color: colors.textSecondary }]}>
-                {activePhotoIndex === 0
-                  ? 'Transition In (First Photo)'
-                  : `Transition: Photo ${activePhotoIndex} → Photo ${activePhotoIndex + 1}`}
-              </Text>
-              <Text style={[styles.helpText, { color: colors.textSecondary, marginBottom: SPACING.sm }]}>
-                {currentTransition
-                  ? `Current: ${TRANSITIONS[currentTransition.type]?.name || 'Unknown'}`
-                  : 'No transition selected - tap to add one'}
-              </Text>
               <TransitionPicker
                 selectedTransition={currentTransition?.type || null}
                 onSelect={handleTransitionChange}
