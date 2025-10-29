@@ -763,50 +763,45 @@ const PhotoTimelineItem: React.FC<PhotoTimelineItemProps> = ({
     });
 
   const pan = Gesture.Pan()
-    .activeOffsetX([-10, 10])
-    .failOffsetY([-10, 10])
+    .enabled(draggedIndex === index)
     .onUpdate((event) => {
-      if (draggedIndex === index) {
-        translateX.value = event.translationX;
+      translateX.value = event.translationX;
 
-        // Calculate target index based on drag distance
-        const movedItems = Math.round(translateX.value / itemWidth);
-        const newTargetIndex = Math.max(0, Math.min(photosLength - 1, index + movedItems));
+      // Calculate target index based on drag distance
+      const movedItems = Math.round(translateX.value / itemWidth);
+      const newTargetIndex = Math.max(0, Math.min(photosLength - 1, index + movedItems));
 
-        // Update positions array in real-time for live reordering
-        const oldOrder = [...positions.value];
-        const currentPos = oldOrder.indexOf(index);
-        const targetPos = newTargetIndex;
+      // Update positions array in real-time for live reordering
+      const oldOrder = [...positions.value];
+      const currentPos = oldOrder.indexOf(index);
+      const targetPos = newTargetIndex;
 
-        if (currentPos !== targetPos) {
-          // Create new order array
-          const newOrder = oldOrder.filter(i => i !== index);
-          newOrder.splice(targetPos, 0, index);
-          positions.value = newOrder;
+      if (currentPos !== targetPos) {
+        // Create new order array
+        const newOrder = oldOrder.filter(i => i !== index);
+        newOrder.splice(targetPos, 0, index);
+        positions.value = newOrder;
 
-          runOnJS(setCurrentTargetIndex)(newTargetIndex);
-          runOnJS(haptics.light)();
-        }
+        runOnJS(setCurrentTargetIndex)(newTargetIndex);
+        runOnJS(haptics.light)();
       }
     })
     .onEnd(() => {
-      if (draggedIndex === index) {
-        const movedItems = Math.round(translateX.value / itemWidth);
-        const targetIndex = Math.max(0, Math.min(photosLength - 1, index + movedItems));
+      const movedItems = Math.round(translateX.value / itemWidth);
+      const targetIndex = Math.max(0, Math.min(photosLength - 1, index + movedItems));
 
-        if (targetIndex !== index) {
-          runOnJS(onDragEnd)(index, targetIndex);
-          runOnJS(haptics.success)();
-        }
-
-        scale.value = withSpring(1);
-        translateX.value = withSpring(0);
-        runOnJS(setDraggedIndex)(null);
-        runOnJS(setCurrentTargetIndex)(null);
-
-        // Reset positions after actual reorder
-        positions.value = Array.from({length: photosLength}, (_, i) => i);
+      if (targetIndex !== index) {
+        runOnJS(onDragEnd)(index, targetIndex);
+        runOnJS(haptics.success)();
       }
+
+      scale.value = withSpring(1);
+      translateX.value = withSpring(0);
+      runOnJS(setDraggedIndex)(null);
+      runOnJS(setCurrentTargetIndex)(null);
+
+      // Reset positions after actual reorder
+      positions.value = Array.from({length: photosLength}, (_, i) => i);
     });
 
   const tap = Gesture.Tap()
@@ -921,7 +916,7 @@ const PhotoTimeline: React.FC<PhotoTimelineProps> = ({ photos, transitions, acti
       horizontal
       showsHorizontalScrollIndicator={false}
       contentContainerStyle={styles.timelineContent}
-      scrollEnabled={draggedIndex === null}
+      scrollEnabled={true}
     >
       {photos.map((photo, index) => {
         const transition = transitions?.find(t => t.order === index);
