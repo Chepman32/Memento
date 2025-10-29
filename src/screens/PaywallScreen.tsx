@@ -10,6 +10,7 @@ import {
 import { useNavigation } from '@react-navigation/native';
 import { StackNavigationProp } from '@react-navigation/stack';
 import { RootStackParamList } from '../navigation/navigationTypes';
+import FeatherIcon from 'react-native-vector-icons/Feather';
 import { useThemeStore } from '../store/themeStore';
 import { usePurchaseStore } from '../store/purchaseStore';
 import { Button, Card } from '../components/common';
@@ -76,12 +77,12 @@ const PaywallScreen: React.FC = () => {
   };
 
   const features = [
-    { icon: '📷', title: 'Unlimited Photos', description: 'Create slideshows with 50+ photos' },
-    { icon: '✨', title: 'Premium Transitions', description: 'Access all 13 transition effects' },
-    { icon: '🎵', title: 'Custom Music', description: 'Add your own background music' },
-    { icon: '4️⃣', title: '4K Export', description: 'Export in ultra-high definition' },
-    { icon: '💧', title: 'No Watermark', description: 'Clean, professional exports' },
-    { icon: '🎨', title: 'Advanced Effects', description: 'Ken Burns, color grading & more' },
+    { iconName: 'image', title: 'Unlimited Photos', description: 'Create slideshows with 50+ photos' },
+    { iconName: 'film', title: 'Premium Transitions', description: 'Access all 13 transition effects' },
+    { iconName: 'music', title: 'Custom Music', description: 'Add your own background music' },
+    { iconName: 'maximize', title: '4K Export', description: 'Export in ultra-high definition' },
+    { iconName: 'droplet', title: 'No Watermark', description: 'Clean, professional exports' },
+    { iconName: 'aperture', title: 'Advanced Effects', description: 'Ken Burns, color grading & more' },
   ];
 
   return (
@@ -106,7 +107,12 @@ const PaywallScreen: React.FC = () => {
         <View style={styles.features}>
           {features.map((feature, index) => (
             <View key={index} style={styles.featureRow}>
-              <Text style={styles.featureIcon}>{feature.icon}</Text>
+              <FeatherIcon
+                name={feature.iconName}
+                size={24}
+                color={colors.primary}
+                style={styles.featureIcon}
+              />
               <View style={styles.featureContent}>
                 <Text style={[styles.featureTitle, { color: colors.text }]}>{feature.title}</Text>
                 <Text style={[styles.featureDescription, { color: colors.textSecondary }]}>
@@ -251,7 +257,6 @@ const styles = StyleSheet.create({
     marginBottom: SPACING.lg,
   },
   featureIcon: {
-    fontSize: 32,
     marginRight: SPACING.md,
   },
   featureContent: {

@@ -10,6 +10,7 @@ import {
 } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { StackNavigationProp } from '@react-navigation/stack';
+import FeatherIcon from 'react-native-vector-icons/Feather';
 import { RootStackParamList } from '../navigation/navigationTypes';
 import useProjectStore from '../store/projectStore';
 import { useThemeStore } from '../store/themeStore';
@@ -88,7 +89,7 @@ const HomeScreen: React.FC = () => {
             {/* Delete button */}
             <View style={styles.deleteButtonContainer}>
               <IconButton
-                icon={<Text style={styles.deleteIcon}>🗑️</Text>}
+                icon={<FeatherIcon name="trash-2" size={18} color="#FFFFFF" />}
                 onPress={() => handleDeleteProject(item.id)}
                 size={32}
                 variant="filled"
@@ -134,11 +135,16 @@ const HomeScreen: React.FC = () => {
         <View>
           <Text style={[styles.headerTitle, { color: colors.text }]}>SlideMint</Text>
           {purchaseState.isPremium && (
-            <Text style={[styles.premiumBadge, { color: colors.primary }]}>⭐ Premium</Text>
+            <View style={styles.premiumBadgeContainer}>
+              <FeatherIcon name="star" size={14} color={colors.primary} />
+              <Text style={[styles.premiumBadgeText, { color: colors.primary }]}>
+                Premium
+              </Text>
+            </View>
           )}
         </View>
         <IconButton
-          icon={<Text style={styles.settingsIcon}>⚙️</Text>}
+          icon={<FeatherIcon name="settings" size={24} color={colors.text} />}
           onPress={handleOpenSettings}
           size={44}
         />
@@ -163,7 +169,7 @@ const HomeScreen: React.FC = () => {
           onPress={handleCreateNew}
           activeOpacity={0.8}
         >
-          <Text style={styles.fabIcon}>+</Text>
+          <FeatherIcon name="plus" size={28} color="#FFFFFF" />
         </TouchableOpacity>
       )}
     </SafeAreaView>
@@ -184,13 +190,15 @@ const styles = StyleSheet.create({
   headerTitle: {
     ...TYPOGRAPHY.h2,
   },
-  premiumBadge: {
-    ...TYPOGRAPHY.caption,
-    fontWeight: '600',
+  premiumBadgeContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
     marginTop: 4,
   },
-  settingsIcon: {
-    fontSize: 24,
+  premiumBadgeText: {
+    ...TYPOGRAPHY.caption,
+    fontWeight: '600',
+    marginLeft: SPACING.xs,
   },
   projectsGrid: {
     padding: SPACING.md,
@@ -224,9 +232,6 @@ const styles = StyleSheet.create({
     position: 'absolute',
     top: SPACING.xs,
     right: SPACING.xs,
-  },
-  deleteIcon: {
-    fontSize: 16,
   },
   projectInfo: {
     padding: SPACING.sm,
@@ -267,11 +272,6 @@ const styles = StyleSheet.create({
     borderRadius: 30,
     justifyContent: 'center',
     alignItems: 'center',
-  },
-  fabIcon: {
-    fontSize: 32,
-    color: '#FFFFFF',
-    fontWeight: '300',
   },
 });
 

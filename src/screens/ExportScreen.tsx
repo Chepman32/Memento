@@ -15,6 +15,7 @@ import useProjectStore from '../store/projectStore';
 import { useThemeStore } from '../store/themeStore';
 import { usePurchaseStore } from '../store/purchaseStore';
 import { Button, Card, LoadingSpinner } from '../components/common';
+import FeatherIcon from 'react-native-vector-icons/Feather';
 import { haptics } from '../utils/hapticFeedback';
 import { sounds } from '../utils/soundEffects';
 import { videoEncoder } from '../utils/videoEncoder';
@@ -357,7 +358,7 @@ const OptionCard: React.FC<OptionCardProps> = ({ title, subtitle, selected, onPr
       <Text style={[styles.optionSubtitle, { color: colors.textSecondary }]}>{subtitle}</Text>
       {locked && (
         <View style={styles.lockBadge}>
-          <Text style={styles.lockIcon}>🔒</Text>
+          <FeatherIcon name="lock" size={16} color={colors.primary} />
         </View>
       )}
     </Card>
@@ -426,9 +427,6 @@ const styles = StyleSheet.create({
     position: 'absolute',
     top: 8,
     right: 8,
-  },
-  lockIcon: {
-    fontSize: 16,
   },
   footer: {
     padding: SPACING.md,
