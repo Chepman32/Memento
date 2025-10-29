@@ -136,6 +136,7 @@ const ExportScreen: React.FC = () => {
           fps: 10,
           colors: 256,
           optimize: true,
+          includeWatermark: !hasFeature(PremiumFeature.NO_WATERMARK),
           onProgress: (progress) => {
             setExportProgress(progress);
           },

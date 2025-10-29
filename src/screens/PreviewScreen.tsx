@@ -6,10 +6,11 @@ import {
   TouchableOpacity,
   SafeAreaView,
   Animated as RNAnimated,
+  Image as RNImage,
 } from 'react-native';
 import { useNavigation, useRoute, RouteProp } from '@react-navigation/native';
 import { StackNavigationProp } from '@react-navigation/stack';
-import { Canvas, Image, useImage } from '@shopify/react-native-skia';
+import { Canvas, Image as SkiaImage, useImage } from '@shopify/react-native-skia';
 import { RootStackParamList } from '../navigation/navigationTypes';
 import useProjectStore from '../store/projectStore';
 import { useThemeStore } from '../store/themeStore';
@@ -31,6 +32,7 @@ const EMPTY_TIMELINE: TimelineDescription = {
   segments: [],
   totalDurationMs: 0,
 };
+const WATERMARK_ICON = require('../assets/icons/icon.png');
 
 const PreviewScreen: React.FC = () => {
   const navigation = useNavigation<PreviewScreenNavigationProp>();
@@ -440,10 +442,6 @@ const PreviewScreen: React.FC = () => {
         break;
       }
       case TransitionType.WIPE_CIRCLE: {
-        const maskScale = progress.interpolate({
-          inputRange: [0, 1],
-          outputRange: [0, 1],
-        });
         currentStyle = {
           opacity: fadeOut,
           transform: [
@@ -548,6 +546,7 @@ const PreviewScreen: React.FC = () => {
             />
           </RNAnimated.View>
         )}
+        <PreviewWatermark width={PREVIEW_WIDTH} height={PREVIEW_HEIGHT} />
       </View>
 
       {/* Progress bar */}
@@ -586,6 +585,54 @@ const PreviewScreen: React.FC = () => {
     </SafeAreaView>
   );
 };
+
+interface PreviewWatermarkProps {
+  width: number;
+  height: number;
+}
+
+const PreviewWatermark: React.FC<PreviewWatermarkProps> = React.memo(({ width, height }) => {
+  const iconSize = Math.max(Math.round(width * 0.28), 140);
+  const margin = Math.max(Math.round(Math.min(width, height) * 0.04), 24);
+  const fontSize = Math.max(Math.round(height * 0.05), 26);
+  const textSpacing = Math.max(Math.round(fontSize * 0.45), 12);
+
+  return (
+    <View
+      pointerEvents="none"
+      style={[
+        styles.watermarkContainer,
+        {
+          bottom: margin,
+          right: margin,
+        },
+      ]}
+    >
+      <RNImage
+        source={WATERMARK_ICON}
+        style={[
+          styles.watermarkImage,
+          {
+            width: iconSize,
+            height: iconSize,
+          },
+        ]}
+        resizeMode="contain"
+      />
+      <Text
+        style={[
+          styles.watermarkText,
+          {
+            fontSize,
+            marginTop: textSpacing,
+          },
+        ]}
+      >
+        SlideMint
+      </Text>
+    </View>
+  );
+});
 
 // Photo Canvas Component
 interface PhotoCanvasProps {
@@ -637,7 +684,7 @@ const PhotoCanvas: React.FC<PhotoCanvasProps> = ({ photo, width, height }) => {
 
   return (
     <Canvas style={{ width, height }}>
-      <Image
+      <SkiaImage
         image={image}
         x={x}
         y={y}
@@ -668,6 +715,20 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
+  },
+  watermarkContainer: {
+    position: 'absolute',
+    alignItems: 'center',
+  },
+  watermarkImage: {
+    width: 140,
+    height: 140,
+  },
+  watermarkText: {
+    color: '#FFFFFF',
+    fontWeight: '800',
+    letterSpacing: 1,
+    textTransform: 'uppercase',
   },
   photoLayer: {
     position: 'absolute',

@@ -1,5 +1,6 @@
 import { TRANSITIONS } from '../constants/transitions';
 import { executeFfmpeg, cancelActiveFfmpeg } from './ffmpegBridge';
+import { prepareWatermarkResources, WatermarkResources } from './watermark';
 import {
   ExportQuality,
   Project,
@@ -14,6 +15,7 @@ export interface VideoEncoderConfig {
   quality: ExportQuality;
   resolution: ResolutionPreset;
   includeWatermark?: boolean;
+  watermarkResources?: WatermarkResources | null;
   onProgress?: (progress: number) => void;
   fps?: number;
 }
@@ -196,6 +198,14 @@ const formatSeconds = (seconds: number) =>
     .replace(/(\.\d*?[1-9])0+$/, '$1')
     .replace(/\.0+$/, '');
 
+const escapeFfmpegPath = (value: string): string => {
+  return value.replace(/(["'\\$`])/g, '\\$1');
+};
+
+const escapeDrawtextValue = (value: string): string => {
+  return value.replace(/\\/g, '\\\\').replace(/:/g, '\\:').replace(/'/g, "\\'");
+};
+
 export const buildTimeline = (project: Project): TimelineDescription => {
   if (!project || !project.photos.length) {
     return {
@@ -351,7 +361,7 @@ export const videoEncoder = {
   },
 
   buildFFmpegCommand: (config: VideoEncoderConfig): string => {
-    const { project, outputPath, quality, resolution } = config;
+    const { project, outputPath, quality, resolution, watermarkResources } = config;
     const timeline = buildTimeline(project);
 
     if (!timeline.photoSegments.length) {
@@ -361,6 +371,7 @@ export const videoEncoder = {
     const dimensions = RESOLUTION_DIMENSIONS[resolution];
     const bitrate = QUALITY_BITRATES[quality];
     const fps = config.fps ?? (quality === '4K' ? 60 : 30);
+    const includeWatermark = Boolean(config.includeWatermark && watermarkResources?.imagePath);
 
     // Check if there's an entrance transition for the first photo
     const firstPhotoEntranceTransition = findEntranceTransitionForPhoto(project, 0);
@@ -378,7 +389,7 @@ export const videoEncoder = {
 
     // Add photo inputs
     inputs += timeline.photoSegments
-      .map((segment, index) => {
+      .map(segment => {
         const seconds = formatSeconds(segment.durationMs / 1000);
         // Remove file:// prefix for FFmpeg
         const cleanUri = segment.uri.replace(/^file:\/\//, '');
@@ -386,10 +397,17 @@ export const videoEncoder = {
       })
       .join(' ');
 
+    if (includeWatermark && watermarkResources) {
+      inputs += ` -loop 1 -i "${escapeFfmpegPath(watermarkResources.imagePath)}"`;
+    }
+
     const filters: string[] = [];
 
     // Adjust input indices if we have a black frame
     const inputOffset = hasBlackFrame ? 1 : 0;
+    const watermarkInputIndex = includeWatermark
+      ? timeline.photoSegments.length + inputOffset
+      : null;
 
     // Scale all inputs (including black frame if present)
     if (hasBlackFrame) {
@@ -455,6 +473,45 @@ export const videoEncoder = {
       });
     }
 
+    if (includeWatermark && watermarkInputIndex !== null && watermarkResources) {
+      const watermarkWidth = Math.max(Math.round(dimensions.width * 0.28), 160);
+      const margin = Math.max(
+        Math.round(Math.min(dimensions.width, dimensions.height) * 0.04),
+        24
+      );
+      const fontSize = Math.max(Math.round(dimensions.height * 0.05), 26);
+      const textSpacing = Math.max(Math.round(fontSize * 0.45), 12);
+      const overlayYOffset = margin + fontSize + textSpacing;
+
+      filters.push(
+        `[${watermarkInputIndex}:v]scale=${watermarkWidth}:-1:flags=lanczos,format=rgba[wm_icon]`
+      );
+
+      filters.push(
+        `[${finalLabel}][wm_icon]overlay=main_w-overlay_w-${margin}:main_h-overlay_h-${overlayYOffset}[wm_applied]`
+      );
+
+      const fontDirective = watermarkResources.fontPath
+        ? `fontfile='${escapeDrawtextValue(watermarkResources.fontPath)}'`
+        : `font='Sans'`;
+
+      const drawtextParts = [
+        `text='SlideMint'`,
+        fontDirective,
+        `fontsize=${fontSize}`,
+        `fontcolor=white`,
+        `x=w-tw-${margin}`,
+        `y=h-${margin}`,
+        `borderw=6`,
+        `bordercolor=black`,
+        `box=1`,
+        `boxcolor=black`,
+      ];
+
+      filters.push(`[wm_applied]drawtext=${drawtextParts.join(':')}[wm_text]`);
+      finalLabel = 'wm_text';
+    }
+
     filters.push(`[${finalLabel}]format=yuv420p[outv]`);
 
     const filterComplex = filters.join(';');
@@ -483,9 +540,26 @@ export const videoEncoder = {
     }
 
     let command: string;
+    let watermarkResources: WatermarkResources | null = null;
+
+    if (config.includeWatermark) {
+      try {
+        watermarkResources = await prepareWatermarkResources();
+      } catch (error) {
+        console.warn(
+          '[FFmpeg-Video]',
+          error instanceof Error
+            ? `Failed to prepare watermark resources: ${error.message}`
+            : 'Failed to prepare watermark resources.'
+        );
+      }
+    }
 
     try {
-      command = videoEncoder.buildFFmpegCommand(config);
+      command = videoEncoder.buildFFmpegCommand({
+        ...config,
+        watermarkResources: watermarkResources ?? undefined,
+      });
     } catch (error) {
       return {
         success: false,

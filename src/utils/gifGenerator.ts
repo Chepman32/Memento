@@ -2,6 +2,7 @@ import RNFS from 'react-native-fs';
 import videoEncoder from './videoEncoder';
 import { executeFfmpeg } from './ffmpegBridge';
 import { Project, ExportQuality, ResolutionPreset } from '../types/project.types';
+import { prepareWatermarkResources, WatermarkResources } from './watermark';
 
 export interface GifConfig {
   project: Project;
@@ -11,6 +12,7 @@ export interface GifConfig {
   fps: number;
   optimize: boolean;
   colors: number;
+  includeWatermark?: boolean;
   onProgress?: (progress: number) => void;
 }
 
@@ -149,6 +151,21 @@ export const gifGenerator = {
     const colors = Math.min(Math.max(config.colors, 2), 256);
     const resolution = pickResolutionPreset(config.width, config.height);
     const estimatedDurationMs = Math.max(timeline.totalDurationMs, 1000);
+    const includeWatermark = config.includeWatermark ?? true;
+    let watermarkResources: WatermarkResources | null = null;
+
+    if (includeWatermark) {
+      try {
+        watermarkResources = await prepareWatermarkResources();
+      } catch (error) {
+        console.warn(
+          '[FFmpeg-GIF]',
+          error instanceof Error
+            ? `Failed to prepare watermark resources: ${error.message}`
+            : 'Failed to prepare watermark resources.'
+        );
+      }
+    }
 
     try {
       const videoCommand = videoEncoder.buildFFmpegCommand({
@@ -156,7 +173,8 @@ export const gifGenerator = {
         outputPath: tempVideoPath,
         quality: ExportQuality.MEDIUM,
         resolution,
-        includeWatermark: false,
+        includeWatermark,
+        watermarkResources: watermarkResources ?? undefined,
         fps: config.fps,
       });
 
