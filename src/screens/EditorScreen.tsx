@@ -3,6 +3,7 @@ import { View, StyleSheet, Dimensions, ScrollView, TouchableOpacity, Text, Image
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useNavigation, useRoute, RouteProp } from '@react-navigation/native';
 import { StackNavigationProp } from '@react-navigation/stack';
+import FeatherIcon from 'react-native-vector-icons/Feather';
 import { RootStackParamList } from '../navigation/navigationTypes';
 import useProjectStore from '../store/projectStore';
 import { useThemeStore } from '../store/themeStore';
@@ -199,6 +200,12 @@ export const EditorScreen = () => {
     navigation.goBack();
   };
 
+  const handleOpenProjectImages = () => {
+    haptics.light();
+    sounds.tap();
+    navigation.navigate('ImageSelection', { autoOpenPicker: false });
+  };
+
   // Go back with autosave
   const handleBack = async () => {
     haptics.light();
@@ -330,8 +337,8 @@ export const EditorScreen = () => {
             <SaveIndicator status={saveStatus} lastSaved={lastSaved} />
           </View>
           <IconButton
-            icon={<Text style={[styles.backIcon, { color: colors.text }]}>♫</Text>}
-            onPress={() => {}}
+            icon={<FeatherIcon name="folder" size={22} color={colors.text} />}
+            onPress={handleOpenProjectImages}
             variant="default"
             size={44}
           />

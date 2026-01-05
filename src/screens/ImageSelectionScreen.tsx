@@ -14,6 +14,7 @@ import { useNavigation, useRoute, RouteProp, useFocusEffect } from '@react-navig
 import { StackNavigationProp } from '@react-navigation/stack';
 import { launchImageLibrary } from 'react-native-image-picker';
 import { check, request, PERMISSIONS, RESULTS, openSettings } from 'react-native-permissions';
+import FeatherIcon from 'react-native-vector-icons/Feather';
 import { RootStackParamList } from '../navigation/navigationTypes';
 import { useThemeStore } from '../store/themeStore';
 import { Button, IconButton } from '../components/common';
@@ -231,7 +232,11 @@ const ImageSelectionScreen: React.FC = () => {
     <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]}>
       {/* Header */}
       <View style={styles.header}>
-        <IconButton icon={<Text style={styles.closeIcon}>×</Text>} onPress={handleClose} size={44} />
+        <IconButton
+          icon={<FeatherIcon name="chevron-left" size={26} color={colors.text} />}
+          onPress={handleClose}
+          size={44}
+        />
         <Text style={[styles.headerTitle, { color: colors.text }]}>Select Photos</Text>
         <View style={{ width: 44 }} />
       </View>
