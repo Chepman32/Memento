@@ -1,5 +1,14 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
-import { View, StyleSheet, Dimensions, ScrollView, TouchableOpacity, Text, Image as RNImage, LayoutChangeEvent } from 'react-native';
+import {
+  View,
+  StyleSheet,
+  Dimensions,
+  ScrollView,
+  TouchableOpacity,
+  Text,
+  Image as RNImage,
+  LayoutChangeEvent,
+} from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useNavigation, useRoute, RouteProp } from '@react-navigation/native';
 import { StackNavigationProp } from '@react-navigation/stack';
@@ -10,9 +19,24 @@ import { useThemeStore } from '../store/themeStore';
 import { SPACING, RADII, TYPOGRAPHY, SHADOWS } from '../constants/theme';
 import { TRANSITIONS } from '../constants/transitions';
 import { Transition } from '../types/project.types';
-import { Canvas, Image, useImage, ColorMatrix } from '@shopify/react-native-skia';
-import { Gesture, GestureDetector, GestureHandlerRootView } from 'react-native-gesture-handler';
-import Animated, { runOnJS, useSharedValue, useAnimatedStyle, withSpring, SharedValue } from 'react-native-reanimated';
+import {
+  Canvas,
+  Image,
+  useImage,
+  ColorMatrix,
+} from '@shopify/react-native-skia';
+import {
+  Gesture,
+  GestureDetector,
+  GestureHandlerRootView,
+} from 'react-native-gesture-handler';
+import Animated, {
+  runOnJS,
+  useSharedValue,
+  useAnimatedStyle,
+  withSpring,
+  SharedValue,
+} from 'react-native-reanimated';
 import { TransitionType, PhotoEffect } from '../types/project.types';
 import { haptics } from '../utils/hapticFeedback';
 import { sounds } from '../utils/soundEffects';
@@ -22,7 +46,10 @@ import { SaveIndicator } from '../components/editor/SaveIndicator';
 
 // Types
 type EditorScreenRouteProp = RouteProp<RootStackParamList, 'Editor'>;
-type EditorScreenNavigationProp = StackNavigationProp<RootStackParamList, 'Editor'>;
+type EditorScreenNavigationProp = StackNavigationProp<
+  RootStackParamList,
+  'Editor'
+>;
 
 const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get('window');
 const PREVIEW_WIDTH = SCREEN_WIDTH - SPACING.sm * 2;
@@ -55,21 +82,30 @@ export const EditorScreen = () => {
     canRedo,
   } = useProjectStore();
 
-  const [activePhotoIndex, setActivePhotoIndex] = useState(0);
+  const [activePhotoIndex, setActivePhotoIndex] = useState<number | null>(0);
+  const [selectedTransitionIndex, setSelectedTransitionIndex] = useState<
+    number | null
+  >(null);
   const [isPlaying, setIsPlaying] = useState(false);
-  const [activeTab, setActiveTab] = useState<'duration' | 'transitions'>('duration');
+  const [activeTab, setActiveTab] = useState<'duration' | 'transitions'>(
+    'duration',
+  );
 
   // Get current project
   const currentProject = projects.find(p => p.id === currentProjectId);
-  const activePhoto = currentProject?.photos[activePhotoIndex];
+  const activePhoto =
+    activePhotoIndex !== null ? currentProject?.photos[activePhotoIndex] : null;
 
   // Autosave functionality
-  const { saveStatus, lastSaved, forceSave } = useAutosave(currentProjectId || undefined, {
-    debounceMs: 1500,
-    onSaveComplete: () => {
-      haptics.light();
+  const { saveStatus, lastSaved, forceSave } = useAutosave(
+    currentProjectId || undefined,
+    {
+      debounceMs: 1500,
+      onSaveComplete: () => {
+        haptics.light();
+      },
     },
-  });
+  );
 
   // Initialize project when screen loads
   useEffect(() => {
@@ -90,11 +126,13 @@ export const EditorScreen = () => {
 
     initializeProject();
   }, [addPhotos, createProject, photos]);
-  
+
   // Handle photo selection
   const handleSelectPhoto = (index: number) => {
     haptics.selection();
     setActivePhotoIndex(index);
+    setSelectedTransitionIndex(null); // Clear transition selection
+    setActiveTab('duration'); // Switch to duration tab when selecting a photo
   };
 
   // Handle photo reordering
@@ -124,19 +162,21 @@ export const EditorScreen = () => {
 
   // Apply transition effect - adds a transition object before the selected photo
   const handleTransitionChange = (transitionType: TransitionType) => {
-    if (!currentProject) return;
+    if (!currentProject || selectedTransitionIndex === null) return;
 
     // Check if transition already exists at this position
     const existingTransition = currentProject.transitions?.find(
-      t => t.order === activePhotoIndex
+      t => t.order === selectedTransitionIndex,
     );
 
     if (existingTransition) {
       // Update existing transition type
-      updateTransition(currentProject.id, existingTransition.id, { type: transitionType });
+      updateTransition(currentProject.id, existingTransition.id, {
+        type: transitionType,
+      });
     } else {
-      // Add new transition before the selected photo
-      addTransition(currentProject.id, activePhotoIndex, transitionType);
+      // Add new transition at selected position
+      addTransition(currentProject.id, selectedTransitionIndex, transitionType);
     }
 
     haptics.medium();
@@ -145,14 +185,15 @@ export const EditorScreen = () => {
 
   // Remove transition at current position
   const handleTransitionRemove = () => {
-    if (!currentProject) return;
+    if (!currentProject || selectedTransitionIndex === null) return;
 
     const existingTransition = currentProject.transitions?.find(
-      t => t.order === activePhotoIndex
+      t => t.order === selectedTransitionIndex,
     );
 
     if (existingTransition) {
       removeTransition(currentProject.id, existingTransition.id);
+      setSelectedTransitionIndex(null);
       haptics.light();
     }
   };
@@ -257,51 +298,77 @@ export const EditorScreen = () => {
       case 'duration':
         return (
           <View style={styles.tabContent}>
-            <View style={styles.controlGroup}>
-              <Text style={[styles.controlLabel, { color: colors.textSecondary }]}>
-                Duration: {activePhoto?.duration || 0}s
+            {activePhotoIndex === null ? (
+              <Text
+                style={[
+                  styles.placeholderText,
+                  { color: colors.textSecondary },
+                ]}
+              >
+                Tap a slide in the timeline to select it
               </Text>
-              <Slider
-                value={activePhoto?.duration || 3}
-                min={1}
-                max={15}
-                step={1}
-                onValueChange={handleDurationChange}
-                color={colors.primary}
-              />
-            </View>
+            ) : (
+              <View style={styles.controlGroup}>
+                <Text
+                  style={[styles.controlLabel, { color: colors.textSecondary }]}
+                >
+                  Duration: {activePhoto?.duration || 0}s
+                </Text>
+                <Slider
+                  value={activePhoto?.duration || 3}
+                  min={1}
+                  max={15}
+                  step={1}
+                  onValueChange={handleDurationChange}
+                  color={colors.primary}
+                />
+              </View>
+            )}
           </View>
         );
       case 'transitions':
-        const currentTransition = currentProject?.transitions?.find(t => t.order === activePhotoIndex);
+        const currentTransition =
+          selectedTransitionIndex !== null
+            ? currentProject?.transitions?.find(
+                t => t.order === selectedTransitionIndex,
+              )
+            : null;
         return (
           <View style={styles.tabContent}>
-            <View style={styles.controlGroup}>
-              <TransitionPicker
-                selectedTransition={currentTransition?.type || null}
-                onSelect={handleTransitionChange}
-              />
-              {currentTransition && (
-                <TouchableOpacity
-                  style={[styles.removeButton, { backgroundColor: colors.error + '20', borderColor: colors.error }]}
-                  onPress={handleTransitionRemove}
-                >
-                  <Text style={[styles.removeButtonText, { color: colors.error }]}>Remove Transition</Text>
-                </TouchableOpacity>
-              )}
-            </View>
+            {selectedTransitionIndex === null ? (
+              <Text
+                style={[
+                  styles.placeholderText,
+                  { color: colors.textSecondary },
+                ]}
+              >
+                Tap a transition in the timeline to select it
+              </Text>
+            ) : (
+              <View style={styles.controlGroup}>
+                <TransitionPicker
+                  selectedTransition={currentTransition?.type || null}
+                  onSelect={handleTransitionChange}
+                />
+              </View>
+            )}
           </View>
         );
     }
   };
 
   return (
-    <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]} edges={['top', 'bottom']}>
+    <SafeAreaView
+      style={[styles.container, { backgroundColor: colors.background }]}
+      edges={['top', 'bottom']}
+    >
       <GestureHandlerRootView style={styles.container}>
         {/* Header */}
         <View style={styles.header}>
           <IconButton
-            icon={<Text style={[styles.backIcon, { color: colors.text }]}>←</Text>}
+            icon={
+              <Text style={[styles.backIcon, { color: colors.text }]}>←</Text>
+            }
             onPress={handleBack}
             variant="default"
             size={44}
@@ -309,28 +376,73 @@ export const EditorScreen = () => {
           <View style={styles.headerCenter}>
             <View style={styles.undoRedoContainer}>
               <TouchableOpacity
-                style={[styles.undoRedoButton, !canUndo() && styles.undoRedoDisabled]}
+                style={[
+                  styles.undoRedoButton,
+                  !canUndo() && styles.undoRedoDisabled,
+                ]}
                 onPress={handleUndo}
                 disabled={!canUndo()}
               >
-                <Text style={[styles.undoRedoText, { color: canUndo() ? colors.text : colors.textSecondary }]}>↶</Text>
+                <Text
+                  style={[
+                    styles.undoRedoText,
+                    { color: canUndo() ? colors.text : colors.textSecondary },
+                  ]}
+                >
+                  ↶
+                </Text>
               </TouchableOpacity>
               <TouchableOpacity
-                style={[styles.undoRedoButton, !canRedo() && styles.undoRedoDisabled]}
+                style={[
+                  styles.undoRedoButton,
+                  !canRedo() && styles.undoRedoDisabled,
+                ]}
                 onPress={handleRedo}
                 disabled={!canRedo()}
               >
-                <Text style={[styles.undoRedoText, { color: canRedo() ? colors.text : colors.textSecondary }]}>↷</Text>
+                <Text
+                  style={[
+                    styles.undoRedoText,
+                    { color: canRedo() ? colors.text : colors.textSecondary },
+                  ]}
+                >
+                  ↷
+                </Text>
               </TouchableOpacity>
               {activePhoto && (
                 <TouchableOpacity
                   style={[
                     styles.removePhotoButton,
-                    { borderColor: colors.error, backgroundColor: colors.error + '20' },
+                    {
+                      borderColor: colors.error,
+                      backgroundColor: colors.error + '20',
+                    },
                   ]}
                   onPress={handleRemovePhoto}
                 >
-                  <Text style={[styles.removePhotoText, { color: colors.error }]}>Remove</Text>
+                  <Text
+                    style={[styles.removePhotoText, { color: colors.error }]}
+                  >
+                    Remove
+                  </Text>
+                </TouchableOpacity>
+              )}
+              {selectedTransitionIndex !== null && (
+                <TouchableOpacity
+                  style={[
+                    styles.removePhotoButton,
+                    {
+                      borderColor: colors.error,
+                      backgroundColor: colors.error + '20',
+                    },
+                  ]}
+                  onPress={handleTransitionRemove}
+                >
+                  <Text
+                    style={[styles.removePhotoText, { color: colors.error }]}
+                  >
+                    Remove
+                  </Text>
                 </TouchableOpacity>
               )}
             </View>
@@ -347,15 +459,28 @@ export const EditorScreen = () => {
         {/* Top Half: Preview & Timeline */}
         <View style={styles.topHalf}>
           <View style={styles.previewContainer}>
-            {activePhoto ? (
-              <PhotoPreview
-                photo={activePhoto}
-                width={PREVIEW_WIDTH}
-                height={PREVIEW_HEIGHT}
-              />
-            ) : (
-              <View style={[styles.previewPlaceholder, { backgroundColor: colors.surface }]} />
-            )}
+            {(() => {
+              // When transition is selected, show the slide after the transition
+              const previewPhoto =
+                selectedTransitionIndex !== null
+                  ? currentProject?.photos[selectedTransitionIndex]
+                  : activePhoto;
+
+              return previewPhoto ? (
+                <PhotoPreview
+                  photo={previewPhoto}
+                  width={PREVIEW_WIDTH}
+                  height={PREVIEW_HEIGHT}
+                />
+              ) : (
+                <View
+                  style={[
+                    styles.previewPlaceholder,
+                    { backgroundColor: colors.surface },
+                  ]}
+                />
+              );
+            })()}
           </View>
 
           <View style={styles.timelineContainer}>
@@ -363,10 +488,12 @@ export const EditorScreen = () => {
               photos={currentProject?.photos || []}
               transitions={currentProject?.transitions || []}
               activeIndex={activePhotoIndex}
+              selectedTransitionIndex={selectedTransitionIndex}
               onSelectPhoto={handleSelectPhoto}
               onDragEnd={handleDragEnd}
-              onSelectTransition={(index) => {
-                setActivePhotoIndex(index);
+              onSelectTransition={index => {
+                setSelectedTransitionIndex(index);
+                setActivePhotoIndex(null); // Clear photo selection
                 setActiveTab('transitions');
               }}
             />
@@ -376,34 +503,83 @@ export const EditorScreen = () => {
         {/* Bottom Half: Tabs & Content */}
         <View style={[styles.bottomHalf, { backgroundColor: colors.surface }]}>
           {/* Tab Selector */}
-          <View style={[styles.tabSelector, { borderBottomColor: colors.border }]}>
+          <View
+            style={[styles.tabSelector, { borderBottomColor: colors.border }]}
+          >
             <TouchableOpacity
-              style={[styles.tab, activeTab === 'duration' && { borderBottomColor: colors.primary, borderBottomWidth: 2 }]}
+              style={[
+                styles.tab,
+                activeTab === 'duration' && {
+                  borderBottomColor: colors.primary,
+                  borderBottomWidth: 2,
+                },
+              ]}
               onPress={() => handleTabChange('duration')}
             >
-              <Text style={[styles.tabText, { color: activeTab === 'duration' ? colors.primary : colors.textSecondary }]}>
+              <Text
+                style={[
+                  styles.tabText,
+                  {
+                    color:
+                      activeTab === 'duration'
+                        ? colors.primary
+                        : colors.textSecondary,
+                  },
+                ]}
+              >
                 Duration
               </Text>
             </TouchableOpacity>
             <TouchableOpacity
-              style={[styles.tab, activeTab === 'transitions' && { borderBottomColor: colors.primary, borderBottomWidth: 2 }]}
+              style={[
+                styles.tab,
+                activeTab === 'transitions' && {
+                  borderBottomColor: colors.primary,
+                  borderBottomWidth: 2,
+                },
+              ]}
               onPress={() => handleTabChange('transitions')}
             >
-              <Text style={[styles.tabText, { color: activeTab === 'transitions' ? colors.primary : colors.textSecondary }]}>
+              <Text
+                style={[
+                  styles.tabText,
+                  {
+                    color:
+                      activeTab === 'transitions'
+                        ? colors.primary
+                        : colors.textSecondary,
+                  },
+                ]}
+              >
                 Transitions
               </Text>
             </TouchableOpacity>
           </View>
 
           {/* Tab Content */}
-          <ScrollView style={styles.scrollContent} showsVerticalScrollIndicator={false}>
+          <ScrollView
+            style={styles.scrollContent}
+            showsVerticalScrollIndicator={false}
+          >
             {renderTabContent()}
           </ScrollView>
 
           {/* Footer Button */}
-          <View style={[styles.footer, { backgroundColor: colors.surface, borderTopColor: colors.border }]}>
+          <View
+            style={[
+              styles.footer,
+              {
+                backgroundColor: colors.surface,
+                borderTopColor: colors.border,
+              },
+            ]}
+          >
             <TouchableOpacity
-              style={[styles.button, styles.primaryButton, { backgroundColor: colors.primary }]}
+              style={[
+                styles.button,
+                styles.primaryButton,
+                { backgroundColor: colors.primary },
+              ]}
               onPress={handlePreview}
             >
               <Text style={[styles.buttonText, { color: '#FFFFFF' }]}>
@@ -429,7 +605,11 @@ interface PhotoPreviewProps {
   height: number;
 }
 
-const PhotoPreview: React.FC<PhotoPreviewProps> = ({ photo, width, height }) => {
+const PhotoPreview: React.FC<PhotoPreviewProps> = ({
+  photo,
+  width,
+  height,
+}) => {
   const [size, setSize] = useState({ width, height });
   const image = useImage(photo.uri);
 
@@ -473,31 +653,22 @@ const PhotoPreview: React.FC<PhotoPreviewProps> = ({ photo, width, height }) => 
     // Sepia effect
     if (photo.effects.includes(PhotoEffect.SEPIA)) {
       return [
-        0.393, 0.769, 0.189, 0, 0,
-        0.349, 0.686, 0.168, 0, 0,
-        0.272, 0.534, 0.131, 0, 0,
-        0, 0, 0, 1, 0,
+        0.393, 0.769, 0.189, 0, 0, 0.349, 0.686, 0.168, 0, 0, 0.272, 0.534,
+        0.131, 0, 0, 0, 0, 0, 1, 0,
       ];
     }
 
     // Black & White effect
     if (photo.effects.includes(PhotoEffect.BLACK_WHITE)) {
       return [
-        0.33, 0.33, 0.33, 0, 0,
-        0.33, 0.33, 0.33, 0, 0,
-        0.33, 0.33, 0.33, 0, 0,
+        0.33, 0.33, 0.33, 0, 0, 0.33, 0.33, 0.33, 0, 0, 0.33, 0.33, 0.33, 0, 0,
         0, 0, 0, 1, 0,
       ];
     }
 
     // Vintage effect (warm tones)
     if (photo.effects.includes(PhotoEffect.VINTAGE)) {
-      return [
-        1.2, 0, 0, 0, 0,
-        0, 0.9, 0, 0, 0,
-        0, 0, 0.7, 0, 0,
-        0, 0, 0, 1, 0,
-      ];
+      return [1.2, 0, 0, 0, 0, 0, 0.9, 0, 0, 0, 0, 0, 0.7, 0, 0, 0, 0, 0, 1, 0];
     }
 
     return undefined;
@@ -537,7 +708,14 @@ interface SliderProps {
   color: string;
 }
 
-const Slider: React.FC<SliderProps> = ({ value, min, max, step, onValueChange, color }) => {
+const Slider: React.FC<SliderProps> = ({
+  value,
+  min,
+  max,
+  step,
+  onValueChange,
+  color,
+}) => {
   const { colors } = useThemeStore();
   const [trackWidth, setTrackWidth] = useState(0);
   const position = useSharedValue(0);
@@ -561,9 +739,12 @@ const Slider: React.FC<SliderProps> = ({ value, min, max, step, onValueChange, c
     .onBegin(() => {
       startOffset.value = position.value;
     })
-    .onChange((event) => {
+    .onChange(event => {
       if (trackWidth <= 0 || range === 0) return;
-      const nextPosition = Math.min(Math.max(startOffset.value + event.translationX, 0), trackWidth);
+      const nextPosition = Math.min(
+        Math.max(startOffset.value + event.translationX, 0),
+        trackWidth,
+      );
       if (nextPosition === position.value) return;
 
       position.value = nextPosition;
@@ -597,15 +778,25 @@ const Slider: React.FC<SliderProps> = ({ value, min, max, step, onValueChange, c
           style={[styles.sliderTrack, { backgroundColor: colors.border }]}
           onLayout={handleTrackLayout}
         >
-          <Animated.View style={[styles.sliderProgress, { backgroundColor: color }, progressStyle]} />
+          <Animated.View
+            style={[
+              styles.sliderProgress,
+              { backgroundColor: color },
+              progressStyle,
+            ]}
+          />
         </View>
         <GestureDetector gesture={gesture}>
           <Animated.View style={styles.sliderGestureArea}>
-            <Animated.View style={[styles.sliderKnob, { borderColor: color }, knobStyle]} />
+            <Animated.View
+              style={[styles.sliderKnob, { borderColor: color }, knobStyle]}
+            />
           </Animated.View>
         </GestureDetector>
       </View>
-      <Text style={[styles.sliderValue, { color: colors.textSecondary }]}>{value}s</Text>
+      <Text style={[styles.sliderValue, { color: colors.textSecondary }]}>
+        {value}s
+      </Text>
     </View>
   );
 };
@@ -616,7 +807,10 @@ interface TransitionPickerProps {
   onSelect: (transition: TransitionType) => void;
 }
 
-const TransitionPicker: React.FC<TransitionPickerProps> = ({ selectedTransition, onSelect }) => {
+const TransitionPicker: React.FC<TransitionPickerProps> = ({
+  selectedTransition,
+  onSelect,
+}) => {
   const { colors } = useThemeStore();
   const transitions = Object.values(TRANSITIONS);
 
@@ -626,7 +820,7 @@ const TransitionPicker: React.FC<TransitionPickerProps> = ({ selectedTransition,
       showsHorizontalScrollIndicator={false}
       contentContainerStyle={styles.transitionContainer}
     >
-      {transitions.map((transition) => {
+      {transitions.map(transition => {
         const isSelected = selectedTransition === transition.id;
         return (
           <TouchableOpacity
@@ -641,7 +835,9 @@ const TransitionPicker: React.FC<TransitionPickerProps> = ({ selectedTransition,
                 isSelected && { borderColor: colors.primary, borderWidth: 2 },
               ]}
             >
-              <Text style={[styles.transitionIconText, { color: colors.primary }]}>
+              <Text
+                style={[styles.transitionIconText, { color: colors.primary }]}
+              >
                 {transition.name.charAt(0)}
               </Text>
             </View>
@@ -667,7 +863,10 @@ interface EffectPickerProps {
   onSelect: (effect: PhotoEffect) => void;
 }
 
-const EffectPicker: React.FC<EffectPickerProps> = ({ selectedEffects, onSelect }) => {
+const EffectPicker: React.FC<EffectPickerProps> = ({
+  selectedEffects,
+  onSelect,
+}) => {
   const { colors } = useThemeStore();
   const effects = [
     { id: PhotoEffect.KEN_BURNS, name: 'Ken Burns' },
@@ -686,7 +885,7 @@ const EffectPicker: React.FC<EffectPickerProps> = ({ selectedEffects, onSelect }
       showsHorizontalScrollIndicator={false}
       contentContainerStyle={styles.effectContainer}
     >
-      {effects.map((effect) => {
+      {effects.map(effect => {
         const isSelected = selectedEffects.includes(effect.id);
 
         return (
@@ -699,10 +898,19 @@ const EffectPicker: React.FC<EffectPickerProps> = ({ selectedEffects, onSelect }
               style={[
                 styles.effectIcon,
                 { backgroundColor: colors.surface, borderColor: colors.border },
-                isSelected && { borderColor: colors.success, borderWidth: 2, backgroundColor: colors.success + '20' },
+                isSelected && {
+                  borderColor: colors.success,
+                  borderWidth: 2,
+                  backgroundColor: colors.success + '20',
+                },
               ]}
             >
-              <Text style={[styles.effectIconText, { color: isSelected ? colors.success : colors.primary }]}>
+              <Text
+                style={[
+                  styles.effectIconText,
+                  { color: isSelected ? colors.success : colors.primary },
+                ]}
+              >
                 {effect.name.charAt(0)}
               </Text>
             </View>
@@ -748,7 +956,7 @@ const PhotoTimelineItem: React.FC<PhotoTimelineItemProps> = ({
   onDragEnd,
   setDraggedIndex,
   setCurrentTargetIndex,
-  photosLength
+  photosLength,
 }) => {
   const { colors } = useThemeStore();
   const translateX = useSharedValue(0);
@@ -770,12 +978,15 @@ const PhotoTimelineItem: React.FC<PhotoTimelineItemProps> = ({
 
   const pan = Gesture.Pan()
     .enabled(draggedIndex === index)
-    .onUpdate((event) => {
+    .onUpdate(event => {
       translateX.value = event.translationX;
 
       // Calculate target index based on drag distance
       const movedItems = Math.round(translateX.value / itemWidth);
-      const newTargetIndex = Math.max(0, Math.min(photosLength - 1, index + movedItems));
+      const newTargetIndex = Math.max(
+        0,
+        Math.min(photosLength - 1, index + movedItems),
+      );
 
       // Update positions array in real-time for live reordering
       const oldOrder = [...positions.value];
@@ -794,7 +1005,10 @@ const PhotoTimelineItem: React.FC<PhotoTimelineItemProps> = ({
     })
     .onEnd(() => {
       const movedItems = Math.round(translateX.value / itemWidth);
-      const targetIndex = Math.max(0, Math.min(photosLength - 1, index + movedItems));
+      const targetIndex = Math.max(
+        0,
+        Math.min(photosLength - 1, index + movedItems),
+      );
 
       if (targetIndex !== index) {
         runOnJS(onDragEnd)(index, targetIndex);
@@ -807,37 +1021,31 @@ const PhotoTimelineItem: React.FC<PhotoTimelineItemProps> = ({
       runOnJS(setCurrentTargetIndex)(null);
 
       // Reset positions after actual reorder
-      positions.value = Array.from({length: photosLength}, (_, i) => i);
+      positions.value = Array.from({ length: photosLength }, (_, i) => i);
     });
 
-  const tap = Gesture.Tap()
-    .onStart(() => {
-      runOnJS(onSelectPhoto)(index);
-      runOnJS(haptics.light)();
-    });
+  const tap = Gesture.Tap().onStart(() => {
+    runOnJS(onSelectPhoto)(index);
+    runOnJS(haptics.light)();
+  });
 
-  const composed = Gesture.Exclusive(
-    Gesture.Simultaneous(longPress, pan),
-    tap
-  );
+  const composed = Gesture.Exclusive(Gesture.Simultaneous(longPress, pan), tap);
 
   const animatedStyle = useAnimatedStyle(() => {
     // Calculate position based on current order
     const currentOrder = getOrder(index);
     const offset = (currentOrder - index) * itemWidth;
 
-    const finalTranslateX = draggedIndex === index
-      ? translateX.value
-      : withSpring(offset, {
-          damping: 20,
-          stiffness: 150,
-        });
+    const finalTranslateX =
+      draggedIndex === index
+        ? translateX.value
+        : withSpring(offset, {
+            damping: 20,
+            stiffness: 150,
+          });
 
     return {
-      transform: [
-        { translateX: finalTranslateX },
-        { scale: scale.value },
-      ],
+      transform: [{ translateX: finalTranslateX }, { scale: scale.value }],
       zIndex: draggedIndex === index ? 1000 : 1,
       opacity: draggedIndex === index ? 0.9 : 1,
     };
@@ -853,12 +1061,24 @@ const PhotoTimelineItem: React.FC<PhotoTimelineItemProps> = ({
             isDragged && { borderColor: colors.success, borderWidth: 3 },
           ]}
         >
-          <RNImage source={{ uri: photo.uri }} style={styles.thumbnailImage} resizeMode="cover" />
+          <RNImage
+            source={{ uri: photo.uri }}
+            style={styles.thumbnailImage}
+            resizeMode="cover"
+          />
           {isActive && !isDragged && (
-            <View style={[styles.thumbnailActiveIndicator, { borderColor: colors.primary }]} />
+            <View
+              style={[
+                styles.thumbnailActiveIndicator,
+                { borderColor: colors.primary },
+              ]}
+            />
           )}
         </View>
-        <Text style={[styles.thumbnailDuration, { color: colors.textSecondary }]} numberOfLines={1}>
+        <Text
+          style={[styles.thumbnailDuration, { color: colors.textSecondary }]}
+          numberOfLines={1}
+        >
           {photo.duration}s
         </Text>
       </Animated.View>
@@ -870,17 +1090,28 @@ const PhotoTimelineItem: React.FC<PhotoTimelineItemProps> = ({
 interface PhotoTimelineProps {
   photos: any[];
   transitions: any[];
-  activeIndex: number;
+  activeIndex: number | null;
+  selectedTransitionIndex: number | null;
   onSelectPhoto: (index: number) => void;
   onDragEnd: (fromIndex: number, toIndex: number) => void;
   onSelectTransition?: (index: number) => void;
 }
 
-const PhotoTimeline: React.FC<PhotoTimelineProps> = ({ photos, transitions, activeIndex, onSelectPhoto, onDragEnd, onSelectTransition }) => {
+const PhotoTimeline: React.FC<PhotoTimelineProps> = ({
+  photos,
+  transitions,
+  activeIndex,
+  selectedTransitionIndex,
+  onSelectPhoto,
+  onDragEnd,
+  onSelectTransition,
+}) => {
   const { colors } = useThemeStore();
   const scrollViewRef = useRef<ScrollView>(null);
   const [draggedIndex, setDraggedIndex] = useState<number | null>(null);
-  const [currentTargetIndex, setCurrentTargetIndex] = useState<number | null>(null);
+  const [currentTargetIndex, setCurrentTargetIndex] = useState<number | null>(
+    null,
+  );
   const positions = useSharedValue<number[]>(photos.map((_, i) => i));
 
   // Reset positions when photos change
@@ -893,7 +1124,9 @@ const PhotoTimeline: React.FC<PhotoTimelineProps> = ({ photos, transitions, acti
     if (scrollViewRef.current && photos.length > 0) {
       const offset = Math.max(
         0,
-        activeIndex * (THUMBNAIL_SIZE + SPACING.sm * 2) - SCREEN_WIDTH / 2 + THUMBNAIL_SIZE / 2
+        activeIndex * (THUMBNAIL_SIZE + SPACING.sm * 2) -
+          SCREEN_WIDTH / 2 +
+          THUMBNAIL_SIZE / 2,
       );
       scrollViewRef.current.scrollTo({ x: offset, animated: true });
     }
@@ -901,15 +1134,32 @@ const PhotoTimeline: React.FC<PhotoTimelineProps> = ({ photos, transitions, acti
 
   // Render transition item
   const renderTransition = (transition: any, index: number) => {
+    const isSelected = selectedTransitionIndex === index;
     return (
       <TouchableOpacity
         key={`transition-${transition.id}`}
         style={styles.transitionTimelineItem}
         onPress={() => onSelectTransition?.(index)}
       >
-        <View style={[styles.transitionIcon, { backgroundColor: colors.primary + '20', borderColor: colors.primary }]}>
-          <Text style={[styles.transitionTimelineText, { color: colors.primary }]}>
-            {TRANSITIONS[transition.type as TransitionType]?.name?.charAt(0) || 'T'}
+        <View
+          style={[
+            styles.transitionIcon,
+            {
+              backgroundColor: colors.primary + '20',
+              borderColor: colors.primary,
+            },
+            isSelected && {
+              borderWidth: 3,
+              borderColor: colors.primary,
+              backgroundColor: colors.primary + '40',
+            },
+          ]}
+        >
+          <Text
+            style={[styles.transitionTimelineText, { color: colors.primary }]}
+          >
+            {TRANSITIONS[transition.type as TransitionType]?.name?.charAt(0) ||
+              'T'}
           </Text>
         </View>
       </TouchableOpacity>
