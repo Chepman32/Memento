@@ -1,12 +1,17 @@
 import { create } from 'zustand';
 import { persist, createJSONStorage } from 'zustand/middleware';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { PurchaseState, SubscriptionType, PremiumFeature } from '../types/purchase.types';
+import {
+  PurchaseState,
+  SubscriptionType,
+  PremiumFeature,
+} from '../types/purchase.types';
 
 const ALL_FEATURES = Object.values(PremiumFeature) as PremiumFeature[];
 
+// App is completely free - all features unlocked by default
 const DEFAULT_PURCHASE_STATE: PurchaseState = {
-  isPremium: false,
+  isPremium: true, // Always premium - app is free
   features: ALL_FEATURES,
   isTrialActive: false,
 };
@@ -28,7 +33,7 @@ export const usePurchaseStore = create<PurchaseStoreState>()(
       purchaseState: DEFAULT_PURCHASE_STATE,
 
       updatePurchaseState: (updates: Partial<PurchaseState>) => {
-        set((state) => ({
+        set(state => ({
           purchaseState: {
             ...state.purchaseState,
             ...updates,
@@ -37,43 +42,8 @@ export const usePurchaseStore = create<PurchaseStoreState>()(
       },
 
       checkSubscription: async () => {
-        // This will be implemented with react-native-iap
-        // For now, just check if the subscription is expired
-        const { purchaseState } = get();
-
-        if (purchaseState.expirationDate) {
-          const now = new Date();
-          const expiration = new Date(purchaseState.expirationDate);
-
-          if (now > expiration) {
-            // Subscription expired
-            set({
-              purchaseState: {
-                ...purchaseState,
-                isPremium: false,
-                subscriptionType: undefined,
-                features: [],
-              },
-            });
-          }
-        }
-
-        // Check trial expiration
-        if (purchaseState.isTrialActive && purchaseState.trialEndDate) {
-          const now = new Date();
-          const trialEnd = new Date(purchaseState.trialEndDate);
-
-          if (now > trialEnd) {
-            set({
-              purchaseState: {
-                ...purchaseState,
-                isTrialActive: false,
-                isPremium: false,
-                features: [],
-              },
-            });
-          }
-        }
+        // App is completely free - no subscription checks needed
+        // All features are always available
       },
 
       restorePurchases: async () => {
@@ -83,9 +53,9 @@ export const usePurchaseStore = create<PurchaseStoreState>()(
         return false;
       },
 
-      hasFeature: (feature: PremiumFeature): boolean => {
-        const { purchaseState } = get();
-        return purchaseState.features.includes(feature);
+      hasFeature: (_feature: PremiumFeature): boolean => {
+        // App is completely free - all features always available
+        return true;
       },
 
       activateTrial: (type: SubscriptionType) => {
@@ -126,6 +96,6 @@ export const usePurchaseStore = create<PurchaseStoreState>()(
     {
       name: 'slidemint-purchase',
       storage: createJSONStorage(() => AsyncStorage),
-    }
-  )
+    },
+  ),
 );

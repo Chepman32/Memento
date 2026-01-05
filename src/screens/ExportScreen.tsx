@@ -13,21 +13,21 @@ import { StackNavigationProp } from '@react-navigation/stack';
 import { RootStackParamList } from '../navigation/navigationTypes';
 import useProjectStore from '../store/projectStore';
 import { useThemeStore } from '../store/themeStore';
-import { usePurchaseStore } from '../store/purchaseStore';
 import { Button, Card, LoadingSpinner } from '../components/common';
-import FeatherIcon from 'react-native-vector-icons/Feather';
 import { haptics } from '../utils/hapticFeedback';
 import { sounds } from '../utils/soundEffects';
 import { videoEncoder } from '../utils/videoEncoder';
 import { gifGenerator } from '../utils/gifGenerator';
 import { photoLibrary } from '../utils/photoLibrary';
 import { ExportQuality, ResolutionPreset } from '../types/project.types';
-import { PremiumFeature } from '../types/purchase.types';
 import { SPACING, RADII, TYPOGRAPHY } from '../constants/theme';
 import RNFS from 'react-native-fs';
 
 type ExportScreenRouteProp = RouteProp<RootStackParamList, 'Export'>;
-type ExportScreenNavigationProp = StackNavigationProp<RootStackParamList, 'Export'>;
+type ExportScreenNavigationProp = StackNavigationProp<
+  RootStackParamList,
+  'Export'
+>;
 
 type ExportFormat = 'video' | 'gif';
 
@@ -38,13 +38,14 @@ const ExportScreen: React.FC = () => {
 
   const { colors } = useThemeStore();
   const { getProjectById } = useProjectStore();
-  const { purchaseState, hasFeature } = usePurchaseStore();
 
   const project = getProjectById(projectId);
 
   const [format, setFormat] = useState<ExportFormat>('video');
   const [quality, setQuality] = useState<ExportQuality>(ExportQuality.MEDIUM);
-  const [resolution, setResolution] = useState<ResolutionPreset>(ResolutionPreset.LANDSCAPE);
+  const [resolution, setResolution] = useState<ResolutionPreset>(
+    ResolutionPreset.LANDSCAPE,
+  );
   const [isExporting, setIsExporting] = useState(false);
   const [exportProgress, setExportProgress] = useState(0);
 
@@ -76,7 +77,9 @@ const ExportScreen: React.FC = () => {
       const outputDir = RNFS.TemporaryDirectoryPath;
 
       const timestamp = Date.now();
-      const filename = `slidemint_${timestamp}.${format === 'video' ? 'mp4' : 'gif'}`;
+      const filename = `slidemint_${timestamp}.${
+        format === 'video' ? 'mp4' : 'gif'
+      }`;
       const outputPath = `${outputDir}${filename}`;
 
       if (format === 'video') {
@@ -85,8 +88,8 @@ const ExportScreen: React.FC = () => {
           outputPath,
           quality,
           resolution,
-          includeWatermark: !hasFeature(PremiumFeature.NO_WATERMARK),
-          onProgress: (progress) => {
+          includeWatermark: false, // App is free - no watermark
+          onProgress: progress => {
             setExportProgress(progress);
           },
         });
@@ -98,30 +101,34 @@ const ExportScreen: React.FC = () => {
             sounds.exportComplete();
             haptics.success();
 
-            Alert.alert('Export Complete', 'Your video has been saved to the gallery!', [
-              {
-                text: 'OK',
-                onPress: () => navigation.goBack()
-              },
-              {
-                text: 'Show in Gallery',
-                onPress: async () => {
-                  try {
-                    await photoLibrary.openPhotosApp();
-                    navigation.goBack();
-                  } catch (error) {
-                    console.error('Failed to open Photos app:', error);
-                    navigation.goBack();
-                  }
+            Alert.alert(
+              'Export Complete',
+              'Your video has been saved to the gallery!',
+              [
+                {
+                  text: 'OK',
+                  onPress: () => navigation.goBack(),
                 },
-              },
-            ]);
+                {
+                  text: 'Show in Gallery',
+                  onPress: async () => {
+                    try {
+                      await photoLibrary.openPhotosApp();
+                      navigation.goBack();
+                    } catch (error) {
+                      console.error('Failed to open Photos app:', error);
+                      navigation.goBack();
+                    }
+                  },
+                },
+              ],
+            );
           } catch (saveError) {
             console.error('Failed to save to photo library:', saveError);
             Alert.alert(
               'Export Complete',
               'Video exported but could not be saved to gallery. Please check permissions.',
-              [{ text: 'OK', onPress: () => navigation.goBack() }]
+              [{ text: 'OK', onPress: () => navigation.goBack() }],
             );
           }
         } else {
@@ -136,8 +143,8 @@ const ExportScreen: React.FC = () => {
           fps: 10,
           colors: 256,
           optimize: true,
-          includeWatermark: !hasFeature(PremiumFeature.NO_WATERMARK),
-          onProgress: (progress) => {
+          includeWatermark: false, // App is free - no watermark
+          onProgress: progress => {
             setExportProgress(progress);
           },
         });
@@ -151,11 +158,13 @@ const ExportScreen: React.FC = () => {
 
             Alert.alert(
               'Export Complete',
-              `GIF saved to gallery (${gifGenerator.formatFileSize(result.fileSize || 0)})`,
+              `GIF saved to gallery (${gifGenerator.formatFileSize(
+                result.fileSize || 0,
+              )})`,
               [
                 {
                   text: 'OK',
-                  onPress: () => navigation.goBack()
+                  onPress: () => navigation.goBack(),
                 },
                 {
                   text: 'Show in Gallery',
@@ -169,14 +178,16 @@ const ExportScreen: React.FC = () => {
                     }
                   },
                 },
-              ]
+              ],
             );
           } catch (saveError) {
             console.error('Failed to save to photo library:', saveError);
             Alert.alert(
               'Export Complete',
-              `GIF exported (${gifGenerator.formatFileSize(result.fileSize || 0)}) but could not be saved to gallery. Please check permissions.`,
-              [{ text: 'OK', onPress: () => navigation.goBack() }]
+              `GIF exported (${gifGenerator.formatFileSize(
+                result.fileSize || 0,
+              )}) but could not be saved to gallery. Please check permissions.`,
+              [{ text: 'OK', onPress: () => navigation.goBack() }],
             );
           }
         } else {
@@ -186,7 +197,10 @@ const ExportScreen: React.FC = () => {
     } catch (error) {
       sounds.error();
       haptics.error();
-      Alert.alert('Export Failed', error instanceof Error ? error.message : 'Unknown error');
+      Alert.alert(
+        'Export Failed',
+        error instanceof Error ? error.message : 'Unknown error',
+      );
     } finally {
       setIsExporting(false);
       setExportProgress(0);
@@ -195,17 +209,21 @@ const ExportScreen: React.FC = () => {
 
   const handleClose = () => {
     if (isExporting) {
-      Alert.alert('Cancel Export?', 'Are you sure you want to cancel the export?', [
-        { text: 'No', style: 'cancel' },
-        {
-          text: 'Yes',
-          style: 'destructive',
-          onPress: () => {
-            videoEncoder.cancelEncoding();
-            navigation.goBack();
+      Alert.alert(
+        'Cancel Export?',
+        'Are you sure you want to cancel the export?',
+        [
+          { text: 'No', style: 'cancel' },
+          {
+            text: 'Yes',
+            style: 'destructive',
+            onPress: () => {
+              videoEncoder.cancelEncoding();
+              navigation.goBack();
+            },
           },
-        },
-      ]);
+        ],
+      );
     } else {
       navigation.goBack();
     }
@@ -218,7 +236,9 @@ const ExportScreen: React.FC = () => {
   const duration = videoEncoder.calculateDuration(project);
 
   return (
-    <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]}>
+    <SafeAreaView
+      style={[styles.container, { backgroundColor: colors.background }]}
+    >
       {/* Header */}
       <View style={styles.header}>
         <TouchableOpacity onPress={handleClose} disabled={isExporting}>
@@ -231,7 +251,9 @@ const ExportScreen: React.FC = () => {
       <ScrollView contentContainerStyle={styles.content}>
         {/* Project info */}
         <View style={styles.projectInfo}>
-          <Text style={[styles.projectTitle, { color: colors.text }]}>{project.title}</Text>
+          <Text style={[styles.projectTitle, { color: colors.text }]}>
+            {project.title}
+          </Text>
           <Text style={[styles.projectMeta, { color: colors.textSecondary }]}>
             {project.photos.length} photos • {duration}s
           </Text>
@@ -239,7 +261,9 @@ const ExportScreen: React.FC = () => {
 
         {/* Format selection */}
         <View style={styles.section}>
-          <Text style={[styles.sectionTitle, { color: colors.text }]}>Format</Text>
+          <Text style={[styles.sectionTitle, { color: colors.text }]}>
+            Format
+          </Text>
           <View style={styles.optionRow}>
             <OptionCard
               title="Video (MP4)"
@@ -259,7 +283,9 @@ const ExportScreen: React.FC = () => {
         {/* Quality selection */}
         {format === 'video' && (
           <View style={styles.section}>
-            <Text style={[styles.sectionTitle, { color: colors.text }]}>Quality</Text>
+            <Text style={[styles.sectionTitle, { color: colors.text }]}>
+              Quality
+            </Text>
             <View style={styles.optionRow}>
               <OptionCard
                 title="HD"
@@ -278,7 +304,6 @@ const ExportScreen: React.FC = () => {
                 subtitle="Ultra HD"
                 selected={quality === ExportQuality.HIGH}
                 onPress={() => handleQualitySelect(ExportQuality.HIGH)}
-                locked={!hasFeature(PremiumFeature.EXPORT_4K)}
               />
             </View>
           </View>
@@ -286,7 +311,9 @@ const ExportScreen: React.FC = () => {
 
         {/* Resolution selection */}
         <View style={styles.section}>
-          <Text style={[styles.sectionTitle, { color: colors.text }]}>Aspect Ratio</Text>
+          <Text style={[styles.sectionTitle, { color: colors.text }]}>
+            Aspect Ratio
+          </Text>
           <View style={styles.optionRow}>
             <OptionCard
               title="Square"
@@ -319,7 +346,12 @@ const ExportScreen: React.FC = () => {
       </ScrollView>
 
       {/* Export button */}
-      <View style={[styles.footer, { backgroundColor: colors.surface, borderTopColor: colors.border }]}>
+      <View
+        style={[
+          styles.footer,
+          { backgroundColor: colors.surface, borderTopColor: colors.border },
+        ]}
+      >
         {isExporting ? (
           <View style={styles.exportingContainer}>
             <LoadingSpinner size={40} />
@@ -328,7 +360,12 @@ const ExportScreen: React.FC = () => {
             </Text>
           </View>
         ) : (
-          <Button title="Export Now" onPress={handleExport} variant="primary" fullWidth />
+          <Button
+            title="Export Now"
+            onPress={handleExport}
+            variant="primary"
+            fullWidth
+          />
         )}
       </View>
     </SafeAreaView>
@@ -341,27 +378,31 @@ interface OptionCardProps {
   subtitle: string;
   selected: boolean;
   onPress: () => void;
-  locked?: boolean;
 }
 
-const OptionCard: React.FC<OptionCardProps> = ({ title, subtitle, selected, onPress, locked }) => {
+const OptionCard: React.FC<OptionCardProps> = ({
+  title,
+  subtitle,
+  selected,
+  onPress,
+}) => {
   const { colors } = useThemeStore();
 
   return (
     <Card
       style={[
         styles.optionCard,
-        { borderColor: selected ? colors.primary : colors.border, borderWidth: 2 },
+        {
+          borderColor: selected ? colors.primary : colors.border,
+          borderWidth: 2,
+        },
       ]}
       onPress={onPress}
     >
       <Text style={[styles.optionTitle, { color: colors.text }]}>{title}</Text>
-      <Text style={[styles.optionSubtitle, { color: colors.textSecondary }]}>{subtitle}</Text>
-      {locked && (
-        <View style={styles.lockBadge}>
-          <FeatherIcon name="lock" size={16} color={colors.primary} />
-        </View>
-      )}
+      <Text style={[styles.optionSubtitle, { color: colors.textSecondary }]}>
+        {subtitle}
+      </Text>
     </Card>
   );
 };
@@ -423,11 +464,6 @@ const styles = StyleSheet.create({
   },
   optionSubtitle: {
     ...TYPOGRAPHY.caption,
-  },
-  lockBadge: {
-    position: 'absolute',
-    top: 8,
-    right: 8,
   },
   footer: {
     padding: SPACING.md,

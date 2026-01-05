@@ -1,4 +1,10 @@
-import React, { useState, useEffect, useRef, useMemo, useCallback } from 'react';
+import React, {
+  useState,
+  useEffect,
+  useRef,
+  useMemo,
+  useCallback,
+} from 'react';
 import {
   View,
   Text,
@@ -6,11 +12,14 @@ import {
   TouchableOpacity,
   SafeAreaView,
   Animated as RNAnimated,
-  Image as RNImage,
 } from 'react-native';
 import { useNavigation, useRoute, RouteProp } from '@react-navigation/native';
 import { StackNavigationProp } from '@react-navigation/stack';
-import { Canvas, Image as SkiaImage, useImage } from '@shopify/react-native-skia';
+import {
+  Canvas,
+  Image as SkiaImage,
+  useImage,
+} from '@shopify/react-native-skia';
 import FeatherIcon from 'react-native-vector-icons/Feather';
 import { RootStackParamList } from '../navigation/navigationTypes';
 import useProjectStore from '../store/projectStore';
@@ -18,12 +27,25 @@ import { useThemeStore } from '../store/themeStore';
 import { IconButton } from '../components/common';
 import { haptics } from '../utils/hapticFeedback';
 import { sounds } from '../utils/soundEffects';
-import { SPACING, SCREEN_WIDTH, SCREEN_HEIGHT, SHADOWS } from '../constants/theme';
-import { buildTimeline, TimelineDescription, TransitionSegment, PhotoSegment } from '../utils/videoEncoder';
+import {
+  SPACING,
+  SCREEN_WIDTH,
+  SCREEN_HEIGHT,
+  SHADOWS,
+} from '../constants/theme';
+import {
+  buildTimeline,
+  TimelineDescription,
+  TransitionSegment,
+  PhotoSegment,
+} from '../utils/videoEncoder';
 import { TransitionType } from '../types/project.types';
 
 type PreviewScreenRouteProp = RouteProp<RootStackParamList, 'Preview'>;
-type PreviewScreenNavigationProp = StackNavigationProp<RootStackParamList, 'Preview'>;
+type PreviewScreenNavigationProp = StackNavigationProp<
+  RootStackParamList,
+  'Preview'
+>;
 
 const PREVIEW_WIDTH = SCREEN_WIDTH;
 const PREVIEW_HEIGHT = SCREEN_HEIGHT - 120; // Maximize height, only leave room for controls
@@ -33,7 +55,6 @@ const EMPTY_TIMELINE: TimelineDescription = {
   segments: [],
   totalDurationMs: 0,
 };
-const WATERMARK_ICON = require('../assets/icons/icon.png');
 const CONTROL_ICON_COLOR = '#FFFFFF';
 
 const PreviewScreen: React.FC = () => {
@@ -58,7 +79,7 @@ const PreviewScreen: React.FC = () => {
 
   const timeline = useMemo<TimelineDescription>(
     () => (project ? buildTimeline(project) : EMPTY_TIMELINE),
-    [project]
+    [project],
   );
 
   const totalDurationMs = timeline.totalDurationMs;
@@ -113,7 +134,9 @@ const PreviewScreen: React.FC = () => {
 
     return (
       timeline.transitionSegments.find(
-        segment => playbackPositionMs >= segment.startMs && playbackPositionMs < segment.endMs
+        segment =>
+          playbackPositionMs >= segment.startMs &&
+          playbackPositionMs < segment.endMs,
       ) ?? null
     );
   }, [timeline.transitionSegments, playbackPositionMs]);
@@ -190,13 +213,16 @@ const PreviewScreen: React.FC = () => {
         newPosition = Math.max(targetSegment.startMs, targetSegment.endMs - 1);
       }
 
-      const clamped = Math.max(0, Math.min(newPosition, Math.max(totalDurationMs - 1, 0)));
+      const clamped = Math.max(
+        0,
+        Math.min(newPosition, Math.max(totalDurationMs - 1, 0)),
+      );
 
       setPlaybackPositionMs(clamped);
       pausedAtRef.current = clamped;
       playbackStartRef.current = Date.now() - clamped;
     },
-    [timeline.photoSegments, transitionsIntoPhoto, totalDurationMs]
+    [timeline.photoSegments, transitionsIntoPhoto, totalDurationMs],
   );
 
   useEffect(() => {
@@ -205,7 +231,10 @@ const PreviewScreen: React.FC = () => {
       return;
     }
 
-    const normalized = Math.min(Math.max(playbackPositionMs / totalDurationMs, 0), 1);
+    const normalized = Math.min(
+      Math.max(playbackPositionMs / totalDurationMs, 0),
+      1,
+    );
     progressAnim.setValue(normalized);
   }, [playbackPositionMs, totalDurationMs, progressAnim]);
 
@@ -216,7 +245,8 @@ const PreviewScreen: React.FC = () => {
     }
 
     const { startMs, durationMs } = activeTransitionSegment;
-    const progress = durationMs > 0 ? (playbackPositionMs - startMs) / durationMs : 0;
+    const progress =
+      durationMs > 0 ? (playbackPositionMs - startMs) / durationMs : 0;
     transitionAnim.setValue(Math.min(Math.max(progress, 0), 1));
   }, [activeTransitionSegment, playbackPositionMs, transitionAnim]);
 
@@ -226,8 +256,8 @@ const PreviewScreen: React.FC = () => {
   const incomingIndex = isTransitioning
     ? activeTransitionSegment?.toIndex ?? outgoingIndex
     : totalPhotos > 0
-        ? (outgoingIndex + 1) % totalPhotos
-        : 0;
+    ? (outgoingIndex + 1) % totalPhotos
+    : 0;
 
   const handlePlayPause = () => {
     haptics.medium();
@@ -259,13 +289,15 @@ const PreviewScreen: React.FC = () => {
 
     // Find the next photo segment
     let currentSegmentIndex = timeline.photoSegments.findIndex(
-      segment => playbackPositionMs >= segment.startMs && playbackPositionMs < segment.endMs
+      segment =>
+        playbackPositionMs >= segment.startMs &&
+        playbackPositionMs < segment.endMs,
     );
 
     // If we're not in any segment (e.g., in a transition), find the last passed segment
     if (currentSegmentIndex === -1) {
       currentSegmentIndex = timeline.photoSegments.findIndex(
-        segment => segment.startMs > playbackPositionMs
+        segment => segment.startMs > playbackPositionMs,
       );
       if (currentSegmentIndex === -1) {
         currentSegmentIndex = timeline.photoSegments.length - 1;
@@ -274,7 +306,8 @@ const PreviewScreen: React.FC = () => {
       }
     }
 
-    const nextSegmentIndex = (currentSegmentIndex + 1) % timeline.photoSegments.length;
+    const nextSegmentIndex =
+      (currentSegmentIndex + 1) % timeline.photoSegments.length;
     seekToPhoto(nextSegmentIndex);
   };
 
@@ -295,13 +328,15 @@ const PreviewScreen: React.FC = () => {
 
     // Find the current photo segment
     let currentSegmentIndex = timeline.photoSegments.findIndex(
-      segment => playbackPositionMs >= segment.startMs && playbackPositionMs < segment.endMs
+      segment =>
+        playbackPositionMs >= segment.startMs &&
+        playbackPositionMs < segment.endMs,
     );
 
     // If we're not in any segment (e.g., in a transition), find the last passed segment
     if (currentSegmentIndex === -1) {
       currentSegmentIndex = timeline.photoSegments.findIndex(
-        segment => segment.startMs > playbackPositionMs
+        segment => segment.startMs > playbackPositionMs,
       );
       if (currentSegmentIndex === -1) {
         currentSegmentIndex = timeline.photoSegments.length - 1;
@@ -310,9 +345,10 @@ const PreviewScreen: React.FC = () => {
       }
     }
 
-    const prevSegmentIndex = currentSegmentIndex <= 0
-      ? timeline.photoSegments.length - 1
-      : currentSegmentIndex - 1;
+    const prevSegmentIndex =
+      currentSegmentIndex <= 0
+        ? timeline.photoSegments.length - 1
+        : currentSegmentIndex - 1;
     seekToPhoto(prevSegmentIndex);
   };
 
@@ -331,17 +367,26 @@ const PreviewScreen: React.FC = () => {
 
   if (!project || totalPhotos === 0) {
     return (
-      <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]}>
+      <SafeAreaView
+        style={[styles.container, { backgroundColor: colors.background }]}
+      >
         <View style={styles.errorContainer}>
-          <Text style={[styles.errorText, { color: colors.text }]}>No project found</Text>
+          <Text style={[styles.errorText, { color: colors.text }]}>
+            No project found
+          </Text>
         </View>
       </SafeAreaView>
     );
   }
 
-  const resolvedOutgoingIndex = Math.max(0, Math.min(outgoingIndex, totalPhotos - 1));
+  const resolvedOutgoingIndex = Math.max(
+    0,
+    Math.min(outgoingIndex, totalPhotos - 1),
+  );
   const resolvedIncomingIndex =
-    totalPhotos > 1 ? (incomingIndex + totalPhotos) % totalPhotos : resolvedOutgoingIndex;
+    totalPhotos > 1
+      ? (incomingIndex + totalPhotos) % totalPhotos
+      : resolvedOutgoingIndex;
 
   const isEntranceTransition = Boolean(activeTransitionSegment?.isEntrance);
   const basePhoto = photos[resolvedOutgoingIndex];
@@ -349,8 +394,8 @@ const PreviewScreen: React.FC = () => {
     isTransitioning && isEntranceTransition
       ? null
       : totalPhotos > 1
-          ? photos[resolvedIncomingIndex]
-          : basePhoto;
+      ? photos[resolvedIncomingIndex]
+      : basePhoto;
   const currentTransitionType = isTransitioning
     ? activeTransitionSegment?.transition.type ?? null
     : null;
@@ -450,7 +495,10 @@ const PreviewScreen: React.FC = () => {
           inputRange: [0, 1],
           outputRange: [0.8, 1],
         });
-        currentStyle = { opacity: fadeOut, transform: [{ scale: currentScale }] };
+        currentStyle = {
+          opacity: fadeOut,
+          transform: [{ scale: currentScale }],
+        };
         nextStyle = { opacity: fadeIn, transform: [{ scale: nextScale }] };
         break;
       }
@@ -643,7 +691,10 @@ const PreviewScreen: React.FC = () => {
     };
   };
 
-  const layerStyles = getLayerStyles(isEntranceTransition, Boolean(overlayPhoto));
+  const layerStyles = getLayerStyles(
+    isEntranceTransition,
+    Boolean(overlayPhoto),
+  );
   const currentLayerStyle = layerStyles.current;
   const nextLayerStyle = layerStyles.next;
 
@@ -682,13 +733,21 @@ const PreviewScreen: React.FC = () => {
             />
           </RNAnimated.View>
         )}
-        <PreviewWatermark width={PREVIEW_WIDTH} height={PREVIEW_HEIGHT} />
+        {/* Watermark removed - app is completely free */}
       </View>
 
       {/* Progress bar */}
-      <View style={[styles.progressBarContainer, { backgroundColor: 'rgba(255,255,255,0.3)' }]}>
+      <View
+        style={[
+          styles.progressBarContainer,
+          { backgroundColor: 'rgba(255,255,255,0.3)' },
+        ]}
+      >
         <RNAnimated.View
-          style={[styles.progressBar, { width: progressWidth, backgroundColor: colors.primary }]}
+          style={[
+            styles.progressBar,
+            { width: progressWidth, backgroundColor: colors.primary },
+          ]}
         />
       </View>
 
@@ -698,7 +757,9 @@ const PreviewScreen: React.FC = () => {
           <Text style={[styles.photoCounter, { color: '#FFFFFF' }]}>
             {displayIndex + 1} / {totalPhotos}
           </Text>
-          <Text style={[styles.projectTitle, { color: '#FFFFFF' }]}>{project.title}</Text>
+          <Text style={[styles.projectTitle, { color: '#FFFFFF' }]}>
+            {project.title}
+          </Text>
         </View>
 
         <View style={styles.playbackControls}>
@@ -747,54 +808,6 @@ const PreviewScreen: React.FC = () => {
     </SafeAreaView>
   );
 };
-
-interface PreviewWatermarkProps {
-  width: number;
-  height: number;
-}
-
-const PreviewWatermark: React.FC<PreviewWatermarkProps> = React.memo(({ width, height }) => {
-  const iconSize = Math.max(Math.round(width * 0.28), 140);
-  const margin = Math.max(Math.round(Math.min(width, height) * 0.04), 24);
-  const fontSize = Math.max(Math.round(height * 0.05), 26);
-  const textSpacing = Math.max(Math.round(fontSize * 0.45), 12);
-
-  return (
-    <View
-      pointerEvents="none"
-      style={[
-        styles.watermarkContainer,
-        {
-          bottom: margin,
-          right: margin,
-        },
-      ]}
-    >
-      <RNImage
-        source={WATERMARK_ICON}
-        style={[
-          styles.watermarkImage,
-          {
-            width: iconSize,
-            height: iconSize,
-          },
-        ]}
-        resizeMode="contain"
-      />
-      <Text
-        style={[
-          styles.watermarkText,
-          {
-            fontSize,
-            marginTop: textSpacing,
-          },
-        ]}
-      >
-        SlideMint
-      </Text>
-    </View>
-  );
-});
 
 // Photo Canvas Component
 interface PhotoCanvasProps {
@@ -877,20 +890,6 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-  },
-  watermarkContainer: {
-    position: 'absolute',
-    alignItems: 'center',
-  },
-  watermarkImage: {
-    width: 80,
-    height: 80,
-  },
-  watermarkText: {
-    color: '#FFFFFF',
-    fontWeight: '600',
-    letterSpacing: 1,
-    textTransform: 'uppercase',
   },
   photoLayer: {
     position: 'absolute',

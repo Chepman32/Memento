@@ -14,11 +14,16 @@ import FeatherIcon from 'react-native-vector-icons/Feather';
 import { RootStackParamList } from '../navigation/navigationTypes';
 import useProjectStore from '../store/projectStore';
 import { useThemeStore } from '../store/themeStore';
-import { usePurchaseStore } from '../store/purchaseStore';
 import { Button, IconButton, Card } from '../components/common';
 import { haptics } from '../utils/hapticFeedback';
 import { sounds } from '../utils/soundEffects';
-import { SPACING, RADII, TYPOGRAPHY, SHADOWS, SCREEN_WIDTH } from '../constants/theme';
+import {
+  SPACING,
+  RADII,
+  TYPOGRAPHY,
+  SHADOWS,
+  SCREEN_WIDTH,
+} from '../constants/theme';
 import { Project } from '../types/project.types';
 
 type HomeScreenNavigationProp = StackNavigationProp<RootStackParamList, 'Home'>;
@@ -30,7 +35,6 @@ const HomeScreen: React.FC = () => {
   const navigation = useNavigation<HomeScreenNavigationProp>();
   const { colors } = useThemeStore();
   const { projects, deleteProject, setCurrentProject } = useProjectStore();
-  const { purchaseState } = usePurchaseStore();
 
   const handleCreateNew = useCallback(() => {
     haptics.medium();
@@ -45,7 +49,7 @@ const HomeScreen: React.FC = () => {
       setCurrentProject(project.id);
       navigation.navigate('Editor', { photos: [] });
     },
-    [navigation, setCurrentProject]
+    [navigation, setCurrentProject],
   );
 
   const handleDeleteProject = useCallback(
@@ -53,7 +57,7 @@ const HomeScreen: React.FC = () => {
       haptics.medium();
       deleteProject(projectId);
     },
-    [deleteProject]
+    [deleteProject],
   );
 
   const handleOpenSettings = useCallback(() => {
@@ -64,24 +68,44 @@ const HomeScreen: React.FC = () => {
 
   const renderProject = useCallback(
     ({ item }: { item: Project }) => {
-      const formattedDate = new Date(item.updatedAt).toLocaleDateString('en-US', {
-        month: 'short',
-        day: 'numeric',
-      });
+      const formattedDate = new Date(item.updatedAt).toLocaleDateString(
+        'en-US',
+        {
+          month: 'short',
+          day: 'numeric',
+        },
+      );
 
       return (
         <Card
-          style={[styles.projectCard, { width: CARD_WIDTH, height: CARD_HEIGHT }]}
+          style={[
+            styles.projectCard,
+            { width: CARD_WIDTH, height: CARD_HEIGHT },
+          ]}
           onPress={() => handleOpenProject(item)}
           padding={false}
         >
           {/* Thumbnail */}
           <View style={styles.thumbnailContainer}>
             {item.thumbnail ? (
-              <Image source={{ uri: item.thumbnail }} style={styles.thumbnail} resizeMode="cover" />
+              <Image
+                source={{ uri: item.thumbnail }}
+                style={styles.thumbnail}
+                resizeMode="cover"
+              />
             ) : (
-              <View style={[styles.thumbnailPlaceholder, { backgroundColor: colors.border }]}>
-                <Text style={[styles.placeholderText, { color: colors.textSecondary }]}>
+              <View
+                style={[
+                  styles.thumbnailPlaceholder,
+                  { backgroundColor: colors.border },
+                ]}
+              >
+                <Text
+                  style={[
+                    styles.placeholderText,
+                    { color: colors.textSecondary },
+                  ]}
+                >
                   No Preview
                 </Text>
               </View>
@@ -100,7 +124,10 @@ const HomeScreen: React.FC = () => {
 
           {/* Info */}
           <View style={styles.projectInfo}>
-            <Text style={[styles.projectTitle, { color: colors.text }]} numberOfLines={1}>
+            <Text
+              style={[styles.projectTitle, { color: colors.text }]}
+              numberOfLines={1}
+            >
               {item.title}
             </Text>
             <Text style={[styles.projectMeta, { color: colors.textSecondary }]}>
@@ -110,12 +137,14 @@ const HomeScreen: React.FC = () => {
         </Card>
       );
     },
-    [colors, handleOpenProject, handleDeleteProject]
+    [colors, handleOpenProject, handleDeleteProject],
   );
 
   const renderEmpty = () => (
     <View style={styles.emptyContainer}>
-      <Text style={[styles.emptyTitle, { color: colors.text }]}>No Projects Yet</Text>
+      <Text style={[styles.emptyTitle, { color: colors.text }]}>
+        No Projects Yet
+      </Text>
       <Text style={[styles.emptySubtitle, { color: colors.textSecondary }]}>
         Create your first memory slideshow
       </Text>
@@ -129,19 +158,15 @@ const HomeScreen: React.FC = () => {
   );
 
   return (
-    <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]}>
+    <SafeAreaView
+      style={[styles.container, { backgroundColor: colors.background }]}
+    >
       {/* Header */}
       <View style={styles.header}>
         <View>
-          <Text style={[styles.headerTitle, { color: colors.text }]}>SlideMint</Text>
-          {purchaseState.isPremium && (
-            <View style={styles.premiumBadgeContainer}>
-              <FeatherIcon name="star" size={14} color={colors.primary} />
-              <Text style={[styles.premiumBadgeText, { color: colors.primary }]}>
-                Premium
-              </Text>
-            </View>
-          )}
+          <Text style={[styles.headerTitle, { color: colors.text }]}>
+            SlideMint
+          </Text>
         </View>
         <IconButton
           icon={<FeatherIcon name="settings" size={24} color={colors.text} />}
@@ -154,7 +179,7 @@ const HomeScreen: React.FC = () => {
       <FlatList
         data={projects}
         renderItem={renderProject}
-        keyExtractor={(item) => item.id}
+        keyExtractor={item => item.id}
         numColumns={2}
         contentContainerStyle={styles.projectsGrid}
         columnWrapperStyle={styles.columnWrapper}
@@ -189,16 +214,6 @@ const styles = StyleSheet.create({
   },
   headerTitle: {
     ...TYPOGRAPHY.h2,
-  },
-  premiumBadgeContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginTop: 4,
-  },
-  premiumBadgeText: {
-    ...TYPOGRAPHY.caption,
-    fontWeight: '600',
-    marginLeft: SPACING.xs,
   },
   projectsGrid: {
     padding: SPACING.md,

@@ -1,28 +1,31 @@
-import { SubscriptionType, SUBSCRIPTION_PRODUCTS } from '../types/purchase.types';
+import {
+  SubscriptionType,
+  SUBSCRIPTION_PRODUCTS,
+} from '../types/purchase.types';
 
-// IAP Product IDs
+// IAP Product IDs (kept for reference but not used - app is free)
 export const IAP_PRODUCT_IDS = {
   MONTHLY: SUBSCRIPTION_PRODUCTS[SubscriptionType.MONTHLY].id,
   ANNUAL: SUBSCRIPTION_PRODUCTS[SubscriptionType.ANNUAL].id,
 };
 
-// Free tier limits
+// App is completely free - no limits
 export const FREE_TIER_LIMITS = {
-  MAX_PHOTOS: 50,
-  MAX_TRANSITIONS: 13,
-  MAX_EFFECTS: 8,
-  MAX_EXPORT_QUALITY: '4K' as const,
+  MAX_PHOTOS: 100, // Generous limit for all users
+  MAX_TRANSITIONS: 13, // All transitions available
+  MAX_EFFECTS: 8, // All effects available
+  MAX_EXPORT_QUALITY: '4K' as const, // Best quality for everyone
 };
 
-// Premium tier limits
+// Premium tier limits (same as free - app is free)
 export const PREMIUM_TIER_LIMITS = {
-  MAX_PHOTOS: 50,
+  MAX_PHOTOS: 100,
   MAX_TRANSITIONS: 13,
   MAX_EFFECTS: 8,
   MAX_EXPORT_QUALITY: '4K' as const,
 };
 
-// Feature flags
+// Feature flags (all features enabled for free)
 export const PREMIUM_FEATURES = {
   UNLIMITED_PHOTOS: 'unlimitedPhotos',
   PREMIUM_TRANSITIONS: 'premiumTransitions',
@@ -34,11 +37,11 @@ export const PREMIUM_FEATURES = {
   CLOUD_SYNC: 'cloudSync',
 } as const;
 
-// Paywall configuration
+// Paywall configuration (not used - app is free)
 export const PAYWALL_CONFIG = {
-  MONTHLY_PRICE: '$4.99',
-  ANNUAL_PRICE: '$29.99',
-  ANNUAL_SAVINGS: '50%',
-  TRIAL_DAYS_MONTHLY: 3,
-  TRIAL_DAYS_ANNUAL: 7,
+  MONTHLY_PRICE: '$0.00',
+  ANNUAL_PRICE: '$0.00',
+  ANNUAL_SAVINGS: '100%',
+  TRIAL_DAYS_MONTHLY: 0,
+  TRIAL_DAYS_ANNUAL: 0,
 };

@@ -6,7 +6,6 @@ export type RootStackParamList = {
   Preview: { projectId: string };
   Export: { projectId: string };
   Settings: undefined;
-  Paywall: undefined;
 };
 
 export type TransitionType =

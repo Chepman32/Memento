@@ -1,6 +1,9 @@
 import React from 'react';
 import { NavigationContainer } from '@react-navigation/native';
-import { createStackNavigator, CardStyleInterpolators } from '@react-navigation/stack';
+import {
+  createStackNavigator,
+  CardStyleInterpolators,
+} from '@react-navigation/stack';
 import { RootStackParamList } from './navigationTypes';
 import { useThemeStore } from '../store/themeStore';
 
@@ -12,7 +15,6 @@ import EditorScreen from '../screens/EditorScreen';
 import PreviewScreen from '../screens/PreviewScreen';
 import ExportScreen from '../screens/ExportScreen';
 import SettingsScreen from '../screens/SettingsScreen';
-import PaywallScreen from '../screens/PaywallScreen';
 
 const Stack = createStackNavigator<RootStackParamList>();
 
@@ -55,14 +57,8 @@ export const RootNavigator: React.FC = () => {
             cardStyleInterpolator: CardStyleInterpolators.forVerticalIOS,
           }}
         />
-        <Stack.Screen
-          name="Editor"
-          component={EditorScreen}
-        />
-        <Stack.Screen
-          name="Preview"
-          component={PreviewScreen}
-        />
+        <Stack.Screen name="Editor" component={EditorScreen} />
+        <Stack.Screen name="Preview" component={PreviewScreen} />
         <Stack.Screen
           name="Export"
           component={ExportScreen}
@@ -74,14 +70,6 @@ export const RootNavigator: React.FC = () => {
         <Stack.Screen
           name="Settings"
           component={SettingsScreen}
-          options={{
-            presentation: 'modal',
-            cardStyleInterpolator: CardStyleInterpolators.forVerticalIOS,
-          }}
-        />
-        <Stack.Screen
-          name="Paywall"
-          component={PaywallScreen}
           options={{
             presentation: 'modal',
             cardStyleInterpolator: CardStyleInterpolators.forVerticalIOS,

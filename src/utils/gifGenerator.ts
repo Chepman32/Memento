@@ -1,7 +1,11 @@
 import RNFS from 'react-native-fs';
 import videoEncoder from './videoEncoder';
 import { executeFfmpeg } from './ffmpegBridge';
-import { Project, ExportQuality, ResolutionPreset } from '../types/project.types';
+import {
+  Project,
+  ExportQuality,
+  ResolutionPreset,
+} from '../types/project.types';
 import { prepareWatermarkResources, WatermarkResources } from './watermark';
 
 export interface GifConfig {
@@ -25,7 +29,10 @@ export interface GifResult {
 
 const MAX_GIF_SIZE = 10 * 1024 * 1024; // 10MB
 
-const pickResolutionPreset = (width: number, height: number): ResolutionPreset => {
+const pickResolutionPreset = (
+  width: number,
+  height: number,
+): ResolutionPreset => {
   if (width === height) {
     return ResolutionPreset.SQUARE;
   }
@@ -50,11 +57,11 @@ export const gifGenerator = {
     height: number,
     fps: number,
     duration: number,
-    colors: number
+    colors: number,
   ): number => {
     // Rough estimation: width * height * fps * duration * (colors/256) * compression_factor
     const compressionFactor = 0.1; // GIF compression
-    const bytesPerFrame = (width * height * (colors / 256)) * compressionFactor;
+    const bytesPerFrame = width * height * (colors / 256) * compressionFactor;
     const totalFrames = fps * duration;
     return Math.floor(bytesPerFrame * totalFrames);
   },
@@ -66,7 +73,7 @@ export const gifGenerator = {
     width: number,
     height: number,
     duration: number,
-    maxSize: number = MAX_GIF_SIZE
+    maxSize: number = MAX_GIF_SIZE,
   ): { width: number; height: number; fps: number; colors: number } => {
     let settings = {
       width,
@@ -80,7 +87,7 @@ export const gifGenerator = {
       settings.height,
       settings.fps,
       duration,
-      settings.colors
+      settings.colors,
     );
 
     // Reduce dimensions if too large
@@ -92,7 +99,7 @@ export const gifGenerator = {
         settings.height,
         settings.fps,
         duration,
-        settings.colors
+        settings.colors,
       );
     }
 
@@ -104,7 +111,7 @@ export const gifGenerator = {
         settings.height,
         settings.fps,
         duration,
-        settings.colors
+        settings.colors,
       );
     }
 
@@ -116,7 +123,7 @@ export const gifGenerator = {
         settings.height,
         settings.fps,
         duration,
-        settings.colors
+        settings.colors,
       );
     }
 
@@ -151,7 +158,8 @@ export const gifGenerator = {
     const colors = Math.min(Math.max(config.colors, 2), 256);
     const resolution = pickResolutionPreset(config.width, config.height);
     const estimatedDurationMs = Math.max(timeline.totalDurationMs, 1000);
-    const includeWatermark = config.includeWatermark ?? true;
+    // App is free - no watermark by default
+    const includeWatermark = config.includeWatermark ?? false;
     let watermarkResources: WatermarkResources | null = null;
 
     if (includeWatermark) {
@@ -162,7 +170,7 @@ export const gifGenerator = {
           '[FFmpeg-GIF]',
           error instanceof Error
             ? `Failed to prepare watermark resources: ${error.message}`
-            : 'Failed to prepare watermark resources.'
+            : 'Failed to prepare watermark resources.',
         );
       }
     }
@@ -207,7 +215,7 @@ export const gifGenerator = {
         estimatedDurationMs,
         onProgress: progress => {
           if (config.onProgress) {
-            const mapped = 70 + (Math.min(progress, 100) * 0.3);
+            const mapped = 70 + Math.min(progress, 100) * 0.3;
             config.onProgress(mapped > 100 ? 100 : mapped);
           }
         },
@@ -255,7 +263,10 @@ export const gifGenerator = {
   /**
    * Check if file size is within limit
    */
-  isWithinSizeLimit: (fileSize: number, maxSize: number = MAX_GIF_SIZE): boolean => {
+  isWithinSizeLimit: (
+    fileSize: number,
+    maxSize: number = MAX_GIF_SIZE,
+  ): boolean => {
     return fileSize <= maxSize;
   },
 
