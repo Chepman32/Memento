@@ -162,11 +162,19 @@ export const EditorScreen = () => {
 
   // Apply transition effect - adds a transition object before the selected photo
   const handleTransitionChange = (transitionType: TransitionType) => {
-    if (!currentProject || selectedTransitionIndex === null) return;
+    if (!currentProject) return;
+
+    // Use transition index if selected, otherwise use active photo index
+    const targetIndex =
+      selectedTransitionIndex !== null
+        ? selectedTransitionIndex
+        : activePhotoIndex;
+
+    if (targetIndex === null) return;
 
     // Check if transition already exists at this position
     const existingTransition = currentProject.transitions?.find(
-      t => t.order === selectedTransitionIndex,
+      t => t.order === targetIndex,
     );
 
     if (existingTransition) {
@@ -176,7 +184,7 @@ export const EditorScreen = () => {
       });
     } else {
       // Add new transition at selected position
-      addTransition(currentProject.id, selectedTransitionIndex, transitionType);
+      addTransition(currentProject.id, targetIndex, transitionType);
     }
 
     haptics.medium();
@@ -193,7 +201,7 @@ export const EditorScreen = () => {
 
     if (existingTransition) {
       removeTransition(currentProject.id, existingTransition.id);
-      setSelectedTransitionIndex(null);
+      // Don't clear selection - allows undo to restore with selection intact
       haptics.light();
     }
   };
@@ -272,7 +280,7 @@ export const EditorScreen = () => {
   };
 
   const handleRemovePhoto = () => {
-    if (!currentProject || !activePhoto) return;
+    if (!currentProject || !activePhoto || activePhotoIndex === null) return;
 
     const remainingPhotoCount = currentProject.photos.length - 1;
     removePhoto(currentProject.id, activePhoto.id);
@@ -327,22 +335,32 @@ export const EditorScreen = () => {
           </View>
         );
       case 'transitions':
-        const currentTransition =
+        // Get transition for the selected item (either direct transition selection or slide's incoming transition)
+        const transitionIndex =
           selectedTransitionIndex !== null
+            ? selectedTransitionIndex
+            : activePhotoIndex;
+        const currentTransition =
+          transitionIndex !== null
             ? currentProject?.transitions?.find(
-                t => t.order === selectedTransitionIndex,
+                t => t.order === transitionIndex,
               )
             : null;
+
+        // Show picker if either a transition or a slide is selected
+        const hasSelection =
+          selectedTransitionIndex !== null || activePhotoIndex !== null;
+
         return (
           <View style={styles.tabContent}>
-            {selectedTransitionIndex === null ? (
+            {!hasSelection ? (
               <Text
                 style={[
                   styles.placeholderText,
                   { color: colors.textSecondary },
                 ]}
               >
-                Tap a transition in the timeline to select it
+                Tap a transition or slide in the timeline
               </Text>
             ) : (
               <View style={styles.controlGroup}>
@@ -1121,7 +1139,7 @@ const PhotoTimeline: React.FC<PhotoTimelineProps> = ({
 
   // Scroll to active photo
   useEffect(() => {
-    if (scrollViewRef.current && photos.length > 0) {
+    if (scrollViewRef.current && photos.length > 0 && activeIndex !== null) {
       const offset = Math.max(
         0,
         activeIndex * (THUMBNAIL_SIZE + SPACING.sm * 2) -
