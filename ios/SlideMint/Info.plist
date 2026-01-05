@@ -35,6 +35,8 @@
 	</dict>
 	<key>NSLocationWhenInUseUsageDescription</key>
 	<string></string>
+	<key>NSCameraUsageDescription</key>
+	<string>We use your camera to capture new photos and videos for your slideshows.</string>
 	<key>NSPhotoLibraryAddUsageDescription</key>
 	<string>We need permission to save your created videos to the photo library.</string>
 	<key>NSPhotoLibraryUsageDescription</key>
