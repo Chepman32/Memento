@@ -73,11 +73,10 @@ export const EditorScreen = () => {
   // Initialize project when screen loads
   useEffect(() => {
     const initializeProject = async () => {
-      if (!currentProject && photos && photos.length > 0) {
-        // Create new project
-        const project = await createProject('New Slideshow');
+      // When photos are passed in (from image picker), always start a fresh project
+      if (photos && photos.length > 0) {
+        await createProject('New Slideshow');
 
-        // Add photos to project
         const photoAssets = photos.map((uri: string) => ({
           uri,
           width: 1920,
@@ -89,7 +88,7 @@ export const EditorScreen = () => {
     };
 
     initializeProject();
-  }, []);
+  }, [addPhotos, createProject, photos]);
   
   // Handle photo selection
   const handleSelectPhoto = (index: number) => {

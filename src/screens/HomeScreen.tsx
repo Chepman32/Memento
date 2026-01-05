@@ -39,8 +39,9 @@ const HomeScreen: React.FC = () => {
   const handleCreateNew = useCallback(() => {
     haptics.medium();
     sounds.tap();
+    setCurrentProject(null); // Clear any previously opened project before starting a new one
     navigation.navigate('ImageSelection', { autoOpenPicker: true });
-  }, [navigation]);
+  }, [navigation, setCurrentProject]);
 
   const handleOpenProject = useCallback(
     (project: Project) => {
