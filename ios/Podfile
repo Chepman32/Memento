@@ -23,6 +23,8 @@ end
 
 target 'SlideMint' do
   config = use_native_modules!
+  ffmpeg_https_podspec = File.expand_path('ffmpeg-kit-ios-https.podspec', __dir__)
+  pod 'ffmpeg-kit-ios-https', :podspec => ffmpeg_https_podspec
 
   use_react_native!(
     :path => config[:reactNativePath],

@@ -1,7 +1,7 @@
 import { create } from 'zustand';
 import { persist, createJSONStorage } from 'zustand/middleware';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { Project, Photo, TransitionType, PhotoEffect, Transition } from '../types/project.types';
+import { Project, Photo, TransitionType, PhotoEffect, Transition, Folder } from '../types/project.types';
 
 // Generate unique ID
 const generateId = () => {
@@ -19,6 +19,7 @@ const DEFAULT_PROJECT_SETTINGS = {
 interface ProjectState {
   // State
   projects: Project[];
+  folders: Folder[];
   currentProjectId: string | null;
   isLoading: boolean;
   error: string | null;
@@ -27,6 +28,7 @@ interface ProjectState {
 
   // Actions
   createProject: (title?: string) => Promise<Project>;
+  duplicateProject: (id: string) => void;
   updateProject: (id: string, updates: Partial<Project>) => void;
   deleteProject: (id: string) => void;
   setCurrentProject: (id: string | null) => void;
@@ -35,11 +37,16 @@ interface ProjectState {
   updatePhoto: (projectId: string, photoId: string, updates: Partial<Photo>) => void;
   reorderPhotos: (projectId: string, fromIndex: number, toIndex: number) => void;
   updateProjectSettings: (projectId: string, settings: Partial<typeof DEFAULT_PROJECT_SETTINGS>) => void;
+  moveProjectToFolder: (projectId: string, folderId: string | null) => void;
 
   // Transition actions
   addTransition: (projectId: string, photoIndex: number, transitionType: TransitionType) => void;
   removeTransition: (projectId: string, transitionId: string) => void;
   updateTransition: (projectId: string, transitionId: string, updates: Partial<Transition>) => void;
+
+  // Folder actions
+  createFolder: (name: string, parentId?: string | null) => Folder | null;
+  renameFolder: (id: string, name: string) => void;
 
   // Undo/Redo
   undo: () => void;
@@ -57,6 +64,13 @@ export const useProjectStore = create<ProjectState>()(
   persist(
     (set, get) => ({
       projects: [],
+      folders: [
+        {
+          id: 'root',
+          name: 'All Projects',
+          parentId: null,
+        },
+      ],
       currentProjectId: null,
       isLoading: false,
       error: null,
@@ -74,6 +88,7 @@ export const useProjectStore = create<ProjectState>()(
           settings: { ...DEFAULT_PROJECT_SETTINGS },
           thumbnail: '',
           duration: 0,
+          folderId: 'root',
         };
 
         set((state) => ({
@@ -82,6 +97,36 @@ export const useProjectStore = create<ProjectState>()(
         }));
 
         return newProject;
+      },
+
+      duplicateProject: (id) => {
+        const source = get().projects.find((p) => p.id === id);
+        if (!source) return;
+
+        const clonePhotos = source.photos.map((photo, index) => ({
+          ...photo,
+          id: generateId(),
+          order: index,
+        }));
+
+        const cloneTransitions = (source.transitions || []).map((transition) => ({
+          ...transition,
+          id: generateId(),
+        }));
+
+        const duplicated: Project = {
+          ...source,
+          id: generateId(),
+          title: `${source.title} Copy`,
+          createdAt: new Date(),
+          updatedAt: new Date(),
+          photos: clonePhotos,
+          transitions: cloneTransitions,
+        };
+
+        set((state) => ({
+          projects: [...state.projects, duplicated],
+        }));
       },
       
       updateProject: (id, updates) => {
@@ -104,6 +149,14 @@ export const useProjectStore = create<ProjectState>()(
       
       setCurrentProject: (id) => {
         set({ currentProjectId: id });
+      },
+
+      moveProjectToFolder: (projectId, folderId) => {
+        const targetFolderId = folderId || 'root';
+        const folderExists = get().folders.some((f) => f.id === targetFolderId);
+        if (!folderExists) return;
+
+        get().updateProject(projectId, { folderId: targetFolderId });
       },
       
       addPhotos: async (assets) => {
@@ -229,6 +282,31 @@ export const useProjectStore = create<ProjectState>()(
         });
       },
 
+      createFolder: (name, parentId = 'root') => {
+        const parentExists = parentId === null || get().folders.some((f) => f.id === parentId);
+        if (!parentExists) return null;
+
+        const newFolder: Folder = {
+          id: generateId(),
+          name: name.trim() || 'New Folder',
+          parentId,
+        };
+
+        set((state) => ({
+          folders: [...state.folders, newFolder],
+        }));
+
+        return newFolder;
+      },
+
+      renameFolder: (id, name) => {
+        set((state) => ({
+          folders: state.folders.map((folder) =>
+            folder.id === id ? { ...folder, name: name.trim() || folder.name } : folder
+          ),
+        }));
+      },
+
       // Transition Actions
       addTransition: (projectId, photoIndex, transitionType) => {
         const project = get().projects.find(p => p.id === projectId);
@@ -351,12 +429,13 @@ export const useProjectStore = create<ProjectState>()(
         }
         return project;
       },
-    }),
+      }),
     {
       name: 'slidemint-projects',
       storage: createJSONStorage(() => AsyncStorage),
       partialize: (state) => ({
         projects: state.projects,
+        folders: state.folders,
         currentProjectId: state.currentProjectId,
       }),
     }

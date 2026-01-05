@@ -76,6 +76,12 @@ export interface ProjectSettings {
   resolution: ResolutionPreset;
 }
 
+export interface Folder {
+  id: string;
+  name: string;
+  parentId: string | null;
+}
+
 export interface Project {
   id: string;
   title: string;
@@ -86,4 +92,5 @@ export interface Project {
   settings: ProjectSettings;
   thumbnail: string;
   duration: number;
+  folderId?: string | null;
 }

@@ -6,6 +6,8 @@ import { SPACING, RADII, SHADOWS } from '../../constants/theme';
 interface CardProps {
   children: React.ReactNode;
   onPress?: () => void;
+  onLongPress?: () => void;
+  delayLongPress?: number;
   style?: ViewStyle;
   elevated?: boolean;
   bordered?: boolean;
@@ -15,6 +17,8 @@ interface CardProps {
 export const Card: React.FC<CardProps> = ({
   children,
   onPress,
+  onLongPress,
+  delayLongPress,
   style,
   elevated = true,
   bordered = false,
@@ -39,6 +43,8 @@ export const Card: React.FC<CardProps> = ({
     return (
       <TouchableOpacity
         onPress={onPress}
+        onLongPress={onLongPress}
+        delayLongPress={delayLongPress}
         activeOpacity={0.8}
         style={[cardStyle, style]}
       >
