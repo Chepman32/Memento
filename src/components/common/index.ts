@@ -5,3 +5,4 @@ export { IconButton } from './IconButton';
 export { AnimatedBackground } from './AnimatedBackground';
 export { GradientOverlay } from './GradientOverlay';
 export { LoadingSpinner } from './LoadingSpinner';
+export { InputModal } from './InputModal';
