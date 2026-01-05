@@ -101,6 +101,7 @@ const HomeScreen: React.FC = () => {
 
   const handleDeleteProject = useCallback(
     (projectId: string) => {
+      haptics.light();
       Alert.alert(
         'Delete Project',
         'Are you sure you want to delete this project?',
@@ -121,6 +122,7 @@ const HomeScreen: React.FC = () => {
   );
 
   const handleRenameProject = useCallback((project: Project) => {
+    haptics.light();
     setModalState({
       visible: true,
       type: 'renameProject',
@@ -141,6 +143,7 @@ const HomeScreen: React.FC = () => {
   );
 
   const handleCreateFolder = useCallback(() => {
+    haptics.light();
     setModalState({
       visible: true,
       type: 'createFolder',
@@ -154,6 +157,7 @@ const HomeScreen: React.FC = () => {
   const handleRenameFolder = useCallback((folder: Folder) => {
     if (folder.id === 'root') return;
 
+    haptics.light();
     setModalState({
       visible: true,
       type: 'renameFolder',
@@ -169,6 +173,7 @@ const HomeScreen: React.FC = () => {
     (folderId: string) => {
       if (folderId === 'root') return;
 
+      haptics.light();
       Alert.alert(
         'Delete Folder',
         'Projects in this folder will be moved to All Projects.',

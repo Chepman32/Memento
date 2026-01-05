@@ -13,6 +13,7 @@ import {
 } from 'react-native';
 import { useThemeStore } from '../../store/themeStore';
 import { SPACING, TYPOGRAPHY, RADII } from '../../constants/theme';
+import { haptics } from '../../utils/hapticFeedback';
 
 interface InputModalProps {
   visible: boolean;
@@ -82,11 +83,13 @@ export const InputModal: React.FC<InputModalProps> = ({
 
   const handleConfirm = () => {
     if (value.trim()) {
+      haptics.success();
       onConfirm(value.trim());
     }
   };
 
   const handleCancel = () => {
+    haptics.light();
     setValue(initialValue);
     onCancel();
   };
