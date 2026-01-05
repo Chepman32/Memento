@@ -825,6 +825,40 @@ interface TransitionPickerProps {
   onSelect: (transition: TransitionType) => void;
 }
 
+// Map transition types to Feather icon names
+const getTransitionIcon = (transitionId: TransitionType): string => {
+  switch (transitionId) {
+    case TransitionType.FADE:
+      return 'sun'; // Represents fading/brightness
+    case TransitionType.SLIDE_LEFT:
+      return 'arrow-left';
+    case TransitionType.SLIDE_RIGHT:
+      return 'arrow-right';
+    case TransitionType.SLIDE_UP:
+      return 'arrow-up';
+    case TransitionType.SLIDE_DOWN:
+      return 'arrow-down';
+    case TransitionType.ZOOM:
+      return 'zoom-in';
+    case TransitionType.ROTATE:
+      return 'rotate-cw';
+    case TransitionType.CUBE:
+      return 'box';
+    case TransitionType.FLIP:
+      return 'refresh-cw';
+    case TransitionType.DISSOLVE:
+      return 'wind';
+    case TransitionType.BLUR:
+      return 'droplet';
+    case TransitionType.WIPE_CIRCLE:
+      return 'circle';
+    case TransitionType.PUSH:
+      return 'chevrons-right';
+    default:
+      return 'layers';
+  }
+};
+
 const TransitionPicker: React.FC<TransitionPickerProps> = ({
   selectedTransition,
   onSelect,
@@ -853,11 +887,11 @@ const TransitionPicker: React.FC<TransitionPickerProps> = ({
                 isSelected && { borderColor: colors.primary, borderWidth: 2 },
               ]}
             >
-              <Text
-                style={[styles.transitionIconText, { color: colors.primary }]}
-              >
-                {transition.name.charAt(0)}
-              </Text>
+              <FeatherIcon
+                name={getTransitionIcon(transition.id)}
+                size={22}
+                color={colors.primary}
+              />
             </View>
             <Text
               style={[
@@ -1173,12 +1207,11 @@ const PhotoTimeline: React.FC<PhotoTimelineProps> = ({
             },
           ]}
         >
-          <Text
-            style={[styles.transitionTimelineText, { color: colors.primary }]}
-          >
-            {TRANSITIONS[transition.type as TransitionType]?.name?.charAt(0) ||
-              'T'}
-          </Text>
+          <FeatherIcon
+            name={getTransitionIcon(transition.type as TransitionType)}
+            size={18}
+            color={colors.primary}
+          />
         </View>
       </TouchableOpacity>
     );
