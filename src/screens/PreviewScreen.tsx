@@ -293,16 +293,6 @@ const PreviewScreen: React.FC = () => {
     sounds.tap();
     if (timeline.photoSegments.length === 0) return;
 
-    if (rafRef.current !== null) {
-      cancelAnimationFrame(rafRef.current);
-      rafRef.current = null;
-    }
-
-    // Pause playback when navigating
-    if (isPlaying) {
-      setIsPlaying(false);
-    }
-
     // Find the next photo segment
     let currentSegmentIndex = timeline.photoSegments.findIndex(
       segment =>
@@ -331,16 +321,6 @@ const PreviewScreen: React.FC = () => {
     haptics.medium();
     sounds.tap();
     if (timeline.photoSegments.length === 0) return;
-
-    if (rafRef.current !== null) {
-      cancelAnimationFrame(rafRef.current);
-      rafRef.current = null;
-    }
-
-    // Pause playback when navigating
-    if (isPlaying) {
-      setIsPlaying(false);
-    }
 
     // Find the current photo segment
     let currentSegmentIndex = timeline.photoSegments.findIndex(
@@ -409,6 +389,11 @@ const PreviewScreen: React.FC = () => {
     ? activeTransitionSegment?.transition.type ?? null
     : null;
   const displayIndex = resolvedOutgoingIndex;
+  const shouldShowOverlay =
+    isTransitioning &&
+    !isEntranceTransition &&
+    resolvedIncomingIndex !== resolvedOutgoingIndex;
+  const layerStyles = getLayerStyles(isEntranceTransition, shouldShowOverlay);
 
   const progressWidth = progressAnim.interpolate({
     inputRange: [0, 1],
@@ -416,7 +401,7 @@ const PreviewScreen: React.FC = () => {
   });
 
   // Calculate transition styles for current and next layers
-  const getLayerStyles = (isEntrance: boolean, hasOverlay: boolean) => {
+  function getLayerStyles(isEntrance: boolean, hasOverlay: boolean) {
     const hiddenNext = { opacity: 0 };
     const defaultCurrent = { opacity: 1 };
 
@@ -698,7 +683,7 @@ const PreviewScreen: React.FC = () => {
       current: currentStyle,
       next: nextStyle,
     };
-  };
+  }
 
   return (
     <SafeAreaView style={[styles.container, { backgroundColor: '#000000' }]}>
@@ -720,15 +705,7 @@ const PreviewScreen: React.FC = () => {
         {/* Base layer - current photo */}
         <RNAnimated.View
           key="base-layer"
-          style={[
-            styles.photoLayer,
-            getLayerStyles(
-              isEntranceTransition,
-              isTransitioning &&
-                !isEntranceTransition &&
-                resolvedIncomingIndex !== resolvedOutgoingIndex,
-            ).current,
-          ]}
+          style={[styles.photoLayer, layerStyles.current]}
         >
           <PhotoCanvas
             photo={photos[resolvedOutgoingIndex]}
@@ -738,24 +715,17 @@ const PreviewScreen: React.FC = () => {
         </RNAnimated.View>
 
         {/* Overlay layer - next photo during transitions */}
-        {isTransitioning &&
-          !isEntranceTransition &&
-          resolvedIncomingIndex !== resolvedOutgoingIndex && (
-            <RNAnimated.View
-              key="overlay-layer"
-              pointerEvents="none"
-              style={[
-                styles.photoLayer,
-                getLayerStyles(isEntranceTransition, true).next,
-              ]}
-            >
-              <PhotoCanvas
-                photo={photos[resolvedIncomingIndex]}
-                width={PREVIEW_WIDTH}
-                height={PREVIEW_HEIGHT}
-              />
-            </RNAnimated.View>
-          )}
+        <RNAnimated.View
+          key="overlay-layer"
+          pointerEvents="none"
+          style={[styles.photoLayer, layerStyles.next]}
+        >
+          <PhotoCanvas
+            photo={photos[resolvedIncomingIndex]}
+            width={PREVIEW_WIDTH}
+            height={PREVIEW_HEIGHT}
+          />
+        </RNAnimated.View>
         {/* Watermark removed - app is completely free */}
       </View>
 

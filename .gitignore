@@ -22,6 +22,10 @@ DerivedData
 *.xcuserstate
 **/.xcode.env.local
 
+# fastlane
+#
+fastlane
+fastlane_example
 # Android/IntelliJ
 #
 build/
