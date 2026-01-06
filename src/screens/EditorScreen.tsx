@@ -101,9 +101,6 @@ export const EditorScreen = () => {
     currentProjectId || undefined,
     {
       debounceMs: 1500,
-      onSaveComplete: () => {
-        haptics.light();
-      },
     },
   );
 
