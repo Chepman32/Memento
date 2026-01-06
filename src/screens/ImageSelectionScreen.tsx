@@ -10,13 +10,25 @@ import {
   Alert,
   Linking,
 } from 'react-native';
-import { useNavigation, useRoute, RouteProp, useFocusEffect } from '@react-navigation/native';
+import {
+  useNavigation,
+  useRoute,
+  RouteProp,
+  useFocusEffect,
+} from '@react-navigation/native';
 import { StackNavigationProp } from '@react-navigation/stack';
 import { launchImageLibrary } from 'react-native-image-picker';
-import { check, request, PERMISSIONS, RESULTS, openSettings } from 'react-native-permissions';
+import {
+  check,
+  request,
+  PERMISSIONS,
+  RESULTS,
+  openSettings,
+} from 'react-native-permissions';
 import FeatherIcon from 'react-native-vector-icons/Feather';
 import { RootStackParamList } from '../navigation/navigationTypes';
 import { useThemeStore } from '../store/themeStore';
+import useProjectStore from '../store/projectStore';
 import { Button, IconButton } from '../components/common';
 import { haptics } from '../utils/hapticFeedback';
 import { sounds } from '../utils/soundEffects';
@@ -24,7 +36,10 @@ import { FREE_TIER_LIMITS } from '../constants/iap';
 import { SPACING, RADII, TYPOGRAPHY, SCREEN_WIDTH } from '../constants/theme';
 import { Platform } from 'react-native';
 
-type ImageSelectionNavigationProp = StackNavigationProp<RootStackParamList, 'ImageSelection'>;
+type ImageSelectionNavigationProp = StackNavigationProp<
+  RootStackParamList,
+  'ImageSelection'
+>;
 
 const IMAGE_SIZE = (SCREEN_WIDTH - SPACING.md * 5) / 4;
 
@@ -38,15 +53,34 @@ const ImageSelectionScreen: React.FC = () => {
   const navigation = useNavigation<ImageSelectionNavigationProp>();
   const route = useRoute<RouteProp<RootStackParamList, 'ImageSelection'>>();
   const { colors } = useThemeStore();
+  const { currentProjectId, getProjectById } = useProjectStore();
 
-  const [selectedImages, setSelectedImages] = useState<SelectedImage[]>([]);
+  // Load existing project photos on mount
+  const getInitialImages = useCallback((): SelectedImage[] => {
+    if (currentProjectId) {
+      const project = getProjectById(currentProjectId);
+      if (project && project.photos.length > 0) {
+        return project.photos.map(photo => ({
+          uri: photo.uri,
+          width: photo.width || 1920,
+          height: photo.height || 1080,
+        }));
+      }
+    }
+    return [];
+  }, [currentProjectId, getProjectById]);
+
+  const [selectedImages, setSelectedImages] =
+    useState<SelectedImage[]>(getInitialImages);
   const [permissionStatus, setPermissionStatus] = useState<string | null>(null);
   const [hasPermission, setHasPermission] = useState(true);
   const [hasAutoOpened, setHasAutoOpened] = useState(false);
 
   const maxPhotos = FREE_TIER_LIMITS.MAX_PHOTOS;
   const photoPermission =
-    Platform.OS === 'ios' ? PERMISSIONS.IOS.PHOTO_LIBRARY : PERMISSIONS.ANDROID.READ_MEDIA_IMAGES;
+    Platform.OS === 'ios'
+      ? PERMISSIONS.IOS.PHOTO_LIBRARY
+      : PERMISSIONS.ANDROID.READ_MEDIA_IMAGES;
   const autoOpenPicker = route.params?.autoOpenPicker ?? false;
 
   const refreshPermissionStatus = useCallback(async () => {
@@ -63,13 +97,17 @@ const ImageSelectionScreen: React.FC = () => {
   const ensurePermission = useCallback(async (): Promise<string> => {
     const existingStatus = await refreshPermissionStatus();
 
-    if (existingStatus === RESULTS.GRANTED || existingStatus === RESULTS.LIMITED) {
+    if (
+      existingStatus === RESULTS.GRANTED ||
+      existingStatus === RESULTS.LIMITED
+    ) {
       return existingStatus;
     }
 
     const requested = await request(photoPermission);
     setPermissionStatus(requested);
-    const allowed = requested === RESULTS.GRANTED || requested === RESULTS.LIMITED;
+    const allowed =
+      requested === RESULTS.GRANTED || requested === RESULTS.LIMITED;
     setHasPermission(allowed);
 
     if (!allowed) {
@@ -87,12 +125,15 @@ const ImageSelectionScreen: React.FC = () => {
                 Linking.openURL('app-settings:');
               } else {
                 openSettings().catch(() => {
-                  Alert.alert('Error', 'Unable to open settings. Please enable permissions manually.');
+                  Alert.alert(
+                    'Error',
+                    'Unable to open settings. Please enable permissions manually.',
+                  );
                 });
               }
             },
           },
-        ]
+        ],
       );
     }
 
@@ -109,7 +150,10 @@ const ImageSelectionScreen: React.FC = () => {
     const remainingSlots = Math.max(0, maxPhotos - selectedImages.length);
     if (remainingSlots === 0) {
       haptics.light();
-      Alert.alert('Photo Limit Reached', 'Remove a photo before adding new ones.');
+      Alert.alert(
+        'Photo Limit Reached',
+        'Remove a photo before adding new ones.',
+      );
       return;
     }
 
@@ -131,33 +175,40 @@ const ImageSelectionScreen: React.FC = () => {
           'Please grant photo library access in Settings to select images.',
           [
             { text: 'Cancel', style: 'cancel' },
-            { text: 'Open Settings', onPress: () => {
-              // On iOS, this will open the app settings
-              if (Platform.OS === 'ios') {
-                Linking.openURL('app-settings:');
-              }
-            }},
-          ]
+            {
+              text: 'Open Settings',
+              onPress: () => {
+                // On iOS, this will open the app settings
+                if (Platform.OS === 'ios') {
+                  Linking.openURL('app-settings:');
+                }
+              },
+            },
+          ],
         );
         return;
       }
 
       // Handle other errors
       if (result.errorCode) {
-        console.log('Image picker error:', result.errorCode, result.errorMessage);
+        console.log(
+          'Image picker error:',
+          result.errorCode,
+          result.errorMessage,
+        );
         Alert.alert('Error', 'Unable to load photos. Please try again.');
         return;
       }
 
       // Handle successful selection
       if (result.assets && result.assets.length > 0) {
-        const newImages: SelectedImage[] = result.assets.map((asset) => ({
+        const newImages: SelectedImage[] = result.assets.map(asset => ({
           uri: asset.uri || '',
           width: asset.width || 1920,
           height: asset.height || 1080,
         }));
 
-        setSelectedImages((prevImages) => [...prevImages, ...newImages]);
+        setSelectedImages(prevImages => [...prevImages, ...newImages]);
         sounds.success();
         haptics.success();
       }
@@ -165,7 +216,12 @@ const ImageSelectionScreen: React.FC = () => {
       console.error('Error selecting images:', error);
       Alert.alert('Error', 'Unable to load photos. Please try again.');
     }
-  }, [ensurePermission, maxPhotos, refreshPermissionStatus, selectedImages.length]);
+  }, [
+    ensurePermission,
+    maxPhotos,
+    refreshPermissionStatus,
+    selectedImages.length,
+  ]);
 
   useFocusEffect(
     useCallback(() => {
@@ -173,23 +229,28 @@ const ImageSelectionScreen: React.FC = () => {
         setHasAutoOpened(true);
         void handleSelectImages();
       }
-    }, [autoOpenPicker, hasAutoOpened, handleSelectImages])
+    }, [autoOpenPicker, hasAutoOpened, handleSelectImages]),
   );
 
   const handleRemoveImage = useCallback((index: number) => {
     haptics.light();
-    setSelectedImages((prevImages) => prevImages.filter((_, i) => i !== index));
+    setSelectedImages(prevImages => prevImages.filter((_, i) => i !== index));
   }, []);
 
   const handleContinue = () => {
     if (selectedImages.length < 2) {
-      Alert.alert('Not Enough Photos', 'Please select at least 2 photos to create a slideshow.');
+      Alert.alert(
+        'Not Enough Photos',
+        'Please select at least 2 photos to create a slideshow.',
+      );
       return;
     }
 
     haptics.medium();
     sounds.tap();
-    navigation.navigate('Editor', { photos: selectedImages.map((img) => img.uri) });
+    navigation.navigate('Editor', {
+      photos: selectedImages.map(img => img.uri),
+    });
   };
 
   const handleClose = () => {
@@ -200,7 +261,11 @@ const ImageSelectionScreen: React.FC = () => {
   const renderImage = useCallback(
     ({ item, index }: { item: SelectedImage; index: number }) => (
       <View style={[styles.imageContainer, { marginRight: SPACING.xs }]}>
-        <Image source={{ uri: item.uri }} style={styles.image} resizeMode="cover" />
+        <Image
+          source={{ uri: item.uri }}
+          style={styles.image}
+          resizeMode="cover"
+        />
         <TouchableOpacity
           style={[styles.removeButton, { backgroundColor: colors.error }]}
           onPress={() => handleRemoveImage(index)}
@@ -209,35 +274,49 @@ const ImageSelectionScreen: React.FC = () => {
         </TouchableOpacity>
       </View>
     ),
-    [colors, handleRemoveImage]
+    [colors, handleRemoveImage],
   );
 
   if (!hasPermission) {
     return (
-      <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]}>
+      <SafeAreaView
+        style={[styles.container, { backgroundColor: colors.background }]}
+      >
         <View style={styles.permissionContainer}>
           <Text style={[styles.permissionTitle, { color: colors.text }]}>
             Photo Access Required
           </Text>
-          <Text style={[styles.permissionText, { color: colors.textSecondary }]}>
+          <Text
+            style={[styles.permissionText, { color: colors.textSecondary }]}
+          >
             We need access to your photo library to create slideshows
           </Text>
-          <Button title="Grant Access" onPress={ensurePermission} variant="primary" />
+          <Button
+            title="Grant Access"
+            onPress={ensurePermission}
+            variant="primary"
+          />
         </View>
       </SafeAreaView>
     );
   }
 
   return (
-    <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]}>
+    <SafeAreaView
+      style={[styles.container, { backgroundColor: colors.background }]}
+    >
       {/* Header */}
       <View style={styles.header}>
         <IconButton
-          icon={<FeatherIcon name="chevron-left" size={26} color={colors.text} />}
+          icon={
+            <FeatherIcon name="chevron-left" size={26} color={colors.text} />
+          }
           onPress={handleClose}
           size={44}
         />
-        <Text style={[styles.headerTitle, { color: colors.text }]}>Select Photos</Text>
+        <Text style={[styles.headerTitle, { color: colors.text }]}>
+          Select Photos
+        </Text>
         <View style={{ width: 44 }} />
       </View>
 
@@ -265,7 +344,12 @@ const ImageSelectionScreen: React.FC = () => {
       />
 
       {/* Actions */}
-      <View style={[styles.footer, { backgroundColor: colors.surface, borderTopColor: colors.border }]}>
+      <View
+        style={[
+          styles.footer,
+          { backgroundColor: colors.surface, borderTopColor: colors.border },
+        ]}
+      >
         <Button
           title="Add Photos"
           onPress={handleSelectImages}
@@ -273,7 +357,8 @@ const ImageSelectionScreen: React.FC = () => {
           style={styles.addButton}
         />
         <Button
-          title={`Continue`} b
+          title={`Continue`}
+          b
           onPress={handleContinue}
           variant="primary"
           style={styles.continueButton}

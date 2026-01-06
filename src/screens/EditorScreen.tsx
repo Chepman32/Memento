@@ -129,7 +129,10 @@ export const EditorScreen = () => {
     haptics.selection();
     setActivePhotoIndex(index);
     setSelectedTransitionIndex(null); // Clear transition selection
-    setActiveTab('duration'); // Switch to duration tab when selecting a photo
+    // Only switch to duration tab if currently on transitions tab and no photo was selected before
+    if (activeTab === 'transitions' && activePhotoIndex === null) {
+      setActiveTab('duration');
+    }
   };
 
   // Handle photo reordering
