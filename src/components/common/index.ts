@@ -6,3 +6,4 @@ export { AnimatedBackground } from './AnimatedBackground';
 export { GradientOverlay } from './GradientOverlay';
 export { LoadingSpinner } from './LoadingSpinner';
 export { InputModal } from './InputModal';
+export { default as AnimatedCollapsible } from './AnimatedCollapsible';

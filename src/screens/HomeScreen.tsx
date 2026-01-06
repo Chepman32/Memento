@@ -16,7 +16,12 @@ import ContextMenu from 'react-native-context-menu-view';
 import { RootStackParamList } from '../navigation/navigationTypes';
 import useProjectStore from '../store/projectStore';
 import { useThemeStore } from '../store/themeStore';
-import { Button, IconButton, InputModal } from '../components/common';
+import {
+  Button,
+  IconButton,
+  InputModal,
+  AnimatedCollapsible,
+} from '../components/common';
 import { haptics } from '../utils/hapticFeedback';
 import { sounds } from '../utils/soundEffects';
 import { SPACING, TYPOGRAPHY, SHADOWS, SCREEN_WIDTH } from '../constants/theme';
@@ -243,9 +248,14 @@ const HomeScreen: React.FC = () => {
   }, [navigation]);
 
   // Get projects for a specific folder
+  // "All Projects" (root) shows ALL projects, other folders show only their projects
   const getProjectsInFolder = useCallback(
     (folderId: string) => {
-      return projects.filter(p => (p.folderId || 'root') === folderId);
+      if (folderId === 'root') {
+        // "All Projects" shows everything
+        return projects;
+      }
+      return projects.filter(p => p.folderId === folderId);
     },
     [projects],
   );
@@ -253,10 +263,13 @@ const HomeScreen: React.FC = () => {
   // Build context menu actions with Move to Folder submenu
   const buildContextMenuActions = useCallback(
     (project: Project) => {
-      // Filter out current folder and Archived folder from move options
+      // Filter out current folder, root (All Projects), and Archived folder from move options
       const archivedFolder = folders.find(f => f.name === 'Archived');
       const otherFolders = folders.filter(
-        f => f.id !== (project.folderId || 'root') && f.name !== 'Archived',
+        f =>
+          f.id !== 'root' &&
+          f.id !== (project.folderId || 'root') &&
+          f.name !== 'Archived',
       );
 
       const moveToFolderActions = otherFolders.map(folder => ({
@@ -320,7 +333,10 @@ const HomeScreen: React.FC = () => {
           // Index 2 is "Move to Folder", second index is the folder
           const archivedFolder = folders.find(f => f.name === 'Archived');
           const otherFolders = folders.filter(
-            f => f.id !== (item.folderId || 'root') && f.name !== 'Archived',
+            f =>
+              f.id !== 'root' &&
+              f.id !== (item.folderId || 'root') &&
+              f.name !== 'Archived',
           );
           const selectedFolder = otherFolders[indexPath[1]];
           if (selectedFolder) {
@@ -520,7 +536,7 @@ const HomeScreen: React.FC = () => {
       const folderProjects = getProjectsInFolder(folder.id);
       const isExpanded = expandedFolders.has(folder.id);
 
-      if (!isExpanded || folderProjects.length === 0) {
+      if (folderProjects.length === 0) {
         return null;
       }
 
@@ -531,14 +547,16 @@ const HomeScreen: React.FC = () => {
       }
 
       return (
-        <View style={styles.folderProjectsContainer}>
-          {rows.map((row, rowIndex) => (
-            <View key={rowIndex} style={styles.projectRow}>
-              {row.map(project => renderProject(project))}
-              {row.length === 1 && <View style={{ width: CARD_WIDTH }} />}
-            </View>
-          ))}
-        </View>
+        <AnimatedCollapsible expanded={isExpanded}>
+          <View style={styles.folderProjectsContainer}>
+            {rows.map((row, rowIndex) => (
+              <View key={rowIndex} style={styles.projectRow}>
+                {row.map(project => renderProject(project))}
+                {row.length === 1 && <View style={{ width: CARD_WIDTH }} />}
+              </View>
+            ))}
+          </View>
+        </AnimatedCollapsible>
       );
     },
     [getProjectsInFolder, expandedFolders, renderProject],
