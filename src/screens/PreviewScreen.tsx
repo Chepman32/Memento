@@ -405,13 +405,6 @@ const PreviewScreen: React.FC = () => {
       : resolvedOutgoingIndex;
 
   const isEntranceTransition = Boolean(activeTransitionSegment?.isEntrance);
-  const basePhoto = photos[resolvedOutgoingIndex];
-  const overlayPhoto =
-    isTransitioning && isEntranceTransition
-      ? null
-      : totalPhotos > 1
-      ? photos[resolvedIncomingIndex]
-      : basePhoto;
   const currentTransitionType = isTransitioning
     ? activeTransitionSegment?.transition.type ?? null
     : null;
@@ -707,13 +700,6 @@ const PreviewScreen: React.FC = () => {
     };
   };
 
-  const layerStyles = getLayerStyles(
-    isEntranceTransition,
-    Boolean(overlayPhoto),
-  );
-  const currentLayerStyle = layerStyles.current;
-  const nextLayerStyle = layerStyles.next;
-
   return (
     <SafeAreaView style={[styles.container, { backgroundColor: '#000000' }]}>
       {/* Preload all images to prevent flickering */}
@@ -731,27 +717,45 @@ const PreviewScreen: React.FC = () => {
 
       {/* Preview canvas */}
       <View style={styles.previewContainer}>
-        {basePhoto && (
-          <RNAnimated.View style={[styles.photoLayer, currentLayerStyle]}>
-            <PhotoCanvas
-              photo={basePhoto}
-              width={PREVIEW_WIDTH}
-              height={PREVIEW_HEIGHT}
-            />
-          </RNAnimated.View>
-        )}
-        {overlayPhoto && (
-          <RNAnimated.View
-            pointerEvents="none"
-            style={[styles.photoLayer, nextLayerStyle]}
-          >
-            <PhotoCanvas
-              photo={overlayPhoto}
-              width={PREVIEW_WIDTH}
-              height={PREVIEW_HEIGHT}
-            />
-          </RNAnimated.View>
-        )}
+        {/* Base layer - current photo */}
+        <RNAnimated.View
+          key="base-layer"
+          style={[
+            styles.photoLayer,
+            getLayerStyles(
+              isEntranceTransition,
+              isTransitioning &&
+                !isEntranceTransition &&
+                resolvedIncomingIndex !== resolvedOutgoingIndex,
+            ).current,
+          ]}
+        >
+          <PhotoCanvas
+            photo={photos[resolvedOutgoingIndex]}
+            width={PREVIEW_WIDTH}
+            height={PREVIEW_HEIGHT}
+          />
+        </RNAnimated.View>
+
+        {/* Overlay layer - next photo during transitions */}
+        {isTransitioning &&
+          !isEntranceTransition &&
+          resolvedIncomingIndex !== resolvedOutgoingIndex && (
+            <RNAnimated.View
+              key="overlay-layer"
+              pointerEvents="none"
+              style={[
+                styles.photoLayer,
+                getLayerStyles(isEntranceTransition, true).next,
+              ]}
+            >
+              <PhotoCanvas
+                photo={photos[resolvedIncomingIndex]}
+                width={PREVIEW_WIDTH}
+                height={PREVIEW_HEIGHT}
+              />
+            </RNAnimated.View>
+          )}
         {/* Watermark removed - app is completely free */}
       </View>
 
@@ -838,11 +842,22 @@ interface PhotoCanvasProps {
 const PhotoCanvas: React.FC<PhotoCanvasProps> = React.memo(
   ({ photo, width, height }) => {
     const image = useImage(photo.uri);
+    const previousImageRef = useRef<any>(null);
     const [size, setSize] = useState({ width, height });
 
+    // Keep track of the last successfully loaded image
     useEffect(() => {
-      const intrinsicWidth = image?.width();
-      const intrinsicHeight = image?.height();
+      if (image) {
+        previousImageRef.current = image;
+      }
+    }, [image]);
+
+    // Use current image if available, otherwise fall back to previous
+    const displayImage = image || previousImageRef.current;
+
+    useEffect(() => {
+      const intrinsicWidth = displayImage?.width();
+      const intrinsicHeight = displayImage?.height();
 
       const sourceWidth =
         intrinsicWidth && intrinsicHeight ? intrinsicWidth : photo.width;
@@ -868,9 +883,9 @@ const PhotoCanvas: React.FC<PhotoCanvasProps> = React.memo(
           height,
         });
       }
-    }, [photo.uri, photo.width, photo.height, image, width, height]);
+    }, [photo.uri, photo.width, photo.height, displayImage, width, height]);
 
-    if (!image) {
+    if (!displayImage) {
       return <View style={{ width, height, backgroundColor: '#000' }} />;
     }
 
@@ -880,7 +895,7 @@ const PhotoCanvas: React.FC<PhotoCanvasProps> = React.memo(
     return (
       <Canvas style={{ width, height }}>
         <SkiaImage
-          image={image}
+          image={displayImage}
           x={x}
           y={y}
           width={size.width}
