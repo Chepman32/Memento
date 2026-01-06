@@ -1189,19 +1189,6 @@ const PhotoTimeline: React.FC<PhotoTimelineProps> = ({
     positions.value = photos.map((_, i) => i);
   }, [photos.length]);
 
-  // Scroll to active photo
-  useEffect(() => {
-    if (scrollViewRef.current && photos.length > 0 && activeIndex !== null) {
-      const offset = Math.max(
-        0,
-        activeIndex * (THUMBNAIL_SIZE + SPACING.sm * 2) -
-          SCREEN_WIDTH / 2 +
-          THUMBNAIL_SIZE / 2,
-      );
-      scrollViewRef.current.scrollTo({ x: offset, animated: true });
-    }
-  }, [activeIndex, photos.length]);
-
   // Render transition item
   const renderTransition = (transition: any, index: number) => {
     const isSelected = selectedTransitionIndex === index;

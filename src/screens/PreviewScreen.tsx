@@ -57,6 +57,22 @@ const EMPTY_TIMELINE: TimelineDescription = {
 };
 const CONTROL_ICON_COLOR = '#FFFFFF';
 
+// Preload images component - renders hidden to cache images
+const ImagePreloader: React.FC<{ photos: any[] }> = React.memo(({ photos }) => {
+  return (
+    <View style={{ position: 'absolute', opacity: 0, pointerEvents: 'none' }}>
+      {photos.map((photo, index) => (
+        <PreloadedImage key={`preload-${photo.id || index}`} uri={photo.uri} />
+      ))}
+    </View>
+  );
+});
+
+const PreloadedImage: React.FC<{ uri: string }> = React.memo(({ uri }) => {
+  useImage(uri); // This caches the image
+  return null;
+});
+
 const PreviewScreen: React.FC = () => {
   const navigation = useNavigation<PreviewScreenNavigationProp>();
   const route = useRoute<PreviewScreenRouteProp>();
@@ -700,6 +716,9 @@ const PreviewScreen: React.FC = () => {
 
   return (
     <SafeAreaView style={[styles.container, { backgroundColor: '#000000' }]}>
+      {/* Preload all images to prevent flickering */}
+      <ImagePreloader photos={photos} />
+
       {/* Close button */}
       <View style={styles.topBar}>
         <IconButton
@@ -809,67 +828,77 @@ const PreviewScreen: React.FC = () => {
   );
 };
 
-// Photo Canvas Component
+// Photo Canvas Component - Memoized to prevent unnecessary re-renders
 interface PhotoCanvasProps {
   photo: any;
   width: number;
   height: number;
 }
 
-const PhotoCanvas: React.FC<PhotoCanvasProps> = ({ photo, width, height }) => {
-  const image = useImage(photo.uri);
-  const [size, setSize] = useState({ width, height });
+const PhotoCanvas: React.FC<PhotoCanvasProps> = React.memo(
+  ({ photo, width, height }) => {
+    const image = useImage(photo.uri);
+    const [size, setSize] = useState({ width, height });
 
-  useEffect(() => {
-    const intrinsicWidth = image?.width();
-    const intrinsicHeight = image?.height();
+    useEffect(() => {
+      const intrinsicWidth = image?.width();
+      const intrinsicHeight = image?.height();
 
-    const sourceWidth =
-      intrinsicWidth && intrinsicHeight ? intrinsicWidth : photo.width;
-    const sourceHeight =
-      intrinsicWidth && intrinsicHeight ? intrinsicHeight : photo.height;
+      const sourceWidth =
+        intrinsicWidth && intrinsicHeight ? intrinsicWidth : photo.width;
+      const sourceHeight =
+        intrinsicWidth && intrinsicHeight ? intrinsicHeight : photo.height;
 
-    if (!sourceWidth || !sourceHeight) {
-      setSize({ width, height });
-      return;
+      if (!sourceWidth || !sourceHeight) {
+        setSize({ width, height });
+        return;
+      }
+
+      const aspectRatio = sourceWidth / sourceHeight;
+      const containerAspect = width / height;
+
+      if (aspectRatio > containerAspect) {
+        setSize({
+          width,
+          height: width / aspectRatio,
+        });
+      } else {
+        setSize({
+          width: height * aspectRatio,
+          height,
+        });
+      }
+    }, [photo.uri, photo.width, photo.height, image, width, height]);
+
+    if (!image) {
+      return <View style={{ width, height, backgroundColor: '#000' }} />;
     }
 
-    const aspectRatio = sourceWidth / sourceHeight;
-    const containerAspect = width / height;
+    const x = (width - size.width) / 2;
+    const y = (height - size.height) / 2;
 
-    if (aspectRatio > containerAspect) {
-      setSize({
-        width,
-        height: width / aspectRatio,
-      });
-    } else {
-      setSize({
-        width: height * aspectRatio,
-        height,
-      });
-    }
-  }, [photo.uri, photo.width, photo.height, image, width, height]);
-
-  if (!image) {
-    return <View style={{ width, height, backgroundColor: '#000' }} />;
-  }
-
-  const x = (width - size.width) / 2;
-  const y = (height - size.height) / 2;
-
-  return (
-    <Canvas style={{ width, height }}>
-      <SkiaImage
-        image={image}
-        x={x}
-        y={y}
-        width={size.width}
-        height={size.height}
-        fit="contain"
-      />
-    </Canvas>
-  );
-};
+    return (
+      <Canvas style={{ width, height }}>
+        <SkiaImage
+          image={image}
+          x={x}
+          y={y}
+          width={size.width}
+          height={size.height}
+          fit="contain"
+        />
+      </Canvas>
+    );
+  },
+  (prevProps, nextProps) => {
+    // Only re-render if the photo URI changes
+    return (
+      prevProps.photo.uri === nextProps.photo.uri &&
+      prevProps.width === nextProps.width &&
+      prevProps.height === nextProps.height
+    );
+  },
+);
 
 const styles = StyleSheet.create({
   container: {
