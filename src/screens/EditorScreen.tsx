@@ -302,6 +302,24 @@ export const EditorScreen = () => {
   };
 
   const renderTabContent = () => {
+    // When a transition is selected, always show transitions content
+    if (selectedTransitionIndex !== null) {
+      const currentTransition = currentProject?.transitions?.find(
+        t => t.order === selectedTransitionIndex,
+      );
+
+      return (
+        <View style={styles.tabContent}>
+          <View style={styles.controlGroup}>
+            <TransitionPicker
+              selectedTransition={currentTransition?.type || null}
+              onSelect={handleTransitionChange}
+            />
+          </View>
+        </View>
+      );
+    }
+
     switch (activeTab) {
       case 'duration':
         return (
@@ -335,11 +353,8 @@ export const EditorScreen = () => {
           </View>
         );
       case 'transitions':
-        // Get transition for the selected item (either direct transition selection or slide's incoming transition)
-        const transitionIndex =
-          selectedTransitionIndex !== null
-            ? selectedTransitionIndex
-            : activePhotoIndex;
+        // Get transition for the selected slide's incoming transition
+        const transitionIndex = activePhotoIndex;
         const currentTransition =
           transitionIndex !== null
             ? currentProject?.transitions?.find(
@@ -347,9 +362,8 @@ export const EditorScreen = () => {
               )
             : null;
 
-        // Show picker if either a transition or a slide is selected
-        const hasSelection =
-          selectedTransitionIndex !== null || activePhotoIndex !== null;
+        // Show picker if a slide is selected
+        const hasSelection = activePhotoIndex !== null;
 
         return (
           <View style={styles.tabContent}>
@@ -524,34 +538,37 @@ export const EditorScreen = () => {
           <View
             style={[styles.tabSelector, { borderBottomColor: colors.border }]}
           >
-            <TouchableOpacity
-              style={[
-                styles.tab,
-                activeTab === 'duration' && {
-                  borderBottomColor: colors.primary,
-                  borderBottomWidth: 2,
-                },
-              ]}
-              onPress={() => handleTabChange('duration')}
-            >
-              <Text
+            {selectedTransitionIndex === null && (
+              <TouchableOpacity
                 style={[
-                  styles.tabText,
-                  {
-                    color:
-                      activeTab === 'duration'
-                        ? colors.primary
-                        : colors.textSecondary,
+                  styles.tab,
+                  activeTab === 'duration' && {
+                    borderBottomColor: colors.primary,
+                    borderBottomWidth: 2,
                   },
                 ]}
+                onPress={() => handleTabChange('duration')}
               >
-                Duration
-              </Text>
-            </TouchableOpacity>
+                <Text
+                  style={[
+                    styles.tabText,
+                    {
+                      color:
+                        activeTab === 'duration'
+                          ? colors.primary
+                          : colors.textSecondary,
+                    },
+                  ]}
+                >
+                  Duration
+                </Text>
+              </TouchableOpacity>
+            )}
             <TouchableOpacity
               style={[
                 styles.tab,
-                activeTab === 'transitions' && {
+                (activeTab === 'transitions' ||
+                  selectedTransitionIndex !== null) && {
                   borderBottomColor: colors.primary,
                   borderBottomWidth: 2,
                 },
@@ -563,7 +580,8 @@ export const EditorScreen = () => {
                   styles.tabText,
                   {
                     color:
-                      activeTab === 'transitions'
+                      activeTab === 'transitions' ||
+                      selectedTransitionIndex !== null
                         ? colors.primary
                         : colors.textSecondary,
                   },
