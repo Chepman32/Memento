@@ -47,6 +47,23 @@ const generateParticles = (): Particle[] => {
     'trapezoid',
     'rhombus',
   ];
+
+  // Color palette matching typical app icon colors
+  const colorPalette = [
+    '#007AFF',
+    '#0A84FF',
+    '#5AC8FA',
+    '#4CD964',
+    '#34C759',
+    '#30D158',
+    '#00C7BE',
+    '#32ADE6',
+    '#5856D6',
+    '#AF52DE',
+    '#64D2FF',
+    '#0099CC',
+  ];
+
   const particles: Particle[] = [];
   const centerX = SCREEN_WIDTH / 2;
   const centerY = SCREEN_HEIGHT / 2;
@@ -96,6 +113,9 @@ const generateParticles = (): Particle[] => {
     const shape = shapes[Math.floor(Math.random() * shapes.length)];
     const size = 3 + Math.random() * 8;
 
+    // Pick a random color from the palette
+    const color = colorPalette[Math.floor(Math.random() * colorPalette.length)];
+
     particles.push({
       id: i,
       startX,
@@ -106,9 +126,7 @@ const generateParticles = (): Particle[] => {
       shape,
       rotation: Math.random() * 360,
       delay: Math.random() * 200,
-      color: `hsl(${180 + Math.random() * 60}, ${60 + Math.random() * 30}%, ${
-        50 + Math.random() * 30
-      }%)`,
+      color,
     });
   }
 
