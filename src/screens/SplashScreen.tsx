@@ -12,7 +12,7 @@ type SplashScreenNavigationProp = StackNavigationProp<
   'Splash'
 >;
 
-const PARTICLE_COUNT = 200;
+const PARTICLE_COUNT = 300;
 const LOGO_SIZE = 200;
 const ASSEMBLY_DURATION = 800;
 const ZOOM_DURATION = 500;
