@@ -402,7 +402,7 @@ const PreviewScreen: React.FC = () => {
 
   // Calculate transition styles for current and next layers
   function getLayerStyles(isEntrance: boolean, hasOverlay: boolean) {
-    const hiddenNext = { opacity: 0 };
+    const hiddenNext = { opacity: 0, pointerEvents: 'none' as const };
     const defaultCurrent = { opacity: 1 };
 
     if (!isTransitioning || !currentTransitionType) {
@@ -704,10 +704,13 @@ const PreviewScreen: React.FC = () => {
       <View style={styles.previewContainer}>
         {/* Base layer - current photo */}
         <RNAnimated.View
-          key="base-layer"
           style={[styles.photoLayer, layerStyles.current]}
+          needsOffscreenAlphaCompositing
+          removeClippedSubviews={false}
+          collapsable={false}
         >
           <PhotoCanvas
+            key={`photo-${resolvedOutgoingIndex}`}
             photo={photos[resolvedOutgoingIndex]}
             width={PREVIEW_WIDTH}
             height={PREVIEW_HEIGHT}
@@ -716,11 +719,14 @@ const PreviewScreen: React.FC = () => {
 
         {/* Overlay layer - next photo during transitions */}
         <RNAnimated.View
-          key="overlay-layer"
           pointerEvents="none"
           style={[styles.photoLayer, layerStyles.next]}
+          needsOffscreenAlphaCompositing
+          removeClippedSubviews={false}
+          collapsable={false}
         >
           <PhotoCanvas
+            key={`photo-${resolvedIncomingIndex}`}
             photo={photos[resolvedIncomingIndex]}
             width={PREVIEW_WIDTH}
             height={PREVIEW_HEIGHT}
@@ -812,22 +818,24 @@ interface PhotoCanvasProps {
 const PhotoCanvas: React.FC<PhotoCanvasProps> = React.memo(
   ({ photo, width, height }) => {
     const image = useImage(photo.uri);
-    const previousImageRef = useRef<any>(null);
+    const [displayImage, setDisplayImage] = useState<any>(null);
     const [size, setSize] = useState({ width, height });
 
-    // Keep track of the last successfully loaded image
+    // Update display image only when fully loaded
     useEffect(() => {
       if (image) {
-        previousImageRef.current = image;
+        // Use requestAnimationFrame to ensure smooth update
+        requestAnimationFrame(() => {
+          setDisplayImage(image);
+        });
       }
     }, [image]);
 
-    // Use current image if available, otherwise fall back to previous
-    const displayImage = image || previousImageRef.current;
-
     useEffect(() => {
-      const intrinsicWidth = displayImage?.width();
-      const intrinsicHeight = displayImage?.height();
+      if (!displayImage) return;
+
+      const intrinsicWidth = displayImage.width();
+      const intrinsicHeight = displayImage.height();
 
       const sourceWidth =
         intrinsicWidth && intrinsicHeight ? intrinsicWidth : photo.width;
@@ -853,7 +861,7 @@ const PhotoCanvas: React.FC<PhotoCanvasProps> = React.memo(
           height,
         });
       }
-    }, [photo.uri, photo.width, photo.height, displayImage, width, height]);
+    }, [displayImage, photo.width, photo.height, width, height]);
 
     if (!displayImage) {
       return <View style={{ width, height, backgroundColor: '#000' }} />;
@@ -863,7 +871,7 @@ const PhotoCanvas: React.FC<PhotoCanvasProps> = React.memo(
     const y = (height - size.height) / 2;
 
     return (
-      <Canvas style={{ width, height }}>
+      <Canvas style={{ width, height, backgroundColor: '#000' }}>
         <SkiaImage
           image={displayImage}
           x={x}

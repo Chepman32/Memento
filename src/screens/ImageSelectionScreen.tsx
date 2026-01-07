@@ -3,12 +3,12 @@ import {
   View,
   Text,
   StyleSheet,
-  FlatList,
   Image,
   TouchableOpacity,
   SafeAreaView,
   Alert,
   Linking,
+  Platform,
 } from 'react-native';
 import {
   useNavigation,
@@ -26,6 +26,21 @@ import {
   openSettings,
 } from 'react-native-permissions';
 import FeatherIcon from 'react-native-vector-icons/Feather';
+import {
+  GestureHandlerRootView,
+  PanGestureHandler,
+  PanGestureHandlerGestureEvent,
+} from 'react-native-gesture-handler';
+import Animated, {
+  useSharedValue,
+  useAnimatedStyle,
+  useAnimatedGestureHandler,
+  withSpring,
+  runOnJS,
+  scrollTo,
+  useAnimatedRef,
+  useAnimatedScrollHandler,
+} from 'react-native-reanimated';
 import { RootStackParamList } from '../navigation/navigationTypes';
 import { useThemeStore } from '../store/themeStore';
 import useProjectStore from '../store/projectStore';
@@ -34,7 +49,6 @@ import { haptics } from '../utils/hapticFeedback';
 import { sounds } from '../utils/soundEffects';
 import { FREE_TIER_LIMITS } from '../constants/iap';
 import { SPACING, RADII, TYPOGRAPHY, SCREEN_WIDTH } from '../constants/theme';
-import { Platform } from 'react-native';
 
 type ImageSelectionNavigationProp = StackNavigationProp<
   RootStackParamList,
@@ -42,12 +56,147 @@ type ImageSelectionNavigationProp = StackNavigationProp<
 >;
 
 const IMAGE_SIZE = (SCREEN_WIDTH - SPACING.md * 5) / 4;
+const COLUMNS = 4;
+const IMAGE_MARGIN = SPACING.xs;
 
 interface SelectedImage {
   uri: string;
   width: number;
   height: number;
+  id: string;
 }
+
+interface DraggableImageProps {
+  item: SelectedImage;
+  index: number;
+  positions: Animated.SharedValue<number[]>;
+  scrollY: Animated.SharedValue<number>;
+  onRemove: (index: number) => void;
+  colors: any;
+}
+
+const DraggableImage: React.FC<DraggableImageProps> = ({
+  item,
+  index,
+  positions,
+  scrollY,
+  onRemove,
+  colors,
+}) => {
+  const isGestureActive = useSharedValue(false);
+  const translateX = useSharedValue(0);
+  const translateY = useSharedValue(0);
+  const scale = useSharedValue(1);
+
+  const getPosition = (index: number) => {
+    'worklet';
+    const row = Math.floor(index / COLUMNS);
+    const col = index % COLUMNS;
+    return {
+      x: col * (IMAGE_SIZE + IMAGE_MARGIN) + SPACING.md,
+      y: row * (IMAGE_SIZE + IMAGE_MARGIN) + SPACING.md,
+    };
+  };
+
+  const gestureHandler = useAnimatedGestureHandler<
+    PanGestureHandlerGestureEvent,
+    { startX: number; startY: number; startIndex: number }
+  >({
+    onStart: (_, ctx) => {
+      ctx.startIndex = positions.value[index];
+      const pos = getPosition(ctx.startIndex);
+      ctx.startX = pos.x;
+      ctx.startY = pos.y;
+      isGestureActive.value = true;
+      scale.value = withSpring(1.1);
+      runOnJS(haptics.light)();
+    },
+    onActive: (event, ctx) => {
+      translateX.value = event.translationX;
+      translateY.value = event.translationY;
+
+      const currentX = ctx.startX + event.translationX;
+      const currentY = ctx.startY + event.translationY + scrollY.value;
+
+      const newCol = Math.round(
+        (currentX - SPACING.md) / (IMAGE_SIZE + IMAGE_MARGIN),
+      );
+      const newRow = Math.round(
+        (currentY - SPACING.md) / (IMAGE_SIZE + IMAGE_MARGIN),
+      );
+      const newIndex = Math.max(
+        0,
+        Math.min(newRow * COLUMNS + newCol, positions.value.length - 1),
+      );
+
+      const oldIndex = positions.value.indexOf(index);
+      if (newIndex !== oldIndex && newIndex >= 0) {
+        const newPositions = [...positions.value];
+        newPositions.splice(oldIndex, 1);
+        newPositions.splice(newIndex, 0, index);
+        positions.value = newPositions;
+      }
+    },
+    onEnd: () => {
+      const finalIndex = positions.value.indexOf(index);
+      const finalPos = getPosition(finalIndex);
+      translateX.value = withSpring(finalPos.x - getPosition(index).x);
+      translateY.value = withSpring(finalPos.y - getPosition(index).y);
+      scale.value = withSpring(1);
+      isGestureActive.value = false;
+      runOnJS(haptics.light)();
+    },
+  });
+
+  const animatedStyle = useAnimatedStyle(() => {
+    const currentIndex = positions.value.indexOf(index);
+    const pos = getPosition(currentIndex);
+
+    if (isGestureActive.value) {
+      return {
+        position: 'absolute',
+        left: 0,
+        top: 0,
+        transform: [
+          { translateX: pos.x + translateX.value },
+          { translateY: pos.y + translateY.value - scrollY.value },
+          { scale: scale.value },
+        ],
+        zIndex: 1000,
+      };
+    }
+
+    return {
+      position: 'absolute',
+      left: 0,
+      top: 0,
+      transform: [
+        { translateX: withSpring(pos.x) },
+        { translateY: withSpring(pos.y - scrollY.value) },
+        { scale: scale.value },
+      ],
+      zIndex: 1,
+    };
+  });
+
+  return (
+    <PanGestureHandler onGestureEvent={gestureHandler}>
+      <Animated.View style={[styles.imageContainer, animatedStyle]}>
+        <Image
+          source={{ uri: item.uri }}
+          style={styles.image}
+          resizeMode="cover"
+        />
+        <TouchableOpacity
+          style={[styles.removeButton, { backgroundColor: colors.error }]}
+          onPress={() => onRemove(index)}
+        >
+          <Text style={styles.removeIcon}>×</Text>
+        </TouchableOpacity>
+      </Animated.View>
+    </PanGestureHandler>
+  );
+};
 
 const ImageSelectionScreen: React.FC = () => {
   const navigation = useNavigation<ImageSelectionNavigationProp>();
@@ -60,10 +209,11 @@ const ImageSelectionScreen: React.FC = () => {
     if (currentProjectId) {
       const project = getProjectById(currentProjectId);
       if (project && project.photos.length > 0) {
-        return project.photos.map(photo => ({
+        return project.photos.map((photo, idx) => ({
           uri: photo.uri,
           width: photo.width || 1920,
           height: photo.height || 1080,
+          id: `${photo.uri}-${idx}`,
         }));
       }
     }
@@ -75,6 +225,14 @@ const ImageSelectionScreen: React.FC = () => {
   const [permissionStatus, setPermissionStatus] = useState<string | null>(null);
   const [hasPermission, setHasPermission] = useState(true);
   const [hasAutoOpened, setHasAutoOpened] = useState(false);
+
+  const positions = useSharedValue<number[]>([]);
+  const scrollY = useSharedValue(0);
+  const scrollViewRef = useAnimatedRef<Animated.ScrollView>();
+
+  useEffect(() => {
+    positions.value = selectedImages.map((_, index) => index);
+  }, [selectedImages.length]);
 
   const maxPhotos = FREE_TIER_LIMITS.MAX_PHOTOS;
   const photoPermission =
@@ -202,10 +360,11 @@ const ImageSelectionScreen: React.FC = () => {
 
       // Handle successful selection
       if (result.assets && result.assets.length > 0) {
-        const newImages: SelectedImage[] = result.assets.map(asset => ({
+        const newImages: SelectedImage[] = result.assets.map((asset, idx) => ({
           uri: asset.uri || '',
           width: asset.width || 1920,
           height: asset.height || 1080,
+          id: `${asset.uri}-${Date.now()}-${idx}`,
         }));
 
         setSelectedImages(prevImages => [...prevImages, ...newImages]);
@@ -248,34 +407,29 @@ const ImageSelectionScreen: React.FC = () => {
 
     haptics.medium();
     sounds.tap();
+
+    // Reorder images based on positions
+    const reorderedImages = positions.value.map(pos => selectedImages[pos]);
+
     navigation.navigate('Editor', {
-      photos: selectedImages.map(img => img.uri),
+      photos: reorderedImages.map(img => img.uri),
     });
   };
+
+  const scrollHandler = useAnimatedScrollHandler({
+    onScroll: event => {
+      scrollY.value = event.contentOffset.y;
+    },
+  });
+
+  const containerHeight =
+    Math.ceil(selectedImages.length / COLUMNS) * (IMAGE_SIZE + IMAGE_MARGIN) +
+    SPACING.md * 2;
 
   const handleClose = () => {
     haptics.light();
     navigation.goBack();
   };
-
-  const renderImage = useCallback(
-    ({ item, index }: { item: SelectedImage; index: number }) => (
-      <View style={[styles.imageContainer, { marginRight: SPACING.xs }]}>
-        <Image
-          source={{ uri: item.uri }}
-          style={styles.image}
-          resizeMode="cover"
-        />
-        <TouchableOpacity
-          style={[styles.removeButton, { backgroundColor: colors.error }]}
-          onPress={() => handleRemoveImage(index)}
-        >
-          <Text style={styles.removeIcon}>×</Text>
-        </TouchableOpacity>
-      </View>
-    ),
-    [colors, handleRemoveImage],
-  );
 
   if (!hasPermission) {
     return (
@@ -302,70 +456,85 @@ const ImageSelectionScreen: React.FC = () => {
   }
 
   return (
-    <SafeAreaView
-      style={[styles.container, { backgroundColor: colors.background }]}
-    >
-      {/* Header */}
-      <View style={styles.header}>
-        <IconButton
-          icon={
-            <FeatherIcon name="chevron-left" size={26} color={colors.text} />
-          }
-          onPress={handleClose}
-          size={44}
-        />
-        <Text style={[styles.headerTitle, { color: colors.text }]}>
-          Select Photos
-        </Text>
-        <View style={{ width: 44 }} />
-      </View>
-
-      {/* Selection info */}
-      <View style={styles.infoContainer}>
-        <Text style={[styles.infoText, { color: colors.textSecondary }]}>
-          {selectedImages.length} of {maxPhotos} selected
-        </Text>
-      </View>
-
-      {/* Selected images grid */}
-      <FlatList
-        data={selectedImages}
-        renderItem={renderImage}
-        keyExtractor={(_, index) => index.toString()}
-        numColumns={4}
-        contentContainerStyle={styles.grid}
-        ListEmptyComponent={
-          <View style={styles.emptyContainer}>
-            <Text style={[styles.emptyText, { color: colors.textSecondary }]}>
-              No photos selected yet
-            </Text>
-          </View>
-        }
-      />
-
-      {/* Actions */}
-      <View
-        style={[
-          styles.footer,
-          { backgroundColor: colors.surface, borderTopColor: colors.border },
-        ]}
+    <GestureHandlerRootView style={{ flex: 1 }}>
+      <SafeAreaView
+        style={[styles.container, { backgroundColor: colors.background }]}
       >
-        <Button
-          title="Add Photos"
-          onPress={handleSelectImages}
-          variant="outlined"
-          style={styles.addButton}
-        />
-        <Button
-          title={`Continue`}
-          b
-          onPress={handleContinue}
-          variant="primary"
-          style={styles.continueButton}
-          disabled={selectedImages.length < 2}
-        />
-      </View>
-    </SafeAreaView>
+        {/* Header */}
+        <View style={styles.header}>
+          <IconButton
+            icon={
+              <FeatherIcon name="chevron-left" size={26} color={colors.text} />
+            }
+            onPress={handleClose}
+            size={44}
+          />
+          <Text style={[styles.headerTitle, { color: colors.text }]}>
+            Select Photos
+          </Text>
+          <View style={{ width: 44 }} />
+        </View>
+
+        {/* Selection info */}
+        <View style={styles.infoContainer}>
+          <Text style={[styles.infoText, { color: colors.textSecondary }]}>
+            {selectedImages.length} of {maxPhotos} selected
+          </Text>
+        </View>
+
+        {/* Selected images grid */}
+        <Animated.ScrollView
+          ref={scrollViewRef}
+          onScroll={scrollHandler}
+          scrollEventThrottle={16}
+          contentContainerStyle={styles.scrollContent}
+        >
+          {selectedImages.length === 0 ? (
+            <View style={styles.emptyContainer}>
+              <Text style={[styles.emptyText, { color: colors.textSecondary }]}>
+                No photos selected yet
+              </Text>
+            </View>
+          ) : (
+            <View style={{ height: containerHeight }}>
+              {selectedImages.map((item, index) => (
+                <DraggableImage
+                  key={item.id}
+                  item={item}
+                  index={index}
+                  positions={positions}
+                  scrollY={scrollY}
+                  onRemove={handleRemoveImage}
+                  colors={colors}
+                />
+              ))}
+            </View>
+          )}
+        </Animated.ScrollView>
+
+        {/* Actions */}
+        <View
+          style={[
+            styles.footer,
+            { backgroundColor: colors.surface, borderTopColor: colors.border },
+          ]}
+        >
+          <Button
+            title="Add Photos"
+            onPress={handleSelectImages}
+            variant="outlined"
+            style={styles.addButton}
+          />
+          <Button
+            title="Continue"
+            onPress={handleContinue}
+            variant="primary"
+            style={styles.continueButton}
+            disabled={selectedImages.length < 2}
+          />
+        </View>
+      </SafeAreaView>
+    </GestureHandlerRootView>
   );
 };
 
@@ -397,13 +566,12 @@ const styles = StyleSheet.create({
   infoText: {
     ...TYPOGRAPHY.body2,
   },
-  grid: {
-    padding: SPACING.md,
+  scrollContent: {
+    flexGrow: 1,
   },
   imageContainer: {
     width: IMAGE_SIZE,
     height: IMAGE_SIZE,
-    marginBottom: SPACING.xs,
     borderRadius: RADII.sm,
     overflow: 'hidden',
   },
