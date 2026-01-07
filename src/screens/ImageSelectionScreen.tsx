@@ -37,7 +37,6 @@ import Animated, {
   useAnimatedGestureHandler,
   withSpring,
   runOnJS,
-  scrollTo,
   useAnimatedRef,
   useAnimatedScrollHandler,
 } from 'react-native-reanimated';
@@ -84,9 +83,8 @@ const DraggableImage: React.FC<DraggableImageProps> = ({
   colors,
 }) => {
   const isGestureActive = useSharedValue(false);
-  const translateX = useSharedValue(0);
-  const translateY = useSharedValue(0);
-  const scale = useSharedValue(1);
+  const offsetX = useSharedValue(0);
+  const offsetY = useSharedValue(0);
 
   const getPosition = (index: number) => {
     'worklet';
@@ -100,29 +98,33 @@ const DraggableImage: React.FC<DraggableImageProps> = ({
 
   const gestureHandler = useAnimatedGestureHandler<
     PanGestureHandlerGestureEvent,
-    { startX: number; startY: number; startIndex: number }
+    { startX: number; startY: number }
   >({
     onStart: (_, ctx) => {
-      ctx.startIndex = positions.value[index];
-      const pos = getPosition(ctx.startIndex);
+      const currentIndex = positions.value.indexOf(index);
+      const pos = getPosition(currentIndex);
       ctx.startX = pos.x;
       ctx.startY = pos.y;
       isGestureActive.value = true;
-      scale.value = withSpring(1.1);
       runOnJS(haptics.light)();
     },
     onActive: (event, ctx) => {
-      translateX.value = event.translationX;
-      translateY.value = event.translationY;
+      offsetX.value = event.translationX;
+      offsetY.value = event.translationY;
 
       const currentX = ctx.startX + event.translationX;
       const currentY = ctx.startY + event.translationY + scrollY.value;
 
-      const newCol = Math.round(
-        (currentX - SPACING.md) / (IMAGE_SIZE + IMAGE_MARGIN),
+      const newCol = Math.max(
+        0,
+        Math.min(
+          COLUMNS - 1,
+          Math.round((currentX - SPACING.md) / (IMAGE_SIZE + IMAGE_MARGIN)),
+        ),
       );
-      const newRow = Math.round(
-        (currentY - SPACING.md) / (IMAGE_SIZE + IMAGE_MARGIN),
+      const newRow = Math.max(
+        0,
+        Math.round((currentY - SPACING.md) / (IMAGE_SIZE + IMAGE_MARGIN)),
       );
       const newIndex = Math.max(
         0,
@@ -130,7 +132,7 @@ const DraggableImage: React.FC<DraggableImageProps> = ({
       );
 
       const oldIndex = positions.value.indexOf(index);
-      if (newIndex !== oldIndex && newIndex >= 0) {
+      if (newIndex !== oldIndex) {
         const newPositions = [...positions.value];
         newPositions.splice(oldIndex, 1);
         newPositions.splice(newIndex, 0, index);
@@ -138,11 +140,8 @@ const DraggableImage: React.FC<DraggableImageProps> = ({
       }
     },
     onEnd: () => {
-      const finalIndex = positions.value.indexOf(index);
-      const finalPos = getPosition(finalIndex);
-      translateX.value = withSpring(finalPos.x - getPosition(index).x);
-      translateY.value = withSpring(finalPos.y - getPosition(index).y);
-      scale.value = withSpring(1);
+      offsetX.value = withSpring(0);
+      offsetY.value = withSpring(0);
       isGestureActive.value = false;
       runOnJS(haptics.light)();
     },
@@ -155,44 +154,43 @@ const DraggableImage: React.FC<DraggableImageProps> = ({
     if (isGestureActive.value) {
       return {
         position: 'absolute',
-        left: 0,
-        top: 0,
-        transform: [
-          { translateX: pos.x + translateX.value },
-          { translateY: pos.y + translateY.value - scrollY.value },
-          { scale: scale.value },
-        ],
+        left: pos.x + offsetX.value,
+        top: pos.y + offsetY.value - scrollY.value,
+        width: IMAGE_SIZE,
+        height: IMAGE_SIZE,
+        opacity: 0.85,
         zIndex: 1000,
+        elevation: 8,
       };
     }
 
     return {
       position: 'absolute',
-      left: 0,
-      top: 0,
-      transform: [
-        { translateX: withSpring(pos.x) },
-        { translateY: withSpring(pos.y - scrollY.value) },
-        { scale: scale.value },
-      ],
+      left: withSpring(pos.x, { damping: 20, stiffness: 200 }),
+      top: withSpring(pos.y - scrollY.value, { damping: 20, stiffness: 200 }),
+      width: IMAGE_SIZE,
+      height: IMAGE_SIZE,
+      opacity: 1,
       zIndex: 1,
     };
   });
 
   return (
     <PanGestureHandler onGestureEvent={gestureHandler}>
-      <Animated.View style={[styles.imageContainer, animatedStyle]}>
-        <Image
-          source={{ uri: item.uri }}
-          style={styles.image}
-          resizeMode="cover"
-        />
-        <TouchableOpacity
-          style={[styles.removeButton, { backgroundColor: colors.error }]}
-          onPress={() => onRemove(index)}
-        >
-          <Text style={styles.removeIcon}>×</Text>
-        </TouchableOpacity>
+      <Animated.View style={[animatedStyle]}>
+        <View style={styles.imageContainer}>
+          <Image
+            source={{ uri: item.uri }}
+            style={styles.image}
+            resizeMode="cover"
+          />
+          <TouchableOpacity
+            style={[styles.removeButton, { backgroundColor: colors.error }]}
+            onPress={() => onRemove(index)}
+          >
+            <Text style={styles.removeIcon}>×</Text>
+          </TouchableOpacity>
+        </View>
       </Animated.View>
     </PanGestureHandler>
   );
@@ -204,7 +202,6 @@ const ImageSelectionScreen: React.FC = () => {
   const { colors } = useThemeStore();
   const { currentProjectId, getProjectById } = useProjectStore();
 
-  // Load existing project photos on mount
   const getInitialImages = useCallback((): SelectedImage[] => {
     if (currentProjectId) {
       const project = getProjectById(currentProjectId);
@@ -325,7 +322,6 @@ const ImageSelectionScreen: React.FC = () => {
         includeBase64: false,
       });
 
-      // Handle permission denied
       if (result.errorCode === 'permission') {
         await refreshPermissionStatus();
         Alert.alert(
@@ -336,7 +332,6 @@ const ImageSelectionScreen: React.FC = () => {
             {
               text: 'Open Settings',
               onPress: () => {
-                // On iOS, this will open the app settings
                 if (Platform.OS === 'ios') {
                   Linking.openURL('app-settings:');
                 }
@@ -347,7 +342,6 @@ const ImageSelectionScreen: React.FC = () => {
         return;
       }
 
-      // Handle other errors
       if (result.errorCode) {
         console.log(
           'Image picker error:',
@@ -358,7 +352,6 @@ const ImageSelectionScreen: React.FC = () => {
         return;
       }
 
-      // Handle successful selection
       if (result.assets && result.assets.length > 0) {
         const newImages: SelectedImage[] = result.assets.map((asset, idx) => ({
           uri: asset.uri || '',
@@ -408,7 +401,6 @@ const ImageSelectionScreen: React.FC = () => {
     haptics.medium();
     sounds.tap();
 
-    // Reorder images based on positions
     const reorderedImages = positions.value.map(pos => selectedImages[pos]);
 
     navigation.navigate('Editor', {
@@ -460,7 +452,6 @@ const ImageSelectionScreen: React.FC = () => {
       <SafeAreaView
         style={[styles.container, { backgroundColor: colors.background }]}
       >
-        {/* Header */}
         <View style={styles.header}>
           <IconButton
             icon={
@@ -475,14 +466,12 @@ const ImageSelectionScreen: React.FC = () => {
           <View style={{ width: 44 }} />
         </View>
 
-        {/* Selection info */}
         <View style={styles.infoContainer}>
           <Text style={[styles.infoText, { color: colors.textSecondary }]}>
             {selectedImages.length} of {maxPhotos} selected
           </Text>
         </View>
 
-        {/* Selected images grid */}
         <Animated.ScrollView
           ref={scrollViewRef}
           onScroll={scrollHandler}
@@ -512,7 +501,6 @@ const ImageSelectionScreen: React.FC = () => {
           )}
         </Animated.ScrollView>
 
-        {/* Actions */}
         <View
           style={[
             styles.footer,
@@ -548,10 +536,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingHorizontal: SPACING.md,
     paddingVertical: SPACING.sm,
-  },
-  closeIcon: {
-    fontSize: 36,
-    fontWeight: '300',
   },
   headerTitle: {
     ...TYPOGRAPHY.h3,
