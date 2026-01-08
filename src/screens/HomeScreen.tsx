@@ -23,6 +23,7 @@ import {
   AnimatedCollapsible,
 } from '../components/common';
 import { haptics } from '../utils/hapticFeedback';
+import { sounds } from '../utils/soundEffects';
 import { SPACING, TYPOGRAPHY, SHADOWS, SCREEN_WIDTH } from '../constants/theme';
 import { Project, Folder } from '../types/project.types';
 

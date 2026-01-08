@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
   View,
   Text,
@@ -8,29 +8,73 @@ import {
   SafeAreaView,
   Switch,
   Alert,
+  Image,
 } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { StackNavigationProp } from '@react-navigation/stack';
 import { useTranslation } from 'react-i18next';
+import FeatherIcon from 'react-native-vector-icons/Feather';
 import { RootStackParamList } from '../navigation/navigationTypes';
 import { useThemeStore } from '../store/themeStore';
 import { useSettingsStore } from '../store/settingsStore';
-import { Card } from '../components/common';
+import { Card, AnimatedCollapsible } from '../components/common';
 import { haptics } from '../utils/hapticFeedback';
 import { Theme } from '../types/theme.types';
-import { HapticStrength } from '../types/settings.types';
+import { HapticStrength, LanguageCode } from '../types/settings.types';
 import { SPACING, RADII, TYPOGRAPHY, THEME_COLORS } from '../constants/theme';
+import { changeLanguage } from '../i18n';
 
 type SettingsScreenNavigationProp = StackNavigationProp<
   RootStackParamList,
   'Settings'
 >;
 
+interface LanguageOption {
+  code: LanguageCode;
+  name: string;
+  nativeName: string;
+  flagIcon: any;
+}
+
+const LANGUAGES: LanguageOption[] = [
+  { code: 'en', name: 'English', nativeName: 'English', flagIcon: require('../assets/icons/flags/en.png') },
+  { code: 'zh', name: 'Chinese (Simplified)', nativeName: '简体中文', flagIcon: require('../assets/icons/flags/zh.png') },
+  { code: 'ja', name: 'Japanese', nativeName: '日本語', flagIcon: require('../assets/icons/flags/ja.png') },
+  { code: 'ko', name: 'Korean', nativeName: '한국어', flagIcon: require('../assets/icons/flags/ko.png') },
+  { code: 'de', name: 'German', nativeName: 'Deutsch', flagIcon: require('../assets/icons/flags/de.png') },
+  { code: 'fr', name: 'French', nativeName: 'Français', flagIcon: require('../assets/icons/flags/fr.png') },
+  { code: 'es', name: 'Spanish (Mexican)', nativeName: 'Español (México)', flagIcon: require('../assets/icons/flags/es.png') },
+  { code: 'pt', name: 'Portuguese (Brazilian)', nativeName: 'Português (Brasil)', flagIcon: require('../assets/icons/flags/pt-BR.png') },
+  { code: 'ar', name: 'Arabic', nativeName: 'العربية', flagIcon: require('../assets/icons/flags/ar.png') },
+  { code: 'ru', name: 'Russian', nativeName: 'Русский', flagIcon: require('../assets/icons/flags/ru.png') },
+  { code: 'it', name: 'Italian', nativeName: 'Italiano', flagIcon: require('../assets/icons/flags/it.png') },
+  { code: 'nl', name: 'Dutch', nativeName: 'Nederlands', flagIcon: require('../assets/icons/flags/nl.png') },
+  { code: 'tr', name: 'Turkish', nativeName: 'Türkçe', flagIcon: require('../assets/icons/flags/tr.png') },
+  { code: 'th', name: 'Thai', nativeName: 'ไทย', flagIcon: require('../assets/icons/flags/th.png') },
+  { code: 'vi', name: 'Vietnamese', nativeName: 'Tiếng Việt', flagIcon: require('../assets/icons/flags/vi.png') },
+  { code: 'id', name: 'Indonesian', nativeName: 'Bahasa Indonesia', flagIcon: require('../assets/icons/flags/id.png') },
+  { code: 'pl', name: 'Polish', nativeName: 'Polski', flagIcon: require('../assets/icons/flags/pl.png') },
+  { code: 'uk', name: 'Ukrainian', nativeName: 'Українська', flagIcon: require('../assets/icons/flags/uk.png') },
+  { code: 'hi', name: 'Hindi', nativeName: 'हिन्दी', flagIcon: require('../assets/icons/flags/hi.png') },
+  { code: 'he', name: 'Hebrew', nativeName: 'עברית', flagIcon: require('../assets/icons/flags/he.png') },
+  { code: 'sv', name: 'Swedish', nativeName: 'Svenska', flagIcon: require('../assets/icons/flags/sv.png') },
+  { code: 'no', name: 'Norwegian', nativeName: 'Norsk', flagIcon: require('../assets/icons/flags/no.png') },
+  { code: 'da', name: 'Danish', nativeName: 'Dansk', flagIcon: require('../assets/icons/flags/da.png') },
+  { code: 'fi', name: 'Finnish', nativeName: 'Suomi', flagIcon: require('../assets/icons/flags/fi.png') },
+  { code: 'cs', name: 'Czech', nativeName: 'Čeština', flagIcon: require('../assets/icons/flags/cs.png') },
+  { code: 'hu', name: 'Hungarian', nativeName: 'Magyar', flagIcon: require('../assets/icons/flags/hu.png') },
+  { code: 'ro', name: 'Romanian', nativeName: 'Română', flagIcon: require('../assets/icons/flags/ro.png') },
+  { code: 'el', name: 'Greek', nativeName: 'Ελληνικά', flagIcon: require('../assets/icons/flags/el.png') },
+  { code: 'ms', name: 'Malay', nativeName: 'Bahasa Melayu', flagIcon: require('../assets/icons/flags/ms.png') },
+  { code: 'fil', name: 'Filipino', nativeName: 'Filipino', flagIcon: require('../assets/icons/flags/fil.png') },
+];
+
 const SettingsScreen: React.FC = () => {
   const navigation = useNavigation<SettingsScreenNavigationProp>();
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const { colors, theme, setTheme } = useThemeStore();
   const { settings, updateSettings, clearCache } = useSettingsStore();
+  const [languageExpanded, setLanguageExpanded] = useState(false);
   const themeOptions = [Theme.LIGHT, Theme.DARK, Theme.SOLAR, Theme.MONO];
   const hapticStrengthOptions = [
     HapticStrength.LIGHT,
@@ -79,6 +123,41 @@ const SettingsScreen: React.FC = () => {
       ],
     );
   };
+
+  const handleLanguageChange = async (languageCode: LanguageCode) => {
+    haptics.medium();
+    await changeLanguage(languageCode);
+    updateSettings({ language: languageCode });
+    setLanguageExpanded(false);
+  };
+
+  // Helper function to normalize language code for matching
+  const normalizeLanguageCode = (code: string): string => {
+    if (!code) return 'en';
+    const normalized = code.toLowerCase();
+    // Handle language variants
+    if (normalized.startsWith('zh')) return 'zh';
+    if (normalized.startsWith('pt')) return 'pt';
+    if (normalized.startsWith('es')) return 'es';
+    if (normalized.startsWith('ja') || normalized.startsWith('jp')) return 'ja';
+    if (normalized.startsWith('uk') || normalized.startsWith('ua')) return 'uk';
+    return normalized.split('-')[0];
+  };
+
+  // Get current language - prioritize settings, then i18n, then default
+  const getCurrentLanguageCode = () => {
+    if (settings.language) {
+      return normalizeLanguageCode(settings.language);
+    }
+    if (i18n.language) {
+      return normalizeLanguageCode(i18n.language);
+    }
+    return 'en';
+  };
+
+  const currentLanguageCode = getCurrentLanguageCode();
+  const currentLanguage =
+    LANGUAGES.find(lang => lang.code === currentLanguageCode) || LANGUAGES[0];
 
   const formatCacheSizeValue = (bytes: number): string => {
     if (bytes === 0) return '0 MB';
@@ -154,6 +233,105 @@ const SettingsScreen: React.FC = () => {
                 );
               })}
             </View>
+          </Card>
+        </View>
+
+        {/* Language */}
+        <View style={styles.section}>
+          <Text style={[styles.sectionTitle, { color: colors.text }]}>
+            {t('settings.language')}
+          </Text>
+
+          <Card style={styles.card}>
+            <TouchableOpacity
+              style={styles.languageHeader}
+              onPress={() => {
+                haptics.light();
+                setLanguageExpanded(!languageExpanded);
+              }}
+            >
+              <View style={styles.languageHeaderContent}>
+                <Image
+                  source={currentLanguage.flagIcon}
+                  style={styles.flagIcon}
+                />
+                <View style={styles.languageInfo}>
+                  <Text style={[styles.languageName, { color: colors.text }]}>
+                    {currentLanguage.nativeName}
+                  </Text>
+                  <Text
+                    style={[
+                      styles.languageSubtext,
+                      { color: colors.textSecondary },
+                    ]}
+                  >
+                    {currentLanguage.name}
+                  </Text>
+                </View>
+              </View>
+              <FeatherIcon
+                name={languageExpanded ? 'chevron-up' : 'chevron-down'}
+                size={20}
+                color={colors.textSecondary}
+              />
+            </TouchableOpacity>
+
+            <AnimatedCollapsible expanded={languageExpanded}>
+              <View
+                style={[
+                  styles.languageList,
+                  { borderTopColor: colors.border },
+                ]}
+              >
+                {LANGUAGES.map(language => {
+                  const isSelected = language.code === currentLanguageCode;
+                  return (
+                    <TouchableOpacity
+                      key={language.code}
+                      style={[
+                        styles.languageOption,
+                        {
+                          backgroundColor: isSelected
+                            ? colors.primary + '15'
+                            : 'transparent',
+                        },
+                      ]}
+                      onPress={() => handleLanguageChange(language.code)}
+                    >
+                      <Image
+                        source={language.flagIcon}
+                        style={styles.flagIcon}
+                      />
+                      <View style={styles.languageInfo}>
+                        <Text
+                          style={[
+                            styles.languageName,
+                            { color: colors.text },
+                          ]}
+                        >
+                          {language.nativeName}
+                        </Text>
+                        <Text
+                          style={[
+                            styles.languageSubtext,
+                            { color: colors.textSecondary },
+                          ]}
+                        >
+                          {language.name}
+                        </Text>
+                      </View>
+                      {isSelected && (
+                        <FeatherIcon
+                          name="check"
+                          size={20}
+                          color={colors.primary}
+                        />
+                      )}
+                    </TouchableOpacity>
+                  );
+                })}
+              </View>
+            </AnimatedCollapsible>
           </Card>
         </View>
 
@@ -411,6 +589,47 @@ const styles = StyleSheet.create({
   clearButtonText: {
     ...TYPOGRAPHY.body2,
     fontWeight: '600',
+  },
+  languageHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingVertical: SPACING.xs,
+  },
+  languageHeaderContent: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    flex: 1,
+  },
+  flagIcon: {
+    width: 32,
+    height: 32,
+    borderRadius: RADII.xs,
+    marginRight: SPACING.sm,
+  },
+  languageInfo: {
+    flex: 1,
+  },
+  languageName: {
+    ...TYPOGRAPHY.body1,
+    fontWeight: '500',
+  },
+  languageSubtext: {
+    ...TYPOGRAPHY.caption,
+    marginTop: 2,
+  },
+  languageList: {
+    marginTop: SPACING.xs,
+    paddingTop: SPACING.xs,
+    borderTopWidth: 1,
+  },
+  languageOption: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingVertical: SPACING.sm,
+    paddingHorizontal: SPACING.xs,
+    borderRadius: RADII.sm,
+    marginBottom: SPACING.xs,
   },
 });
 

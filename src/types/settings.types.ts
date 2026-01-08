@@ -32,7 +32,24 @@ export type LanguageCode =
   | 'ua'
   | 'it'
   | 'pl'
-  | 'hi';
+  | 'hi'
+  | 'ar'
+  | 'nl'
+  | 'tr'
+  | 'th'
+  | 'vi'
+  | 'id'
+  | 'he'
+  | 'sv'
+  | 'no'
+  | 'da'
+  | 'fi'
+  | 'cs'
+  | 'hu'
+  | 'ro'
+  | 'el'
+  | 'ms'
+  | 'fil';
 
 export interface AppSettings {
   theme: Theme;
