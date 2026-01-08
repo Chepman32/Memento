@@ -23,6 +23,7 @@ import { Theme } from '../types/theme.types';
 import { HapticStrength, LanguageCode } from '../types/settings.types';
 import { SPACING, RADII, TYPOGRAPHY, THEME_COLORS } from '../constants/theme';
 import { changeLanguage } from '../i18n';
+import { PRIVACY_POLICY_URL } from '../constants/legal';
 
 type SettingsScreenNavigationProp = StackNavigationProp<
   RootStackParamList,
@@ -85,6 +86,14 @@ const SettingsScreen: React.FC = () => {
   const handleClose = () => {
     haptics.light();
     navigation.goBack();
+  };
+
+  const handlePrivacyPolicy = () => {
+    haptics.light();
+    navigation.navigate('WebView', {
+      url: PRIVACY_POLICY_URL,
+      title: t('settings.privacyPolicy'),
+    });
   };
 
   const handleThemeChange = (newTheme: Theme) => {
@@ -451,22 +460,9 @@ const SettingsScreen: React.FC = () => {
           </Card>
 
           <Card style={styles.card}>
-            <TouchableOpacity style={styles.settingRow}>
+            <TouchableOpacity style={styles.settingRow} onPress={handlePrivacyPolicy}>
               <Text style={[styles.settingLabel, { color: colors.text }]}>
                 {t('settings.privacyPolicy')}
-              </Text>
-              <Text
-                style={[styles.settingValue, { color: colors.textSecondary }]}
-              >
-                →
-              </Text>
-            </TouchableOpacity>
-          </Card>
-
-          <Card style={styles.card}>
-            <TouchableOpacity style={styles.settingRow}>
-              <Text style={[styles.settingLabel, { color: colors.text }]}>
-                {t('settings.termsOfService')}
               </Text>
               <Text
                 style={[styles.settingValue, { color: colors.textSecondary }]}

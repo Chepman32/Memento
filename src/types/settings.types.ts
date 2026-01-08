@@ -62,4 +62,5 @@ export interface AppSettings {
   defaultQuality: ExportQuality;
   cacheSize: number;
   exportLocation: ExportLocation;
+  onboardingCompleted: boolean;
 }

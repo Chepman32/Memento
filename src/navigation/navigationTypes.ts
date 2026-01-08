@@ -1,11 +1,13 @@
 export type RootStackParamList = {
   Splash: undefined;
+  Onboarding: undefined;
   Home: undefined;
   ImageSelection: { autoOpenPicker?: boolean } | undefined;
   Editor: { photos: string[] };
   Preview: { projectId: string };
   Export: { projectId: string };
   Settings: undefined;
+  WebView: { url: string; title: string };
 };
 
 export type TransitionType =

@@ -214,6 +214,29 @@
       "termsApply": "Terms and conditions apply"
     }
   },
+  "onboarding": {
+    "skip": "Skip",
+    "getStarted": "Get Started",
+    "tipLabel": "Tip {{index}} of {{total}}",
+    "slides": {
+      "hook": {
+        "title": "Start with a hook",
+        "body": "Open with your strongest photo. Move from wide shots to details to tell a clear story."
+      },
+      "rhythm": {
+        "title": "Keep the rhythm",
+        "body": "Most photos feel great at 2-3 seconds. Hold longer on the moments that matter."
+      },
+      "transitions": {
+        "title": "Transitions with intent",
+        "body": "Pick one signature transition and use it sparingly. Subtle beats busy."
+      },
+      "export": {
+        "title": "Export for the moment",
+        "body": "Choose 9:16 for stories or 16:9 for TV. Save a high quality master once."
+      }
+    }
+  },
   "errors": {
     "generic": "Something went wrong",
     "networkError": "Network error. Please try again.",

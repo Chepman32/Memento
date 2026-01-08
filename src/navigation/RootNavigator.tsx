@@ -9,12 +9,14 @@ import { useThemeStore } from '../store/themeStore';
 
 // Screens
 import SplashScreen from '../screens/SplashScreen';
+import OnboardingScreen from '../screens/OnboardingScreen';
 import HomeScreen from '../screens/HomeScreen';
 import ImageSelectionScreen from '../screens/ImageSelectionScreen';
 import EditorScreen from '../screens/EditorScreen';
 import PreviewScreen from '../screens/PreviewScreen';
 import ExportScreen from '../screens/ExportScreen';
 import SettingsScreen from '../screens/SettingsScreen';
+import WebViewScreen from '../screens/WebViewScreen';
 
 const Stack = createStackNavigator<RootStackParamList>();
 
@@ -38,6 +40,13 @@ export const RootNavigator: React.FC = () => {
         <Stack.Screen
           name="Splash"
           component={SplashScreen}
+          options={{
+            gestureEnabled: false,
+          }}
+        />
+        <Stack.Screen
+          name="Onboarding"
+          component={OnboardingScreen}
           options={{
             gestureEnabled: false,
           }}
@@ -70,6 +79,14 @@ export const RootNavigator: React.FC = () => {
         <Stack.Screen
           name="Settings"
           component={SettingsScreen}
+          options={{
+            presentation: 'modal',
+            cardStyleInterpolator: CardStyleInterpolators.forVerticalIOS,
+          }}
+        />
+        <Stack.Screen
+          name="WebView"
+          component={WebViewScreen}
           options={{
             presentation: 'modal',
             cardStyleInterpolator: CardStyleInterpolators.forVerticalIOS,

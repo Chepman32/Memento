@@ -4,6 +4,7 @@ import { useNavigation } from '@react-navigation/native';
 import { StackNavigationProp } from '@react-navigation/stack';
 import { RootStackParamList } from '../navigation/navigationTypes';
 import { useThemeStore } from '../store/themeStore';
+import { useSettingsStore } from '../store/settingsStore';
 import { SCREEN_WIDTH, SCREEN_HEIGHT } from '../constants/theme';
 
 type SplashScreenNavigationProp = StackNavigationProp<
@@ -257,14 +258,20 @@ const AnimatedParticle: React.FC<AnimatedParticleProps> = React.memo(
 const SplashScreen: React.FC = () => {
   const navigation = useNavigation<SplashScreenNavigationProp>();
   const { colors } = useThemeStore();
+  const { settings } = useSettingsStore();
   const [showLogo, setShowLogo] = useState(false);
   const [showParticles, setShowParticles] = useState(true);
+  const onboardingCompleteRef = useRef(settings.onboardingCompleted);
 
   const particles = useMemo(() => generateParticles(), []);
 
   const logoOpacity = useRef(new Animated.Value(0)).current;
   const logoScale = useRef(new Animated.Value(1)).current;
   const containerOpacity = useRef(new Animated.Value(1)).current;
+
+  useEffect(() => {
+    onboardingCompleteRef.current = settings.onboardingCompleted;
+  }, [settings.onboardingCompleted]);
 
   useEffect(() => {
     // After assembly completes, show logo and zoom
@@ -296,7 +303,9 @@ const SplashScreen: React.FC = () => {
           }),
         ]).start(({ finished }) => {
           if (finished) {
-            navigation.replace('Home');
+            navigation.replace(
+              onboardingCompleteRef.current ? 'Home' : 'Onboarding',
+            );
           }
         });
       }, 100);

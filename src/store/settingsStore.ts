@@ -16,6 +16,7 @@ const DEFAULT_SETTINGS: AppSettings = {
   defaultQuality: ExportQuality.MEDIUM,
   cacheSize: 0,
   exportLocation: ExportLocation.PHOTOS,
+  onboardingCompleted: false,
 };
 
 interface SettingsState {
