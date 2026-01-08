@@ -13,6 +13,7 @@
 		16110A2A2EB206B3004E61E4 /* PhotoLibraryModule.m in Sources */ = {isa = PBXBuildFile; fileRef = 16110A272EB206B2004E61E4 /* PhotoLibraryModule.m */; };
 		761780ED2CA45674006654EE /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 761780EC2CA45674006654EE /* AppDelegate.swift */; };
 		81AB9BB82411601600AC10FF /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */; };
+		FC12A479A9864A87956128FE /* success-fanfare-trumpets-6185.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = F44B25B46E2C4100BF7F3E28 /* success-fanfare-trumpets-6185.mp3 */; };
 		FCDBD3AEFF9EA04EC1EBBA4F /* libPods-SlideMint.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 52721D1CE4C76DB7C7079884 /* libPods-SlideMint.a */; };
 /* End PBXBuildFile section */
 
@@ -29,6 +30,7 @@
 		81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; name = LaunchScreen.storyboard; path = SlideMint/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		E55E5B97B64B7CC32AD75D48 /* Pods-SlideMint.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SlideMint.release.xcconfig"; path = "Target Support Files/Pods-SlideMint/Pods-SlideMint.release.xcconfig"; sourceTree = "<group>"; };
 		ED297162215061F000B7C4FE /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = System/Library/Frameworks/JavaScriptCore.framework; sourceTree = SDKROOT; };
+		F44B25B46E2C4100BF7F3E28 /* success-fanfare-trumpets-6185.mp3 */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = undefined; includeInIndex = 0; lastKnownFileType = unknown; name = "success-fanfare-trumpets-6185.mp3"; path = "../src/assets/sounds/success-fanfare-trumpets-6185.mp3"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -64,6 +66,15 @@
 			name = Frameworks;
 			sourceTree = "<group>";
 		};
+		36B38AAE5E2F45519C7A4A16 /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				F44B25B46E2C4100BF7F3E28 /* success-fanfare-trumpets-6185.mp3 */,
+			);
+			name = Resources;
+			path = "";
+			sourceTree = "<group>";
+		};
 		832341AE1AAA6A7D00B99B32 /* Libraries */ = {
 			isa = PBXGroup;
 			children = (
@@ -81,6 +92,7 @@
 				83CBBA001A601CBA00E9B192 /* Products */,
 				2D16E6871FA4F8E400B85C8A /* Frameworks */,
 				BBD78D7AC51CEA395F1C20DB /* Pods */,
+				36B38AAE5E2F45519C7A4A16 /* Resources */,
 			);
 			indentWidth = 2;
 			sourceTree = "<group>";
@@ -167,6 +179,7 @@
 				81AB9BB82411601600AC10FF /* LaunchScreen.storyboard in Resources */,
 				13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */,
 				10E02CD0DE0A542C37BB3E22 /* PrivacyInfo.xcprivacy in Resources */,
+				FC12A479A9864A87956128FE /* success-fanfare-trumpets-6185.mp3 in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -270,7 +283,7 @@
 				CLANG_ENABLE_MODULES = YES;
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution";
 				CODE_SIGN_STYLE = Manual;
-				CURRENT_PROJECT_VERSION = 6;
+				CURRENT_PROJECT_VERSION = 7;
 				DEVELOPMENT_TEAM = "";
 				"DEVELOPMENT_TEAM[sdk=iphoneos*]" = 8A6D95WMNG;
 				ENABLE_BITCODE = NO;
@@ -307,7 +320,7 @@
 				CLANG_ENABLE_MODULES = YES;
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution";
 				CODE_SIGN_STYLE = Manual;
-				CURRENT_PROJECT_VERSION = 6;
+				CURRENT_PROJECT_VERSION = 7;
 				DEVELOPMENT_TEAM = "";
 				"DEVELOPMENT_TEAM[sdk=iphoneos*]" = 8A6D95WMNG;
 				INFOPLIST_FILE = SlideMint/Info.plist;

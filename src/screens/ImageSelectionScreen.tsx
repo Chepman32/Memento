@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
 import {
   View,
   Text,
@@ -222,6 +222,7 @@ const ImageSelectionScreen: React.FC = () => {
   const [permissionStatus, setPermissionStatus] = useState<string | null>(null);
   const [hasPermission, setHasPermission] = useState(true);
   const [hasAutoOpened, setHasAutoOpened] = useState(false);
+  const permissionRequestRef = useRef<Promise<string> | null>(null);
 
   const positions = useSharedValue<number[]>([]);
   const scrollY = useSharedValue(0);
@@ -250,50 +251,70 @@ const ImageSelectionScreen: React.FC = () => {
   }, [refreshPermissionStatus]);
 
   const ensurePermission = useCallback(async (): Promise<string> => {
-    const existingStatus = await refreshPermissionStatus();
-
-    if (
-      existingStatus === RESULTS.GRANTED ||
-      existingStatus === RESULTS.LIMITED
-    ) {
-      return existingStatus;
+    if (permissionRequestRef.current) {
+      return permissionRequestRef.current;
     }
 
-    const requested = await request(photoPermission);
-    setPermissionStatus(requested);
-    const allowed =
-      requested === RESULTS.GRANTED || requested === RESULTS.LIMITED;
-    setHasPermission(allowed);
+    const requestPromise = (async () => {
+      const existingStatus = await refreshPermissionStatus();
 
-    if (!allowed) {
-      Alert.alert(
-        'Permission Required',
-        Platform.OS === 'ios'
-          ? 'Please allow photo access in Settings to pick images for your slideshow.'
-          : 'Please allow photo access to pick images for your slideshow.',
-        [
-          { text: 'Cancel', style: 'cancel' },
-          {
-            text: 'Open Settings',
-            onPress: () => {
-              if (Platform.OS === 'ios') {
-                Linking.openURL('app-settings:');
-              } else {
-                openSettings().catch(() => {
-                  Alert.alert(
-                    'Error',
-                    'Unable to open settings. Please enable permissions manually.',
-                  );
-                });
-              }
+      if (
+        existingStatus === RESULTS.GRANTED ||
+        existingStatus === RESULTS.LIMITED
+      ) {
+        return existingStatus;
+      }
+
+      const requested = await request(photoPermission);
+      setPermissionStatus(requested);
+      const allowed =
+        requested === RESULTS.GRANTED || requested === RESULTS.LIMITED;
+      setHasPermission(allowed);
+
+      if (!allowed) {
+        Alert.alert(
+          'Permission Required',
+          Platform.OS === 'ios'
+            ? 'Please allow photo access in Settings to pick images for your slideshow.'
+            : 'Please allow photo access to pick images for your slideshow.',
+          [
+            { text: 'Cancel', style: 'cancel' },
+            {
+              text: 'Open Settings',
+              onPress: () => {
+                if (Platform.OS === 'ios') {
+                  Linking.openURL('app-settings:');
+                } else {
+                  openSettings().catch(() => {
+                    Alert.alert(
+                      'Error',
+                      'Unable to open settings. Please enable permissions manually.',
+                    );
+                  });
+                }
+              },
             },
-          },
-        ],
-      );
-    }
+          ],
+        );
+      }
 
-    return requested;
+      return requested;
+    })();
+
+    permissionRequestRef.current = requestPromise;
+
+    try {
+      return await requestPromise;
+    } finally {
+      permissionRequestRef.current = null;
+    }
   }, [photoPermission, refreshPermissionStatus]);
+
+  useFocusEffect(
+    useCallback(() => {
+      void ensurePermission();
+    }, [ensurePermission]),
+  );
 
   const handleSelectImages = useCallback(async () => {
     const status = await ensurePermission();

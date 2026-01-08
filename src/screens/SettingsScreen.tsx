@@ -17,7 +17,6 @@ import { useThemeStore } from '../store/themeStore';
 import { useSettingsStore } from '../store/settingsStore';
 import { Card } from '../components/common';
 import { haptics } from '../utils/hapticFeedback';
-import { sounds } from '../utils/soundEffects';
 import { Theme } from '../types/theme.types';
 import { HapticStrength } from '../types/settings.types';
 import { SPACING, RADII, TYPOGRAPHY, THEME_COLORS } from '../constants/theme';
@@ -46,14 +45,7 @@ const SettingsScreen: React.FC = () => {
 
   const handleThemeChange = (newTheme: Theme) => {
     haptics.medium();
-    sounds.tap();
     setTheme(newTheme);
-  };
-
-  const handleToggleSound = (value: boolean) => {
-    haptics.light();
-    if (value) sounds.tap();
-    updateSettings({ soundEnabled: value });
   };
 
   const handleToggleHaptic = (value: boolean) => {
@@ -165,25 +157,11 @@ const SettingsScreen: React.FC = () => {
           </Card>
         </View>
 
-        {/* Sound & Haptics */}
+        {/* Haptics */}
         <View style={styles.section}>
           <Text style={[styles.sectionTitle, { color: colors.text }]}>
             {t('settings.feedback')}
           </Text>
-
-          <Card style={styles.card}>
-            <View style={styles.settingRow}>
-              <Text style={[styles.settingLabel, { color: colors.text }]}>
-                {t('settings.soundEffects')}
-              </Text>
-              <Switch
-                value={settings.soundEnabled}
-                onValueChange={handleToggleSound}
-                trackColor={{ false: colors.border, true: colors.primary }}
-                thumbColor="#FFFFFF"
-              />
-            </View>
-          </Card>
 
           <Card style={styles.card}>
             <View style={styles.settingRow}>

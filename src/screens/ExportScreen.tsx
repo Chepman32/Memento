@@ -15,7 +15,6 @@ import useProjectStore from '../store/projectStore';
 import { useThemeStore } from '../store/themeStore';
 import { Button, Card, LoadingSpinner } from '../components/common';
 import { haptics } from '../utils/hapticFeedback';
-import { sounds } from '../utils/soundEffects';
 import { videoEncoder } from '../utils/videoEncoder';
 import { gifGenerator } from '../utils/gifGenerator';
 import { photoLibrary } from '../utils/photoLibrary';
@@ -68,7 +67,6 @@ const ExportScreen: React.FC = () => {
     if (!project) return;
 
     haptics.medium();
-    sounds.tap();
     setIsExporting(true);
     setExportProgress(0);
 
@@ -98,7 +96,6 @@ const ExportScreen: React.FC = () => {
           // Save to photo library
           try {
             await photoLibrary.saveToPhotoLibrary(outputPath);
-            sounds.exportComplete();
             haptics.success();
 
             Alert.alert(
@@ -153,7 +150,6 @@ const ExportScreen: React.FC = () => {
           // Save to photo library
           try {
             await photoLibrary.saveToPhotoLibrary(outputPath);
-            sounds.exportComplete();
             haptics.success();
 
             Alert.alert(
@@ -195,7 +191,6 @@ const ExportScreen: React.FC = () => {
         }
       }
     } catch (error) {
-      sounds.error();
       haptics.error();
       Alert.alert(
         'Export Failed',

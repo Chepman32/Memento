@@ -4,7 +4,6 @@ import { useNavigation } from '@react-navigation/native';
 import { StackNavigationProp } from '@react-navigation/stack';
 import { RootStackParamList } from '../navigation/navigationTypes';
 import { useThemeStore } from '../store/themeStore';
-import { sounds } from '../utils/soundEffects';
 import { SCREEN_WIDTH, SCREEN_HEIGHT } from '../constants/theme';
 
 type SplashScreenNavigationProp = StackNavigationProp<
@@ -268,8 +267,6 @@ const SplashScreen: React.FC = () => {
   const containerOpacity = useRef(new Animated.Value(1)).current;
 
   useEffect(() => {
-    sounds.preload();
-
     // After assembly completes, show logo and zoom
     const assemblyTimer = setTimeout(() => {
       setShowLogo(true);

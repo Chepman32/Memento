@@ -6,56 +6,89 @@ Sound.setCategory('Playback');
 
 type SoundName = 'tap' | 'success' | 'error' | 'transition' | 'export_complete';
 
+type SoundConfig = {
+  source: string;
+  basePath?: string;
+};
+
 class SoundManager {
   private sounds: Map<SoundName, Sound> = new Map();
   private loaded: boolean = false;
+  private missingSounds = new Set<SoundName>();
+
+  // Only export_complete is currently provided by the app assets
+  private soundConfigs: Partial<Record<SoundName, SoundConfig>> = {
+    export_complete: {
+      source: 'success_fanfare_trumpets',
+      basePath: Sound.MAIN_BUNDLE,
+    },
+  };
+
+  private getSoundConfig(name: SoundName): SoundConfig | undefined {
+    const config = this.soundConfigs[name];
+    if (!config && !this.missingSounds.has(name)) {
+      this.missingSounds.add(name);
+      console.warn(`Sound ${name} is not configured`);
+    }
+    return config;
+  }
+
+  private loadSound(
+    name: SoundName,
+    config?: SoundConfig,
+  ): Promise<Sound | null> {
+    const soundConfig = config ?? this.getSoundConfig(name);
+    if (!soundConfig) {
+      return Promise.resolve(null);
+    }
+
+    const source = soundConfig.source;
+
+    if (!source) {
+      console.warn(`Sound ${name} source could not be resolved`);
+      return Promise.resolve(null);
+    }
+
+    return new Promise((resolve, reject) => {
+      const sound = new Sound(
+        source,
+        soundConfig.basePath || '',
+        error => {
+          if (error) {
+            console.warn(`Failed to load sound ${name}:`, error);
+            reject(error);
+            return;
+          }
+          this.sounds.set(name, sound);
+          resolve(sound);
+        },
+      );
+    });
+  }
 
   async preloadSounds(): Promise<void> {
     if (this.loaded) return;
 
-    const soundFiles: Record<SoundName, string> = {
-      tap: 'tap.mp3',
-      success: 'success.mp3',
-      error: 'error.mp3',
-      transition: 'transition.mp3',
-      export_complete: 'export_complete.mp3',
-    };
+    const entries = Object.entries(this.soundConfigs) as [
+      SoundName,
+      SoundConfig,
+    ][];
 
-    const loadPromises = Object.entries(soundFiles).map(
-      ([name, filename]) =>
-        new Promise<void>((resolve, reject) => {
-          const sound = new Sound(filename, Sound.MAIN_BUNDLE, (error) => {
-            if (error) {
-              console.warn(`Failed to load sound ${name}:`, error);
-              reject(error);
-              return;
-            }
-            this.sounds.set(name as SoundName, sound);
-            resolve();
-          });
-        })
-    );
+    if (!entries.length) return;
 
     try {
-      await Promise.all(loadPromises);
+      await Promise.all(
+        entries.map(([name, config]) => this.loadSound(name, config)),
+      );
       this.loaded = true;
     } catch (error) {
       console.error('Error preloading sounds:', error);
     }
   }
 
-  playSound(name: SoundName): void {
-    const { settings } = useSettingsStore.getState();
-    if (!settings.soundEnabled) return;
-
-    const sound = this.sounds.get(name);
-    if (!sound) {
-      console.warn(`Sound ${name} not loaded`);
-      return;
-    }
-
+  private playLoadedSound(name: SoundName, sound: Sound) {
     sound.stop(() => {
-      sound.play((success) => {
+      sound.play(success => {
         if (!success) {
           console.warn(`Failed to play sound ${name}`);
         }
@@ -63,18 +96,40 @@ class SoundManager {
     });
   }
 
+  playSound(name: SoundName): void {
+    const { settings } = useSettingsStore.getState();
+    if (!settings.soundEnabled) return;
+
+    const sound = this.sounds.get(name);
+    if (sound) {
+      this.playLoadedSound(name, sound);
+      return;
+    }
+
+    this.loadSound(name)
+      .then(loadedSound => {
+        if (loadedSound) {
+          this.playLoadedSound(name, loadedSound);
+        }
+      })
+      .catch(error => {
+        console.error(`Error loading sound ${name}:`, error);
+      });
+  }
+
   stopAllSounds(): void {
-    this.sounds.forEach((sound) => {
+    this.sounds.forEach(sound => {
       sound.stop();
     });
   }
 
   release(): void {
-    this.sounds.forEach((sound) => {
+    this.sounds.forEach(sound => {
       sound.release();
     });
     this.sounds.clear();
     this.loaded = false;
+    this.missingSounds.clear();
   }
 }
 
