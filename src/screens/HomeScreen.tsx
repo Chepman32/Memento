@@ -23,7 +23,6 @@ import {
   AnimatedCollapsible,
 } from '../components/common';
 import { haptics } from '../utils/hapticFeedback';
-import { sounds } from '../utils/soundEffects';
 import { SPACING, TYPOGRAPHY, SHADOWS, SCREEN_WIDTH } from '../constants/theme';
 import { Project, Folder } from '../types/project.types';
 
@@ -89,7 +88,6 @@ const HomeScreen: React.FC = () => {
 
   const handleCreateNew = useCallback(() => {
     haptics.medium();
-    sounds.tap();
     setCurrentProject(null);
     navigation.navigate('ImageSelection', { autoOpenPicker: true });
   }, [navigation, setCurrentProject]);
@@ -97,7 +95,6 @@ const HomeScreen: React.FC = () => {
   const handleOpenProject = useCallback(
     (project: Project) => {
       haptics.light();
-      sounds.tap();
       setCurrentProject(project.id);
       navigation.navigate('Editor', { photos: [] });
     },

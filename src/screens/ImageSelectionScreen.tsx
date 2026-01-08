@@ -45,7 +45,6 @@ import { useThemeStore } from '../store/themeStore';
 import useProjectStore from '../store/projectStore';
 import { Button, IconButton } from '../components/common';
 import { haptics } from '../utils/hapticFeedback';
-import { sounds } from '../utils/soundEffects';
 import { FREE_TIER_LIMITS } from '../constants/iap';
 import { SPACING, RADII, TYPOGRAPHY, SCREEN_WIDTH } from '../constants/theme';
 
@@ -382,7 +381,6 @@ const ImageSelectionScreen: React.FC = () => {
         }));
 
         setSelectedImages(prevImages => [...prevImages, ...newImages]);
-        sounds.success();
         haptics.success();
       }
     } catch (error) {
@@ -420,7 +418,6 @@ const ImageSelectionScreen: React.FC = () => {
     }
 
     haptics.medium();
-    sounds.tap();
 
     const reorderedImages = positions.value.map(pos => selectedImages[pos]);
 

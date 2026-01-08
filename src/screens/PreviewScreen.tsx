@@ -26,7 +26,6 @@ import useProjectStore from '../store/projectStore';
 import { useThemeStore } from '../store/themeStore';
 import { IconButton } from '../components/common';
 import { haptics } from '../utils/hapticFeedback';
-import { sounds } from '../utils/soundEffects';
 import {
   SPACING,
   SCREEN_WIDTH,
@@ -277,7 +276,6 @@ const PreviewScreen: React.FC = () => {
 
   const handlePlayPause = () => {
     haptics.medium();
-    sounds.tap();
     setIsPlaying(prev => {
       if (prev) {
         pausedAtRef.current = playbackPositionMs;
@@ -290,7 +288,6 @@ const PreviewScreen: React.FC = () => {
 
   const handleNext = () => {
     haptics.medium();
-    sounds.tap();
     if (timeline.photoSegments.length === 0) return;
 
     // Find the next photo segment
@@ -319,7 +316,6 @@ const PreviewScreen: React.FC = () => {
 
   const handlePrev = () => {
     haptics.medium();
-    sounds.tap();
     if (timeline.photoSegments.length === 0) return;
 
     // Find the current photo segment
@@ -350,7 +346,6 @@ const PreviewScreen: React.FC = () => {
 
   const handleExport = () => {
     haptics.medium();
-    sounds.tap();
     pausedAtRef.current = playbackPositionMs;
     setIsPlaying(false);
     navigation.navigate('Export', { projectId });
