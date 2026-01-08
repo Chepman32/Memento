@@ -1,0 +1,237 @@
+{
+  "common": {
+    "cancel": "Anulează",
+    "done": "Gata",
+    "save": "Salvează",
+    "delete": "Șterge",
+    "edit": "Editează",
+    "share": "Distribuie",
+    "close": "Închide",
+    "back": "Înapoi",
+    "next": "Următorul",
+    "previous": "Anterior",
+    "continue": "Continuă",
+    "ok": "OK",
+    "yes": "Da",
+    "no": "Nu",
+    "loading": "Se încarcă...",
+    "retry": "Încearcă din nou",
+    "error": "Eroare",
+    "success": "Succes"
+  },
+  "home": {
+    "title": "SlideMint",
+    "emptyStateTitle": "Creează prima ta amintire",
+    "emptyStateSubtitle": "Transformă fotografiile în prezentări magice",
+    "getStartedButton": "Începe",
+    "yourProjects": "Proiectele tale",
+    "createNewProject": "Creează proiect nou",
+    "lastEdited": "Ultima editare {{time}}",
+    "projectCount": "{{count}} fotografie",
+    "projectCount_plural": "{{count}} fotografii"
+  },
+  "imageSelection": {
+    "title": "Selectează fotografii",
+    "permissionRequired": "Acces la fotografii necesar",
+    "permissionMessage": "Avem nevoie de permisiune pentru a accesa fotografiile tale",
+    "grantAccess": "Acordă acces",
+    "selectedCount": "{{count}} selectate",
+    "createSlideshow": "Creează prezentare ({{count}} fotografii)",
+    "maximumReached": "Maximum {{count}} fotografii permise",
+    "minimumRequired": "Selectează cel puțin {{count}} fotografii"
+  },
+  "editor": {
+    "title": "Editează prezentarea",
+    "transition": "Tranziție",
+    "duration": "Durata fotografiei",
+    "effects": "Efecte foto",
+    "music": "Muzică de fundal",
+    "preview": "Previzualizare",
+    "export": "Exportă",
+    "durationValue": "{{value}}s",
+    "saveChanges": "Salvează modificările",
+    "discardChanges": "Renunță la modificări"
+  },
+  "transitions": {
+    "fade": "Estompare",
+    "slideLeft": "Glisează stânga",
+    "slideRight": "Glisează dreapta",
+    "slideUp": "Glisează sus",
+    "slideDown": "Glisează jos",
+    "zoom": "Zoom",
+    "rotate": "Rotește",
+    "cube": "Cub",
+    "flip": "Întoarce",
+    "dissolve": "Disoluție",
+    "blur": "Estompare",
+    "wipeCircle": "Ștergere circulară",
+    "push": "Împinge"
+  },
+  "effects": {
+    "kenBurns": "Ken Burns",
+    "vignette": "Vignetă",
+    "sepia": "Sepia",
+    "blackWhite": "Alb-negru",
+    "vintage": "Vintage",
+    "filmGrain": "Granulație film",
+    "colorPop": "Culoare accentuată",
+    "lightLeak": "Scurgere lumină"
+  },
+  "preview": {
+    "title": "Previzualizare",
+    "play": "Redare",
+    "pause": "Pauză",
+    "position": "{{current}}/{{total}}",
+    "speed": "Viteză",
+    "loop": "Repetă",
+    "mute": "Mut"
+  },
+  "export": {
+    "title": "Exportă amintirea ta",
+    "subtitle": "{{count}} fotografii • {{duration}} secunde",
+    "quality": "Calitate",
+    "format": "Format",
+    "resolution": "Rezoluție",
+    "saveToPhotos": "Salvează în fotografii",
+    "share": "Distribuie",
+    "saveToFiles": "Salvează în fișiere",
+    "exporting": "Se exportă...",
+    "progress": "{{percent}}% finalizat",
+    "estimatedTime": "Aproximativ {{time}} rămase",
+    "success": "Exportat cu succes!",
+    "error": "Export eșuat",
+    "view": "Vizualizează",
+    "done": "Gata",
+    "formats": {
+      "video": "Video (MP4)",
+      "gif": "GIF (Animat)"
+    },
+    "qualities": {
+      "720p": "HD (720p)",
+      "1080p": "Full HD (1080p)",
+      "4K": "4K Ultra HD"
+    },
+    "resolutions": {
+      "1:1": "Pătrat (1:1)",
+      "9:16": "Portret (9:16)",
+      "16:9": "Peisaj (16:9)",
+      "21:9": "Cinema (21:9)"
+    },
+    "fileSizeEstimate": "Dimensiune estimată: {{size}}",
+    "tooLarge": "Dimensiunea fișierului poate depăși {{size}}MB"
+  },
+  "settings": {
+    "title": "Setări",
+    "appearance": "Aspect",
+    "feedback": "Feedback",
+    "theme": "Temă",
+    "soundEffects": "Efecte sonore",
+    "hapticFeedback": "Feedback haptic",
+    "hapticStrength": "Intensitate haptică",
+    "language": "Limbă",
+    "storage": "Stocare",
+    "cache": "Cache",
+    "clearCache": "Șterge cache",
+    "clear": "Șterge",
+    "cacheSize": "Dimensiune cache: {{size}}",
+    "confirmClearCacheMessage": "Ești sigur că vrei să ștergi cache-ul?",
+    "cacheClearedDescription": "Cache-ul a fost șters cu succes.",
+    "premium": "Premium",
+    "premiumActive": "⭐ Premium activ",
+    "subscription": {
+      "monthly": "Plan lunar",
+      "annual": "Plan anual"
+    },
+    "renewsOn": "Se reînnoiește pe {{date}}",
+    "about": "Despre",
+    "versionLabel": "Versiune",
+    "version": "Versiune {{version}}",
+    "rateApp": "Evaluează aplicația",
+    "shareApp": "Distribuie aplicația",
+    "helpSupport": "Ajutor și suport",
+    "privacyPolicy": "Politica de confidențialitate",
+    "termsOfService": "Termeni de serviciu",
+    "licenses": "Licențe open source",
+    "hapticStrengthOptions": {
+      "light": "Ușor",
+      "medium": "Mediu",
+      "heavy": "Puternic"
+    }
+  },
+  "themes": {
+    "light": "Luminos",
+    "dark": "Întunecat",
+    "solar": "Solar",
+    "mono": "Mono",
+    "description": {
+      "light": "Curat și luminos",
+      "dark": "Prietenos cu ochii",
+      "solar": "Cald și vibrant",
+      "mono": "Tonuri de gri simple"
+    }
+  },
+  "premium": {
+    "title": "Actualizează la Premium",
+    "subtitle": "Deblochează toate funcțiile",
+    "features": {
+      "unlimitedPhotos": "Fotografii nelimitate",
+      "unlimitedPhotosDesc": "Creează prezentări cu 50+ fotografii",
+      "premiumTransitions": "Tranziții Premium",
+      "premiumTransitionsDesc": "Acces la 20+ efecte de tranziție exclusive",
+      "customMusic": "Muzică personalizată",
+      "customMusicDesc": "Adaugă propria ta muzică de fundal",
+      "export4K": "Export 4K",
+      "export4KDesc": "Exportă în rezoluție ultra înaltă",
+      "noWatermark": "Fără filigran",
+      "noWatermarkDesc": "Exporturi curate, profesionale",
+      "advancedEffects": "Efecte avansate",
+      "advancedEffectsDesc": "Ken Burns, corecție culoare, suprapuneri text",
+      "prioritySupport": "Suport priorititar",
+      "prioritySupportDesc": "Obține ajutor când ai nevoie",
+      "cloudSync": "Sincronizare cloud",
+      "cloudSyncDesc": "Sincronizează proiecte între dispozitive"
+    },
+    "subscribe": "Abonează-te acum",
+    "monthlyPlan": "Plan lunar",
+    "annualPlan": "Plan anual",
+    "freeTrial": "Începe perioada de probă gratuită",
+    "restore": "Restaurează achiziții",
+    "pricing": {
+      "monthly": "$4.99/lună",
+      "annual": "$29.99/an",
+      "annualMonthly": "$2.50/lună",
+      "save": "Economisește 50%",
+      "trialMonthly": "3 zile gratis, apoi $4.99/lună",
+      "trialAnnual": "7 zile gratis, apoi $29.99/an"
+    },
+    "badges": {
+      "mostFlexible": "Cel mai flexibil",
+      "bestValue": "Cea mai bună valoare"
+    },
+    "legal": {
+      "cancelAnytime": "Anulează oricând",
+      "autoRenewable": "Abonament cu reînnoire automată",
+      "termsApply": "Se aplică termenii și condițiile"
+    }
+  },
+  "errors": {
+    "generic": "Ceva a mers greșit",
+    "networkError": "Eroare de rețea. Te rugăm să încerci din nou.",
+    "permissionDenied": "Permisiune refuzată",
+    "insufficientStorage": "Spațiu de stocare insuficient",
+    "imageLoadFailed": "Încărcarea imaginii a eșuat",
+    "videoEncodeFailed": "Codarea video a eșuat",
+    "gifCreateFailed": "Crearea GIF a eșuat",
+    "purchaseFailed": "Achiziția a eșuat",
+    "restoreFailed": "Nu s-au găsit achiziții de restaurat",
+    "subscriptionExpired": "Abonamentul tău a expirat"
+  },
+  "success": {
+    "projectCreated": "Proiect creat",
+    "projectSaved": "Proiect salvat",
+    "projectDeleted": "Proiect șters",
+    "exported": "Exportat cu succes",
+    "purchaseComplete": "Achiziție finalizată",
+    "cacheCleared": "Cache șters"
+  }
+}

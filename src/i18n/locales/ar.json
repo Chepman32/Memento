@@ -1,0 +1,237 @@
+{
+  "common": {
+    "cancel": "إلغاء",
+    "done": "تم",
+    "save": "حفظ",
+    "delete": "حذف",
+    "edit": "تعديل",
+    "share": "مشاركة",
+    "close": "إغلاق",
+    "back": "رجوع",
+    "next": "التالي",
+    "previous": "السابق",
+    "continue": "متابعة",
+    "ok": "موافق",
+    "yes": "نعم",
+    "no": "لا",
+    "loading": "جاري التحميل...",
+    "retry": "إعادة المحاولة",
+    "error": "خطأ",
+    "success": "نجح"
+  },
+  "home": {
+    "title": "SlideMint",
+    "emptyStateTitle": "أنشئ ذاكرتك الأولى",
+    "emptyStateSubtitle": "حول الصور إلى عروض شرائح سحرية",
+    "getStartedButton": "ابدأ",
+    "yourProjects": "مشاريعك",
+    "createNewProject": "إنشاء مشروع جديد",
+    "lastEdited": "آخر تعديل {{time}}",
+    "projectCount": "{{count}} صورة",
+    "projectCount_plural": "{{count}} صورة"
+  },
+  "imageSelection": {
+    "title": "اختر الصور",
+    "permissionRequired": "مطلوب الوصول إلى الصور",
+    "permissionMessage": "نحتاج إلى إذن للوصول إلى صورك",
+    "grantAccess": "منح الوصول",
+    "selectedCount": "تم اختيار {{count}}",
+    "createSlideshow": "إنشاء عرض شرائح ({{count}} صورة)",
+    "maximumReached": "الحد الأقصى {{count}} صورة مسموح بها",
+    "minimumRequired": "اختر على الأقل {{count}} صورة"
+  },
+  "editor": {
+    "title": "تحرير عرض الشرائح",
+    "transition": "الانتقال",
+    "duration": "مدة الصورة",
+    "effects": "تأثيرات الصورة",
+    "music": "الموسيقى الخلفية",
+    "preview": "معاينة",
+    "export": "تصدير",
+    "durationValue": "{{value}}ث",
+    "saveChanges": "حفظ التغييرات",
+    "discardChanges": "تجاهل التغييرات"
+  },
+  "transitions": {
+    "fade": "تلاشي",
+    "slideLeft": "انزلاق يسار",
+    "slideRight": "انزلاق يمين",
+    "slideUp": "انزلاق لأعلى",
+    "slideDown": "انزلاق لأسفل",
+    "zoom": "تكبير",
+    "rotate": "دوران",
+    "cube": "مكعب",
+    "flip": "قلب",
+    "dissolve": "ذوبان",
+    "blur": "ضبابية",
+    "wipeCircle": "مسح دائري",
+    "push": "دفع"
+  },
+  "effects": {
+    "kenBurns": "كين بيرنز",
+    "vignette": "فيجنيت",
+    "sepia": "بني داكن",
+    "blackWhite": "أبيض وأسود",
+    "vintage": "عتيق",
+    "filmGrain": "حبيبات الفيلم",
+    "colorPop": "لون بارز",
+    "lightLeak": "تسرب الضوء"
+  },
+  "preview": {
+    "title": "معاينة",
+    "play": "تشغيل",
+    "pause": "إيقاف مؤقت",
+    "position": "{{current}}/{{total}}",
+    "speed": "السرعة",
+    "loop": "تكرار",
+    "mute": "كتم الصوت"
+  },
+  "export": {
+    "title": "تصدير ذاكرتك",
+    "subtitle": "{{count}} صورة • {{duration}} ثانية",
+    "quality": "الجودة",
+    "format": "التنسيق",
+    "resolution": "الدقة",
+    "saveToPhotos": "حفظ في الصور",
+    "share": "مشاركة",
+    "saveToFiles": "حفظ في الملفات",
+    "exporting": "جاري التصدير...",
+    "progress": "{{percent}}% مكتمل",
+    "estimatedTime": "حوالي {{time}} متبقي",
+    "success": "تم التصدير بنجاح!",
+    "error": "فشل التصدير",
+    "view": "عرض",
+    "done": "تم",
+    "formats": {
+      "video": "فيديو (MP4)",
+      "gif": "GIF (متحرك)"
+    },
+    "qualities": {
+      "720p": "HD (720p)",
+      "1080p": "Full HD (1080p)",
+      "4K": "4K Ultra HD"
+    },
+    "resolutions": {
+      "1:1": "مربع (1:1)",
+      "9:16": "عمودي (9:16)",
+      "16:9": "أفقي (16:9)",
+      "21:9": "سينما (21:9)"
+    },
+    "fileSizeEstimate": "الحجم المقدر: {{size}}",
+    "tooLarge": "قد يتجاوز حجم الملف {{size}} ميجابايت"
+  },
+  "settings": {
+    "title": "الإعدادات",
+    "appearance": "المظهر",
+    "feedback": "التعليقات",
+    "theme": "المظهر",
+    "soundEffects": "التأثيرات الصوتية",
+    "hapticFeedback": "التعليقات اللمسية",
+    "hapticStrength": "قوة اللمس",
+    "language": "اللغة",
+    "storage": "التخزين",
+    "cache": "الذاكرة المؤقتة",
+    "clearCache": "مسح الذاكرة المؤقتة",
+    "clear": "مسح",
+    "cacheSize": "حجم الذاكرة المؤقتة: {{size}}",
+    "confirmClearCacheMessage": "هل أنت متأكد أنك تريد مسح الذاكرة المؤقتة؟",
+    "cacheClearedDescription": "تم مسح الذاكرة المؤقتة بنجاح.",
+    "premium": "مميز",
+    "premiumActive": "⭐ مميز نشط",
+    "subscription": {
+      "monthly": "خطة شهرية",
+      "annual": "خطة سنوية"
+    },
+    "renewsOn": "يتجدد في {{date}}",
+    "about": "حول",
+    "versionLabel": "الإصدار",
+    "version": "الإصدار {{version}}",
+    "rateApp": "قيم التطبيق",
+    "shareApp": "مشاركة التطبيق",
+    "helpSupport": "المساعدة والدعم",
+    "privacyPolicy": "سياسة الخصوصية",
+    "termsOfService": "شروط الخدمة",
+    "licenses": "تراخيص مفتوحة المصدر",
+    "hapticStrengthOptions": {
+      "light": "خفيف",
+      "medium": "متوسط",
+      "heavy": "قوي"
+    }
+  },
+  "themes": {
+    "light": "فاتح",
+    "dark": "داكن",
+    "solar": "شمسي",
+    "mono": "أحادي",
+    "description": {
+      "light": "نظيف ومشرق",
+      "dark": "مريح للعين",
+      "solar": "دافئ ونابض بالحياة",
+      "mono": "رمادي بسيط"
+    }
+  },
+  "premium": {
+    "title": "الترقية إلى المميز",
+    "subtitle": "فتح جميع الميزات",
+    "features": {
+      "unlimitedPhotos": "صور غير محدودة",
+      "unlimitedPhotosDesc": "إنشاء عروض شرائح بأكثر من 50 صورة",
+      "premiumTransitions": "انتقالات مميزة",
+      "premiumTransitionsDesc": "الوصول إلى أكثر من 20 تأثير انتقال حصري",
+      "customMusic": "موسيقى مخصصة",
+      "customMusicDesc": "أضف موسيقاك الخلفية الخاصة",
+      "export4K": "تصدير 4K",
+      "export4KDesc": "تصدير بدقة فائقة",
+      "noWatermark": "بدون علامة مائية",
+      "noWatermarkDesc": "تصدير نظيف واحترافي",
+      "advancedEffects": "تأثيرات متقدمة",
+      "advancedEffectsDesc": "كين بيرنز، تصحيح الألوان، تراكبات النص",
+      "prioritySupport": "دعم ذو أولوية",
+      "prioritySupportDesc": "احصل على المساعدة عندما تحتاجها",
+      "cloudSync": "مزامنة السحابة",
+      "cloudSyncDesc": "مزامنة المشاريع عبر الأجهزة"
+    },
+    "subscribe": "اشترك الآن",
+    "monthlyPlan": "خطة شهرية",
+    "annualPlan": "خطة سنوية",
+    "freeTrial": "ابدأ التجربة المجانية",
+    "restore": "استعادة المشتريات",
+    "pricing": {
+      "monthly": "$4.99/شهر",
+      "annual": "$29.99/سنة",
+      "annualMonthly": "$2.50/شهر",
+      "save": "وفر 50%",
+      "trialMonthly": "3 أيام مجاناً، ثم $4.99/شهر",
+      "trialAnnual": "7 أيام مجاناً، ثم $29.99/سنة"
+    },
+    "badges": {
+      "mostFlexible": "الأكثر مرونة",
+      "bestValue": "أفضل قيمة"
+    },
+    "legal": {
+      "cancelAnytime": "إلغاء في أي وقت",
+      "autoRenewable": "اشتراك قابل للتجديد التلقائي",
+      "termsApply": "تنطبق الشروط والأحكام"
+    }
+  },
+  "errors": {
+    "generic": "حدث خطأ ما",
+    "networkError": "خطأ في الشبكة. يرجى المحاولة مرة أخرى.",
+    "permissionDenied": "تم رفض الإذن",
+    "insufficientStorage": "مساحة تخزين غير كافية",
+    "imageLoadFailed": "فشل تحميل الصورة",
+    "videoEncodeFailed": "فشل ترميز الفيديو",
+    "gifCreateFailed": "فشل إنشاء GIF",
+    "purchaseFailed": "فشلت عملية الشراء",
+    "restoreFailed": "لم يتم العثور على مشتريات للاستعادة",
+    "subscriptionExpired": "انتهت صلاحية اشتراكك"
+  },
+  "success": {
+    "projectCreated": "تم إنشاء المشروع",
+    "projectSaved": "تم حفظ المشروع",
+    "projectDeleted": "تم حذف المشروع",
+    "exported": "تم التصدير بنجاح",
+    "purchaseComplete": "اكتملت عملية الشراء",
+    "cacheCleared": "تم مسح الذاكرة المؤقتة"
+  }
+}

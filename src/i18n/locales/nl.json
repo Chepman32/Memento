@@ -1,0 +1,237 @@
+{
+  "common": {
+    "cancel": "Annuleren",
+    "done": "Klaar",
+    "save": "Opslaan",
+    "delete": "Verwijderen",
+    "edit": "Bewerken",
+    "share": "Delen",
+    "close": "Sluiten",
+    "back": "Terug",
+    "next": "Volgende",
+    "previous": "Vorige",
+    "continue": "Doorgaan",
+    "ok": "OK",
+    "yes": "Ja",
+    "no": "Nee",
+    "loading": "Laden...",
+    "retry": "Opnieuw proberen",
+    "error": "Fout",
+    "success": "Succes"
+  },
+  "home": {
+    "title": "SlideMint",
+    "emptyStateTitle": "Maak je eerste herinnering",
+    "emptyStateSubtitle": "Verander foto's in magische diavoorstellingen",
+    "getStartedButton": "Aan de slag",
+    "yourProjects": "Je projecten",
+    "createNewProject": "Nieuw project maken",
+    "lastEdited": "Laatst bewerkt {{time}}",
+    "projectCount": "{{count}} foto",
+    "projectCount_plural": "{{count}} foto's"
+  },
+  "imageSelection": {
+    "title": "Foto's selecteren",
+    "permissionRequired": "Toegang tot foto's vereist",
+    "permissionMessage": "We hebben toestemming nodig om je foto's te openen",
+    "grantAccess": "Toegang verlenen",
+    "selectedCount": "{{count}} geselecteerd",
+    "createSlideshow": "Diavoorstelling maken ({{count}} foto's)",
+    "maximumReached": "Maximaal {{count}} foto's toegestaan",
+    "minimumRequired": "Selecteer minimaal {{count}} foto's"
+  },
+  "editor": {
+    "title": "Diavoorstelling bewerken",
+    "transition": "Overgang",
+    "duration": "Fotoduur",
+    "effects": "Foto-effecten",
+    "music": "Achtergrondmuziek",
+    "preview": "Voorvertoning",
+    "export": "Exporteren",
+    "durationValue": "{{value}}s",
+    "saveChanges": "Wijzigingen opslaan",
+    "discardChanges": "Wijzigingen negeren"
+  },
+  "transitions": {
+    "fade": "Vervagen",
+    "slideLeft": "Naar links schuiven",
+    "slideRight": "Naar rechts schuiven",
+    "slideUp": "Naar boven schuiven",
+    "slideDown": "Naar beneden schuiven",
+    "zoom": "Inzoomen",
+    "rotate": "Draaien",
+    "cube": "Kubus",
+    "flip": "Omkeren",
+    "dissolve": "Oplossen",
+    "blur": "Vervagen",
+    "wipeCircle": "Cirkelwissel",
+    "push": "Duwen"
+  },
+  "effects": {
+    "kenBurns": "Ken Burns",
+    "vignette": "Vignette",
+    "sepia": "Sepia",
+    "blackWhite": "Zwart-wit",
+    "vintage": "Vintage",
+    "filmGrain": "Filmgrain",
+    "colorPop": "Kleurpop",
+    "lightLeak": "Lichtlek"
+  },
+  "preview": {
+    "title": "Voorvertoning",
+    "play": "Afspelen",
+    "pause": "Pauzeren",
+    "position": "{{current}}/{{total}}",
+    "speed": "Snelheid",
+    "loop": "Herhalen",
+    "mute": "Dempen"
+  },
+  "export": {
+    "title": "Je herinnering exporteren",
+    "subtitle": "{{count}} foto's • {{duration}} seconden",
+    "quality": "Kwaliteit",
+    "format": "Formaat",
+    "resolution": "Resolutie",
+    "saveToPhotos": "Opslaan in foto's",
+    "share": "Delen",
+    "saveToFiles": "Opslaan in bestanden",
+    "exporting": "Exporteren...",
+    "progress": "{{percent}}% voltooid",
+    "estimatedTime": "Ongeveer {{time}} resterend",
+    "success": "Succesvol geëxporteerd!",
+    "error": "Exporteren mislukt",
+    "view": "Bekijken",
+    "done": "Klaar",
+    "formats": {
+      "video": "Video (MP4)",
+      "gif": "GIF (Geanimeerd)"
+    },
+    "qualities": {
+      "720p": "HD (720p)",
+      "1080p": "Full HD (1080p)",
+      "4K": "4K Ultra HD"
+    },
+    "resolutions": {
+      "1:1": "Vierkant (1:1)",
+      "9:16": "Staand (9:16)",
+      "16:9": "Liggend (16:9)",
+      "21:9": "Bioscoop (21:9)"
+    },
+    "fileSizeEstimate": "Geschatte grootte: {{size}}",
+    "tooLarge": "Bestandsgrootte kan {{size}}MB overschrijden"
+  },
+  "settings": {
+    "title": "Instellingen",
+    "appearance": "Weergave",
+    "feedback": "Feedback",
+    "theme": "Thema",
+    "soundEffects": "Geluidseffecten",
+    "hapticFeedback": "Haptische feedback",
+    "hapticStrength": "Haptische sterkte",
+    "language": "Taal",
+    "storage": "Opslag",
+    "cache": "Cache",
+    "clearCache": "Cache wissen",
+    "clear": "Wissen",
+    "cacheSize": "Cachegrootte: {{size}}",
+    "confirmClearCacheMessage": "Weet je zeker dat je de cache wilt wissen?",
+    "cacheClearedDescription": "Cache succesvol gewist.",
+    "premium": "Premium",
+    "premiumActive": "⭐ Premium actief",
+    "subscription": {
+      "monthly": "Maandelijks abonnement",
+      "annual": "Jaarabonnement"
+    },
+    "renewsOn": "Verlengt op {{date}}",
+    "about": "Over",
+    "versionLabel": "Versie",
+    "version": "Versie {{version}}",
+    "rateApp": "App beoordelen",
+    "shareApp": "App delen",
+    "helpSupport": "Help & ondersteuning",
+    "privacyPolicy": "Privacybeleid",
+    "termsOfService": "Servicevoorwaarden",
+    "licenses": "Open source licenties",
+    "hapticStrengthOptions": {
+      "light": "Licht",
+      "medium": "Gemiddeld",
+      "heavy": "Sterk"
+    }
+  },
+  "themes": {
+    "light": "Licht",
+    "dark": "Donker",
+    "solar": "Zon",
+    "mono": "Mono",
+    "description": {
+      "light": "Schoon en helder",
+      "dark": "Mild voor de ogen",
+      "solar": "Warm en levendig",
+      "mono": "Eenvoudig grijstinten"
+    }
+  },
+  "premium": {
+    "title": "Upgrade naar Premium",
+    "subtitle": "Ontgrendel alle functies",
+    "features": {
+      "unlimitedPhotos": "Onbeperkte foto's",
+      "unlimitedPhotosDesc": "Maak diavoorstellingen met 50+ foto's",
+      "premiumTransitions": "Premium overgangen",
+      "premiumTransitionsDesc": "Toegang tot 20+ exclusieve overgangseffecten",
+      "customMusic": "Aangepaste muziek",
+      "customMusicDesc": "Voeg je eigen achtergrondmuziek toe",
+      "export4K": "4K export",
+      "export4KDesc": "Exporteer in ultra-hoge definitie",
+      "noWatermark": "Geen watermerk",
+      "noWatermarkDesc": "Schone, professionele exports",
+      "advancedEffects": "Geavanceerde effecten",
+      "advancedEffectsDesc": "Ken Burns, kleurcorrectie, tekstoverlays",
+      "prioritySupport": "Prioriteitsondersteuning",
+      "prioritySupportDesc": "Krijg hulp wanneer je het nodig hebt",
+      "cloudSync": "Cloudsynchronisatie",
+      "cloudSyncDesc": "Synchroniseer projecten tussen apparaten"
+    },
+    "subscribe": "Nu abonneren",
+    "monthlyPlan": "Maandelijks abonnement",
+    "annualPlan": "Jaarabonnement",
+    "freeTrial": "Start gratis proefperiode",
+    "restore": "Aankopen herstellen",
+    "pricing": {
+      "monthly": "$4,99/maand",
+      "annual": "$29,99/jaar",
+      "annualMonthly": "$2,50/maand",
+      "save": "Bespaar 50%",
+      "trialMonthly": "3 dagen gratis, daarna $4,99/maand",
+      "trialAnnual": "7 dagen gratis, daarna $29,99/jaar"
+    },
+    "badges": {
+      "mostFlexible": "Meest flexibel",
+      "bestValue": "Beste waarde"
+    },
+    "legal": {
+      "cancelAnytime": "Altijd opzeggen",
+      "autoRenewable": "Automatisch verlengend abonnement",
+      "termsApply": "Voorwaarden zijn van toepassing"
+    }
+  },
+  "errors": {
+    "generic": "Er is iets misgegaan",
+    "networkError": "Netwerkfout. Probeer het opnieuw.",
+    "permissionDenied": "Toestemming geweigerd",
+    "insufficientStorage": "Onvoldoende opslagruimte",
+    "imageLoadFailed": "Foto laden mislukt",
+    "videoEncodeFailed": "Video coderen mislukt",
+    "gifCreateFailed": "GIF maken mislukt",
+    "purchaseFailed": "Aankoop mislukt",
+    "restoreFailed": "Geen aankopen gevonden om te herstellen",
+    "subscriptionExpired": "Je abonnement is verlopen"
+  },
+  "success": {
+    "projectCreated": "Project aangemaakt",
+    "projectSaved": "Project opgeslagen",
+    "projectDeleted": "Project verwijderd",
+    "exported": "Succesvol geëxporteerd",
+    "purchaseComplete": "Aankoop voltooid",
+    "cacheCleared": "Cache gewist"
+  }
+}

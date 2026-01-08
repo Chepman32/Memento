@@ -1,0 +1,237 @@
+{
+  "common": {
+    "cancel": "Avbryt",
+    "done": "Ferdig",
+    "save": "Lagre",
+    "delete": "Slett",
+    "edit": "Rediger",
+    "share": "Del",
+    "close": "Lukk",
+    "back": "Tilbake",
+    "next": "Neste",
+    "previous": "Forrige",
+    "continue": "Fortsett",
+    "ok": "OK",
+    "yes": "Ja",
+    "no": "Nei",
+    "loading": "Laster...",
+    "retry": "Prøv igjen",
+    "error": "Feil",
+    "success": "Suksess"
+  },
+  "home": {
+    "title": "SlideMint",
+    "emptyStateTitle": "Lag ditt første minne",
+    "emptyStateSubtitle": "Forvandl bilder til magiske lysbildshow",
+    "getStartedButton": "Kom i gang",
+    "yourProjects": "Prosjektene dine",
+    "createNewProject": "Opprett nytt prosjekt",
+    "lastEdited": "Sist redigert {{time}}",
+    "projectCount": "{{count}} bilde",
+    "projectCount_plural": "{{count}} bilder"
+  },
+  "imageSelection": {
+    "title": "Velg bilder",
+    "permissionRequired": "Tilgang til bilder kreves",
+    "permissionMessage": "Vi trenger tillatelse til å få tilgang til bildene dine",
+    "grantAccess": "Gi tilgang",
+    "selectedCount": "{{count}} valgt",
+    "createSlideshow": "Opprett lysbildshow ({{count}} bilder)",
+    "maximumReached": "Maks {{count}} bilder tillatt",
+    "minimumRequired": "Velg minst {{count}} bilder"
+  },
+  "editor": {
+    "title": "Rediger lysbildshow",
+    "transition": "Overgang",
+    "duration": "Bildelengde",
+    "effects": "Bildeeffekter",
+    "music": "Bakgrunnsmusikk",
+    "preview": "Forhåndsvisning",
+    "export": "Eksporter",
+    "durationValue": "{{value}}s",
+    "saveChanges": "Lagre endringer",
+    "discardChanges": "Forkast endringer"
+  },
+  "transitions": {
+    "fade": "Falme",
+    "slideLeft": "Skyv venstre",
+    "slideRight": "Skyv høyre",
+    "slideUp": "Skyv opp",
+    "slideDown": "Skyv ned",
+    "zoom": "Zoom",
+    "rotate": "Roter",
+    "cube": "Kube",
+    "flip": "Vend",
+    "dissolve": "Oppløs",
+    "blur": "Uklar",
+    "wipeCircle": "Sirkelovergang",
+    "push": "Trykk"
+  },
+  "effects": {
+    "kenBurns": "Ken Burns",
+    "vignette": "Vignett",
+    "sepia": "Sepia",
+    "blackWhite": "Svart-hvitt",
+    "vintage": "Vintage",
+    "filmGrain": "Filmkorn",
+    "colorPop": "Fargepop",
+    "lightLeak": "Lyslekkasje"
+  },
+  "preview": {
+    "title": "Forhåndsvisning",
+    "play": "Spill",
+    "pause": "Pause",
+    "position": "{{current}}/{{total}}",
+    "speed": "Hastighet",
+    "loop": "Gjenta",
+    "mute": "Demp"
+  },
+  "export": {
+    "title": "Eksporter minnet ditt",
+    "subtitle": "{{count}} bilder • {{duration}} sekunder",
+    "quality": "Kvalitet",
+    "format": "Format",
+    "resolution": "Oppløsning",
+    "saveToPhotos": "Lagre til bilder",
+    "share": "Del",
+    "saveToFiles": "Lagre til filer",
+    "exporting": "Eksporterer...",
+    "progress": "{{percent}}% fullført",
+    "estimatedTime": "Omtrent {{time}} gjenstår",
+    "success": "Eksportert vellykket!",
+    "error": "Eksport mislyktes",
+    "view": "Vis",
+    "done": "Ferdig",
+    "formats": {
+      "video": "Video (MP4)",
+      "gif": "GIF (Animasjon)"
+    },
+    "qualities": {
+      "720p": "HD (720p)",
+      "1080p": "Full HD (1080p)",
+      "4K": "4K Ultra HD"
+    },
+    "resolutions": {
+      "1:1": "Kvadrat (1:1)",
+      "9:16": "Stående (9:16)",
+      "16:9": "Liggende (16:9)",
+      "21:9": "Kino (21:9)"
+    },
+    "fileSizeEstimate": "Estimert størrelse: {{size}}",
+    "tooLarge": "Filstørrelsen kan overstige {{size}}MB"
+  },
+  "settings": {
+    "title": "Innstillinger",
+    "appearance": "Utseende",
+    "feedback": "Tilbakemelding",
+    "theme": "Tema",
+    "soundEffects": "Lydeffekter",
+    "hapticFeedback": "Haptisk tilbakemelding",
+    "hapticStrength": "Haptisk styrke",
+    "language": "Språk",
+    "storage": "Lagring",
+    "cache": "Mellomlager",
+    "clearCache": "Tøm mellomlager",
+    "clear": "Tøm",
+    "cacheSize": "Mellomlagerstørrelse: {{size}}",
+    "confirmClearCacheMessage": "Er du sikker på at du vil tømme mellomlageret?",
+    "cacheClearedDescription": "Mellomlageret ble tømt vellykket.",
+    "premium": "Premium",
+    "premiumActive": "⭐ Premium aktiv",
+    "subscription": {
+      "monthly": "Månedsplan",
+      "annual": "Årsplan"
+    },
+    "renewsOn": "Fornyes den {{date}}",
+    "about": "Om",
+    "versionLabel": "Versjon",
+    "version": "Versjon {{version}}",
+    "rateApp": "Vurder appen",
+    "shareApp": "Del appen",
+    "helpSupport": "Hjelp & støtte",
+    "privacyPolicy": "Personvernregler",
+    "termsOfService": "Tjenestevilkår",
+    "licenses": "Åpne kildekodelisenser",
+    "hapticStrengthOptions": {
+      "light": "Lett",
+      "medium": "Middels",
+      "heavy": "Sterk"
+    }
+  },
+  "themes": {
+    "light": "Lys",
+    "dark": "Mørk",
+    "solar": "Sol",
+    "mono": "Mono",
+    "description": {
+      "light": "Ren og lys",
+      "dark": "Skånsom for øynene",
+      "solar": "Varm og livlig",
+      "mono": "Enkel gråskala"
+    }
+  },
+  "premium": {
+    "title": "Oppgrader til Premium",
+    "subtitle": "Lås opp alle funksjoner",
+    "features": {
+      "unlimitedPhotos": "Ubegrensede bilder",
+      "unlimitedPhotosDesc": "Lag lysbildshow med 50+ bilder",
+      "premiumTransitions": "Premium-overganger",
+      "premiumTransitionsDesc": "Tilgang til 20+ eksklusive overgangseffekter",
+      "customMusic": "Egendefinert musikk",
+      "customMusicDesc": "Legg til din egen bakgrunnsmusikk",
+      "export4K": "4K-eksport",
+      "export4KDesc": "Eksporter i ultra høy oppløsning",
+      "noWatermark": "Ingen vannmerke",
+      "noWatermarkDesc": "Ren, profesjonell eksport",
+      "advancedEffects": "Avanserte effekter",
+      "advancedEffectsDesc": "Ken Burns, fargejustering, tekstoverlegg",
+      "prioritySupport": "Prioritetsstøtte",
+      "prioritySupportDesc": "Få hjelp når du trenger det",
+      "cloudSync": "Sky-synkronisering",
+      "cloudSyncDesc": "Synkroniser prosjekter mellom enheter"
+    },
+    "subscribe": "Abonner nå",
+    "monthlyPlan": "Månedsplan",
+    "annualPlan": "Årsplan",
+    "freeTrial": "Start gratis prøveperiode",
+    "restore": "Gjenopprett kjøp",
+    "pricing": {
+      "monthly": "$4.99/måned",
+      "annual": "$29.99/år",
+      "annualMonthly": "$2.50/måned",
+      "save": "Spar 50%",
+      "trialMonthly": "3 dager gratis, deretter $4.99/måned",
+      "trialAnnual": "7 dager gratis, deretter $29.99/år"
+    },
+    "badges": {
+      "mostFlexible": "Mest fleksibel",
+      "bestValue": "Beste verdi"
+    },
+    "legal": {
+      "cancelAnytime": "Avbryt når som helst",
+      "autoRenewable": "Automatisk fornybar abonnement",
+      "termsApply": "Vilkår og betingelser gjelder"
+    }
+  },
+  "errors": {
+    "generic": "Noe gikk galt",
+    "networkError": "Nettverksfeil. Prøv igjen.",
+    "permissionDenied": "Tillatelse nektet",
+    "insufficientStorage": "Utilstrekkelig lagringsplass",
+    "imageLoadFailed": "Kunne ikke laste bilde",
+    "videoEncodeFailed": "Kunne ikke kode video",
+    "gifCreateFailed": "Kunne ikke opprette GIF",
+    "purchaseFailed": "Kjøp mislyktes",
+    "restoreFailed": "Ingen kjøp funnet å gjenopprette",
+    "subscriptionExpired": "Abonnementet ditt har utløpt"
+  },
+  "success": {
+    "projectCreated": "Prosjekt opprettet",
+    "projectSaved": "Prosjekt lagret",
+    "projectDeleted": "Prosjekt slettet",
+    "exported": "Eksportert vellykket",
+    "purchaseComplete": "Kjøp fullført",
+    "cacheCleared": "Mellomlager tømt"
+  }
+}

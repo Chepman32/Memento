@@ -1,0 +1,237 @@
+{
+  "common": {
+    "cancel": "Mégse",
+    "done": "Kész",
+    "save": "Mentés",
+    "delete": "Törlés",
+    "edit": "Szerkesztés",
+    "share": "Megosztás",
+    "close": "Bezárás",
+    "back": "Vissza",
+    "next": "Következő",
+    "previous": "Előző",
+    "continue": "Folytatás",
+    "ok": "OK",
+    "yes": "Igen",
+    "no": "Nem",
+    "loading": "Betöltés...",
+    "retry": "Újra próbálás",
+    "error": "Hiba",
+    "success": "Sikeres"
+  },
+  "home": {
+    "title": "SlideMint",
+    "emptyStateTitle": "Hozd létre az első emlékedet",
+    "emptyStateSubtitle": "Alakítsd át a fotókat varázslatos diavetítésekké",
+    "getStartedButton": "Kezdés",
+    "yourProjects": "Projektjeid",
+    "createNewProject": "Új projekt létrehozása",
+    "lastEdited": "Utoljára szerkesztve {{time}}",
+    "projectCount": "{{count}} fotó",
+    "projectCount_plural": "{{count}} fotó"
+  },
+  "imageSelection": {
+    "title": "Fotók kiválasztása",
+    "permissionRequired": "Fotókhoz való hozzáférés szükséges",
+    "permissionMessage": "Engedélyre van szükségünk a fotóid eléréséhez",
+    "grantAccess": "Hozzáférés biztosítása",
+    "selectedCount": "{{count}} kiválasztva",
+    "createSlideshow": "Diavetítés létrehozása ({{count}} fotó)",
+    "maximumReached": "Maximum {{count}} fotó engedélyezett",
+    "minimumRequired": "Válassz ki legalább {{count}} fotót"
+  },
+  "editor": {
+    "title": "Diavetítés szerkesztése",
+    "transition": "Átmenet",
+    "duration": "Fotó időtartama",
+    "effects": "Fotó effektek",
+    "music": "Háttérzene",
+    "preview": "Előnézet",
+    "export": "Exportálás",
+    "durationValue": "{{value}}s",
+    "saveChanges": "Változások mentése",
+    "discardChanges": "Változások elvetése"
+  },
+  "transitions": {
+    "fade": "Elhalványulás",
+    "slideLeft": "Csúsztatás balra",
+    "slideRight": "Csúsztatás jobbra",
+    "slideUp": "Csúsztatás fel",
+    "slideDown": "Csúsztatás le",
+    "zoom": "Nagyítás",
+    "rotate": "Forgatás",
+    "cube": "Kocka",
+    "flip": "Megfordítás",
+    "dissolve": "Feloldás",
+    "blur": "Elmosás",
+    "wipeCircle": "Körös törlés",
+    "push": "Lökés"
+  },
+  "effects": {
+    "kenBurns": "Ken Burns",
+    "vignette": "Vignett",
+    "sepia": "Szépia",
+    "blackWhite": "Fekete-fehér",
+    "vintage": "Vintage",
+    "filmGrain": "Filmgranuláció",
+    "colorPop": "Színkiemelés",
+    "lightLeak": "Fény szivárgás"
+  },
+  "preview": {
+    "title": "Előnézet",
+    "play": "Lejátszás",
+    "pause": "Szünet",
+    "position": "{{current}}/{{total}}",
+    "speed": "Sebesség",
+    "loop": "Hurok",
+    "mute": "Némítás"
+  },
+  "export": {
+    "title": "Emléked exportálása",
+    "subtitle": "{{count}} fotó • {{duration}} másodperc",
+    "quality": "Minőség",
+    "format": "Formátum",
+    "resolution": "Felbontás",
+    "saveToPhotos": "Mentés a fotókhoz",
+    "share": "Megosztás",
+    "saveToFiles": "Mentés a fájlokhoz",
+    "exporting": "Exportálás...",
+    "progress": "{{percent}}% kész",
+    "estimatedTime": "Körülbelül {{time}} van hátra",
+    "success": "Sikeresen exportálva!",
+    "error": "Exportálás sikertelen",
+    "view": "Megtekintés",
+    "done": "Kész",
+    "formats": {
+      "video": "Video (MP4)",
+      "gif": "GIF (Animált)"
+    },
+    "qualities": {
+      "720p": "HD (720p)",
+      "1080p": "Full HD (1080p)",
+      "4K": "4K Ultra HD"
+    },
+    "resolutions": {
+      "1:1": "Négyzet (1:1)",
+      "9:16": "Álló (9:16)",
+      "16:9": "Fekvő (16:9)",
+      "21:9": "Mozi (21:9)"
+    },
+    "fileSizeEstimate": "Becsült méret: {{size}}",
+    "tooLarge": "A fájlméret meghaladhatja a {{size}}MB-ot"
+  },
+  "settings": {
+    "title": "Beállítások",
+    "appearance": "Megjelenés",
+    "feedback": "Visszajelzés",
+    "theme": "Téma",
+    "soundEffects": "Hangeffektek",
+    "hapticFeedback": "Haptikus visszajelzés",
+    "hapticStrength": "Haptikus erősség",
+    "language": "Nyelv",
+    "storage": "Tárolás",
+    "cache": "Gyorsítótár",
+    "clearCache": "Gyorsítótár törlése",
+    "clear": "Törlés",
+    "cacheSize": "Gyorsítótár mérete: {{size}}",
+    "confirmClearCacheMessage": "Biztosan törölni szeretnéd a gyorsítótárat?",
+    "cacheClearedDescription": "A gyorsítótár sikeresen törölve.",
+    "premium": "Prémium",
+    "premiumActive": "⭐ Prémium aktív",
+    "subscription": {
+      "monthly": "Havi csomag",
+      "annual": "Éves csomag"
+    },
+    "renewsOn": "{{date}}-án megújul",
+    "about": "Névjegy",
+    "versionLabel": "Verzió",
+    "version": "Verzió {{version}}",
+    "rateApp": "Alkalmazás értékelése",
+    "shareApp": "Alkalmazás megosztása",
+    "helpSupport": "Súgó és támogatás",
+    "privacyPolicy": "Adatvédelmi irányelvek",
+    "termsOfService": "Szolgáltatási feltételek",
+    "licenses": "Nyílt forráskódú licencek",
+    "hapticStrengthOptions": {
+      "light": "Könnyű",
+      "medium": "Közepes",
+      "heavy": "Erős"
+    }
+  },
+  "themes": {
+    "light": "Világos",
+    "dark": "Sötét",
+    "solar": "Nap",
+    "mono": "Mono",
+    "description": {
+      "light": "Tiszta és világos",
+      "dark": "Kíméletes a szemnek",
+      "solar": "Meleg és élénk",
+      "mono": "Egyszerű szürkeárnyalatok"
+    }
+  },
+  "premium": {
+    "title": "Frissítés Prémiumra",
+    "subtitle": "Nyisd ki az összes funkciót",
+    "features": {
+      "unlimitedPhotos": "Korlátlan fotó",
+      "unlimitedPhotosDesc": "Hozz létre diavetítéseket 50+ fotóval",
+      "premiumTransitions": "Prémium átmenetek",
+      "premiumTransitionsDesc": "Hozzáférés 20+ exkluzív átmeneti effekthez",
+      "customMusic": "Egyedi zene",
+      "customMusicDesc": "Add hozzá a saját háttérzenéd",
+      "export4K": "4K exportálás",
+      "export4KDesc": "Exportálás ultra nagy felbontásban",
+      "noWatermark": "Nincs vízjel",
+      "noWatermarkDesc": "Tiszta, professzionális exportálás",
+      "advancedEffects": "Fejlett effektek",
+      "advancedEffectsDesc": "Ken Burns, színkorrekció, szövegrétegek",
+      "prioritySupport": "Prioritásos támogatás",
+      "prioritySupportDesc": "Segítség, amikor szükséged van rá",
+      "cloudSync": "Felhő szinkronizálás",
+      "cloudSyncDesc": "Projektek szinkronizálása eszközök között"
+    },
+    "subscribe": "Feliratkozás most",
+    "monthlyPlan": "Havi csomag",
+    "annualPlan": "Éves csomag",
+    "freeTrial": "Ingyenes próbaidőszak indítása",
+    "restore": "Vásárlások visszaállítása",
+    "pricing": {
+      "monthly": "$4.99/hó",
+      "annual": "$29.99/év",
+      "annualMonthly": "$2.50/hó",
+      "save": "50% megtakarítás",
+      "trialMonthly": "3 nap ingyenes, majd $4.99/hó",
+      "trialAnnual": "7 nap ingyenes, majd $29.99/év"
+    },
+    "badges": {
+      "mostFlexible": "Legrugalmasabb",
+      "bestValue": "Legjobb ár-érték arány"
+    },
+    "legal": {
+      "cancelAnytime": "Bármikor lemondható",
+      "autoRenewable": "Automatikusan megújuló előfizetés",
+      "termsApply": "A feltételek és kikötések érvényesek"
+    }
+  },
+  "errors": {
+    "generic": "Valami hiba történt",
+    "networkError": "Hálózati hiba. Kérjük, próbáld újra.",
+    "permissionDenied": "Engedély megtagadva",
+    "insufficientStorage": "Nincs elég tárhely",
+    "imageLoadFailed": "A kép betöltése sikertelen",
+    "videoEncodeFailed": "A videó kódolása sikertelen",
+    "gifCreateFailed": "A GIF létrehozása sikertelen",
+    "purchaseFailed": "A vásárlás sikertelen",
+    "restoreFailed": "Nem található visszaállítható vásárlás",
+    "subscriptionExpired": "Az előfizetésed lejárt"
+  },
+  "success": {
+    "projectCreated": "Projekt létrehozva",
+    "projectSaved": "Projekt mentve",
+    "projectDeleted": "Projekt törölve",
+    "exported": "Sikeresen exportálva",
+    "purchaseComplete": "Vásárlás befejezve",
+    "cacheCleared": "Gyorsítótár törölve"
+  }
+}

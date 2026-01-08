@@ -1,0 +1,237 @@
+{
+  "common": {
+    "cancel": "Kanselahin",
+    "done": "Tapos",
+    "save": "I-save",
+    "delete": "Tanggalin",
+    "edit": "I-edit",
+    "share": "I-share",
+    "close": "Isara",
+    "back": "Bumalik",
+    "next": "Susunod",
+    "previous": "Nakaraan",
+    "continue": "Magpatuloy",
+    "ok": "OK",
+    "yes": "Oo",
+    "no": "Hindi",
+    "loading": "Naglo-load...",
+    "retry": "Subukan ulit",
+    "error": "Error",
+    "success": "Tagumpay"
+  },
+  "home": {
+    "title": "SlideMint",
+    "emptyStateTitle": "Gumawa ng Unang Alaala",
+    "emptyStateSubtitle": "Gawing magical slideshow ang mga larawan",
+    "getStartedButton": "Magsimula",
+    "yourProjects": "Ang Iyong Mga Proyekto",
+    "createNewProject": "Gumawa ng Bagong Proyekto",
+    "lastEdited": "Huling na-edit {{time}}",
+    "projectCount": "{{count}} larawan",
+    "projectCount_plural": "{{count}} larawan"
+  },
+  "imageSelection": {
+    "title": "Pumili ng Larawan",
+    "permissionRequired": "Kailangan ang Access sa Larawan",
+    "permissionMessage": "Kailangan namin ng permiso para ma-access ang iyong mga larawan",
+    "grantAccess": "Bigyan ng Access",
+    "selectedCount": "{{count}} napili",
+    "createSlideshow": "Gumawa ng Slideshow ({{count}} larawan)",
+    "maximumReached": "Maximum {{count}} larawan ang pinapayagan",
+    "minimumRequired": "Pumili ng hindi bababa sa {{count}} larawan"
+  },
+  "editor": {
+    "title": "I-edit ang Slideshow",
+    "transition": "Transition",
+    "duration": "Tagal ng Larawan",
+    "effects": "Mga Effect ng Larawan",
+    "music": "Background Music",
+    "preview": "Preview",
+    "export": "I-export",
+    "durationValue": "{{value}}s",
+    "saveChanges": "I-save ang Mga Pagbabago",
+    "discardChanges": "Itapon ang Mga Pagbabago"
+  },
+  "transitions": {
+    "fade": "Fade",
+    "slideLeft": "Slide Kaliwa",
+    "slideRight": "Slide Kanan",
+    "slideUp": "Slide Pataas",
+    "slideDown": "Slide Pababa",
+    "zoom": "Zoom",
+    "rotate": "I-rotate",
+    "cube": "Cube",
+    "flip": "I-flip",
+    "dissolve": "Dissolve",
+    "blur": "Blur",
+    "wipeCircle": "Circle Wipe",
+    "push": "Push"
+  },
+  "effects": {
+    "kenBurns": "Ken Burns",
+    "vignette": "Vignette",
+    "sepia": "Sepia",
+    "blackWhite": "Itim at Puti",
+    "vintage": "Vintage",
+    "filmGrain": "Film Grain",
+    "colorPop": "Color Pop",
+    "lightLeak": "Light Leak"
+  },
+  "preview": {
+    "title": "Preview",
+    "play": "I-play",
+    "pause": "I-pause",
+    "position": "{{current}}/{{total}}",
+    "speed": "Bilis",
+    "loop": "Loop",
+    "mute": "I-mute"
+  },
+  "export": {
+    "title": "I-export ang Iyong Alaala",
+    "subtitle": "{{count}} larawan • {{duration}} segundo",
+    "quality": "Kalidad",
+    "format": "Format",
+    "resolution": "Resolution",
+    "saveToPhotos": "I-save sa Larawan",
+    "share": "I-share",
+    "saveToFiles": "I-save sa Files",
+    "exporting": "Nag-e-export...",
+    "progress": "{{percent}}% tapos na",
+    "estimatedTime": "Mga {{time}} na lang ang natitira",
+    "success": "Matagumpay na Na-export!",
+    "error": "Nabigo ang Export",
+    "view": "Tingnan",
+    "done": "Tapos",
+    "formats": {
+      "video": "Video (MP4)",
+      "gif": "GIF (Animated)"
+    },
+    "qualities": {
+      "720p": "HD (720p)",
+      "1080p": "Full HD (1080p)",
+      "4K": "4K Ultra HD"
+    },
+    "resolutions": {
+      "1:1": "Square (1:1)",
+      "9:16": "Portrait (9:16)",
+      "16:9": "Landscape (16:9)",
+      "21:9": "Cinema (21:9)"
+    },
+    "fileSizeEstimate": "Tinatayang laki: {{size}}",
+    "tooLarge": "Maaaring lumampas ang laki ng file sa {{size}}MB"
+  },
+  "settings": {
+    "title": "Settings",
+    "appearance": "Itsura",
+    "feedback": "Feedback",
+    "theme": "Theme",
+    "soundEffects": "Sound Effects",
+    "hapticFeedback": "Haptic Feedback",
+    "hapticStrength": "Lakas ng Haptic",
+    "language": "Wika",
+    "storage": "Storage",
+    "cache": "Cache",
+    "clearCache": "I-clear ang Cache",
+    "clear": "I-clear",
+    "cacheSize": "Laki ng cache: {{size}}",
+    "confirmClearCacheMessage": "Sigurado ka bang gusto mong i-clear ang cache?",
+    "cacheClearedDescription": "Matagumpay na na-clear ang cache.",
+    "premium": "Premium",
+    "premiumActive": "⭐ Premium Active",
+    "subscription": {
+      "monthly": "Monthly Plan",
+      "annual": "Annual Plan"
+    },
+    "renewsOn": "Magre-renew sa {{date}}",
+    "about": "Tungkol",
+    "versionLabel": "Version",
+    "version": "Version {{version}}",
+    "rateApp": "I-rate ang App",
+    "shareApp": "I-share ang App",
+    "helpSupport": "Tulong & Suporta",
+    "privacyPolicy": "Privacy Policy",
+    "termsOfService": "Terms of Service",
+    "licenses": "Open Source Licenses",
+    "hapticStrengthOptions": {
+      "light": "Magaan",
+      "medium": "Katamtaman",
+      "heavy": "Malakas"
+    }
+  },
+  "themes": {
+    "light": "Light",
+    "dark": "Dark",
+    "solar": "Solar",
+    "mono": "Mono",
+    "description": {
+      "light": "Malinis at maliwanag",
+      "dark": "Maginhawa sa mata",
+      "solar": "Mainit at buhay",
+      "mono": "Simpleng grayscale"
+    }
+  },
+  "premium": {
+    "title": "I-upgrade sa Premium",
+    "subtitle": "I-unlock ang lahat ng features",
+    "features": {
+      "unlimitedPhotos": "Unlimited na Larawan",
+      "unlimitedPhotosDesc": "Gumawa ng slideshow na may 50+ larawan",
+      "premiumTransitions": "Premium Transitions",
+      "premiumTransitionsDesc": "Access sa 20+ exclusive transition effects",
+      "customMusic": "Custom Music",
+      "customMusicDesc": "Magdagdag ng sarili mong background music",
+      "export4K": "4K Export",
+      "export4KDesc": "I-export sa ultra-high definition",
+      "noWatermark": "Walang Watermark",
+      "noWatermarkDesc": "Malinis, propesyonal na export",
+      "advancedEffects": "Advanced Effects",
+      "advancedEffectsDesc": "Ken Burns, color grading, text overlays",
+      "prioritySupport": "Priority Support",
+      "prioritySupportDesc": "Kumuha ng tulong kapag kailangan mo",
+      "cloudSync": "Cloud Sync",
+      "cloudSyncDesc": "I-sync ang mga proyekto sa pagitan ng devices"
+    },
+    "subscribe": "Mag-subscribe Ngayon",
+    "monthlyPlan": "Monthly Plan",
+    "annualPlan": "Annual Plan",
+    "freeTrial": "Simulan ang Free Trial",
+    "restore": "I-restore ang Mga Binili",
+    "pricing": {
+      "monthly": "$4.99/buwan",
+      "annual": "$29.99/taon",
+      "annualMonthly": "$2.50/buwan",
+      "save": "Makatipid ng 50%",
+      "trialMonthly": "3 araw libre, tapos $4.99/buwan",
+      "trialAnnual": "7 araw libre, tapos $29.99/taon"
+    },
+    "badges": {
+      "mostFlexible": "Pinaka Flexible",
+      "bestValue": "Pinakamahusay na Value"
+    },
+    "legal": {
+      "cancelAnytime": "Kanselahin kahit kailan",
+      "autoRenewable": "Auto-renewable subscription",
+      "termsApply": "Naaangkop ang mga terms at conditions"
+    }
+  },
+  "errors": {
+    "generic": "May naging problema",
+    "networkError": "Network error. Pakisubukan ulit.",
+    "permissionDenied": "Tinanggihan ang permiso",
+    "insufficientStorage": "Hindi sapat ang storage space",
+    "imageLoadFailed": "Nabigo ang pag-load ng larawan",
+    "videoEncodeFailed": "Nabigo ang pag-encode ng video",
+    "gifCreateFailed": "Nabigo ang paggawa ng GIF",
+    "purchaseFailed": "Nabigo ang pagbili",
+    "restoreFailed": "Walang nahanap na binili para i-restore",
+    "subscriptionExpired": "Nag-expire na ang iyong subscription"
+  },
+  "success": {
+    "projectCreated": "Nagawa ang proyekto",
+    "projectSaved": "Na-save ang proyekto",
+    "projectDeleted": "Natanggal ang proyekto",
+    "exported": "Matagumpay na na-export",
+    "purchaseComplete": "Tapos na ang pagbili",
+    "cacheCleared": "Na-clear ang cache"
+  }
+}

@@ -1,0 +1,237 @@
+{
+  "common": {
+    "cancel": "Zrušit",
+    "done": "Hotovo",
+    "save": "Uložit",
+    "delete": "Smazat",
+    "edit": "Upravit",
+    "share": "Sdílet",
+    "close": "Zavřít",
+    "back": "Zpět",
+    "next": "Další",
+    "previous": "Předchozí",
+    "continue": "Pokračovat",
+    "ok": "OK",
+    "yes": "Ano",
+    "no": "Ne",
+    "loading": "Načítání...",
+    "retry": "Zkusit znovu",
+    "error": "Chyba",
+    "success": "Úspěch"
+  },
+  "home": {
+    "title": "SlideMint",
+    "emptyStateTitle": "Vytvořte svou první vzpomínku",
+    "emptyStateSubtitle": "Proměňte fotky v kouzelné prezentace",
+    "getStartedButton": "Začít",
+    "yourProjects": "Vaše projekty",
+    "createNewProject": "Vytvořit nový projekt",
+    "lastEdited": "Naposledy upraveno {{time}}",
+    "projectCount": "{{count}} fotka",
+    "projectCount_plural": "{{count}} fotky"
+  },
+  "imageSelection": {
+    "title": "Vybrat fotky",
+    "permissionRequired": "Vyžadován přístup k fotkám",
+    "permissionMessage": "Potřebujeme oprávnění k přístupu k vašim fotkám",
+    "grantAccess": "Udělit přístup",
+    "selectedCount": "{{count}} vybráno",
+    "createSlideshow": "Vytvořit prezentaci ({{count}} fotek)",
+    "maximumReached": "Maximálně {{count}} fotek povoleno",
+    "minimumRequired": "Vyberte alespoň {{count}} fotek"
+  },
+  "editor": {
+    "title": "Upravit prezentaci",
+    "transition": "Přechod",
+    "duration": "Délka fotky",
+    "effects": "Efekty fotky",
+    "music": "Hudba na pozadí",
+    "preview": "Náhled",
+    "export": "Exportovat",
+    "durationValue": "{{value}}s",
+    "saveChanges": "Uložit změny",
+    "discardChanges": "Zrušit změny"
+  },
+  "transitions": {
+    "fade": "Zeslabení",
+    "slideLeft": "Posunout vlevo",
+    "slideRight": "Posunout vpravo",
+    "slideUp": "Posunout nahoru",
+    "slideDown": "Posunout dolů",
+    "zoom": "Přiblížit",
+    "rotate": "Otočit",
+    "cube": "Kostka",
+    "flip": "Převrátit",
+    "dissolve": "Rozpustit",
+    "blur": "Rozmazat",
+    "wipeCircle": "Kruhový přechod",
+    "push": "Posunout"
+  },
+  "effects": {
+    "kenBurns": "Ken Burns",
+    "vignette": "Viněta",
+    "sepia": "Sépie",
+    "blackWhite": "Černobílé",
+    "vintage": "Vintage",
+    "filmGrain": "Zrnitost filmu",
+    "colorPop": "Výrazná barva",
+    "lightLeak": "Únik světla"
+  },
+  "preview": {
+    "title": "Náhled",
+    "play": "Přehrát",
+    "pause": "Pozastavit",
+    "position": "{{current}}/{{total}}",
+    "speed": "Rychlost",
+    "loop": "Opakovat",
+    "mute": "Ztlumit"
+  },
+  "export": {
+    "title": "Exportovat vaši vzpomínku",
+    "subtitle": "{{count}} fotek • {{duration}} sekund",
+    "quality": "Kvalita",
+    "format": "Formát",
+    "resolution": "Rozlišení",
+    "saveToPhotos": "Uložit do fotek",
+    "share": "Sdílet",
+    "saveToFiles": "Uložit do souborů",
+    "exporting": "Exportování...",
+    "progress": "{{percent}}% hotovo",
+    "estimatedTime": "Přibližně {{time}} zbývá",
+    "success": "Úspěšně exportováno!",
+    "error": "Export selhal",
+    "view": "Zobrazit",
+    "done": "Hotovo",
+    "formats": {
+      "video": "Video (MP4)",
+      "gif": "GIF (Animované)"
+    },
+    "qualities": {
+      "720p": "HD (720p)",
+      "1080p": "Full HD (1080p)",
+      "4K": "4K Ultra HD"
+    },
+    "resolutions": {
+      "1:1": "Čtverec (1:1)",
+      "9:16": "Na výšku (9:16)",
+      "16:9": "Na šířku (16:9)",
+      "21:9": "Kino (21:9)"
+    },
+    "fileSizeEstimate": "Odhadovaná velikost: {{size}}",
+    "tooLarge": "Velikost souboru může přesáhnout {{size}}MB"
+  },
+  "settings": {
+    "title": "Nastavení",
+    "appearance": "Vzhled",
+    "feedback": "Zpětná vazba",
+    "theme": "Téma",
+    "soundEffects": "Zvukové efekty",
+    "hapticFeedback": "Haptická zpětná vazba",
+    "hapticStrength": "Síla haptiky",
+    "language": "Jazyk",
+    "storage": "Úložiště",
+    "cache": "Mezipaměť",
+    "clearCache": "Vymazat mezipaměť",
+    "clear": "Vymazat",
+    "cacheSize": "Velikost mezipaměti: {{size}}",
+    "confirmClearCacheMessage": "Opravdu chcete vymazat mezipaměť?",
+    "cacheClearedDescription": "Mezipaměť byla úspěšně vymazána.",
+    "premium": "Premium",
+    "premiumActive": "⭐ Premium aktivní",
+    "subscription": {
+      "monthly": "Měsíční plán",
+      "annual": "Roční plán"
+    },
+    "renewsOn": "Obnoví se {{date}}",
+    "about": "O aplikaci",
+    "versionLabel": "Verze",
+    "version": "Verze {{version}}",
+    "rateApp": "Ohodnotit aplikaci",
+    "shareApp": "Sdílet aplikaci",
+    "helpSupport": "Nápověda a podpora",
+    "privacyPolicy": "Zásady ochrany osobních údajů",
+    "termsOfService": "Podmínky služby",
+    "licenses": "Open source licence",
+    "hapticStrengthOptions": {
+      "light": "Lehké",
+      "medium": "Střední",
+      "heavy": "Silné"
+    }
+  },
+  "themes": {
+    "light": "Světlý",
+    "dark": "Tmavý",
+    "solar": "Sluneční",
+    "mono": "Mono",
+    "description": {
+      "light": "Čistý a světlý",
+      "dark": "Šetrný k očím",
+      "solar": "Teplý a živý",
+      "mono": "Jednoduchá šedá škála"
+    }
+  },
+  "premium": {
+    "title": "Upgradovat na Premium",
+    "subtitle": "Odemknout všechny funkce",
+    "features": {
+      "unlimitedPhotos": "Neomezené fotky",
+      "unlimitedPhotosDesc": "Vytvářejte prezentace s 50+ fotkami",
+      "premiumTransitions": "Prémiové přechody",
+      "premiumTransitionsDesc": "Přístup k 20+ exkluzivním přechodovým efektům",
+      "customMusic": "Vlastní hudba",
+      "customMusicDesc": "Přidejte svou vlastní hudbu na pozadí",
+      "export4K": "Export 4K",
+      "export4KDesc": "Exportujte v ultra vysokém rozlišení",
+      "noWatermark": "Bez vodoznaku",
+      "noWatermarkDesc": "Čistý, profesionální export",
+      "advancedEffects": "Pokročilé efekty",
+      "advancedEffectsDesc": "Ken Burns, úprava barev, textové překryvy",
+      "prioritySupport": "Prioritní podpora",
+      "prioritySupportDesc": "Získejte pomoc, když ji potřebujete",
+      "cloudSync": "Cloudová synchronizace",
+      "cloudSyncDesc": "Synchronizujte projekty napříč zařízeními"
+    },
+    "subscribe": "Přihlásit se nyní",
+    "monthlyPlan": "Měsíční plán",
+    "annualPlan": "Roční plán",
+    "freeTrial": "Spustit bezplatnou zkušební verzi",
+    "restore": "Obnovit nákupy",
+    "pricing": {
+      "monthly": "$4.99/měsíc",
+      "annual": "$29.99/rok",
+      "annualMonthly": "$2.50/měsíc",
+      "save": "Ušetřete 50%",
+      "trialMonthly": "3 dny zdarma, poté $4.99/měsíc",
+      "trialAnnual": "7 dní zdarma, poté $29.99/rok"
+    },
+    "badges": {
+      "mostFlexible": "Nejpružnější",
+      "bestValue": "Nejlepší hodnota"
+    },
+    "legal": {
+      "cancelAnytime": "Zrušit kdykoli",
+      "autoRenewable": "Automaticky obnovitelné předplatné",
+      "termsApply": "Platí podmínky a ujednání"
+    }
+  },
+  "errors": {
+    "generic": "Něco se pokazilo",
+    "networkError": "Chyba sítě. Zkuste to znovu.",
+    "permissionDenied": "Oprávnění zamítnuto",
+    "insufficientStorage": "Nedostatečný úložný prostor",
+    "imageLoadFailed": "Načtení obrázku selhalo",
+    "videoEncodeFailed": "Kódování videa selhalo",
+    "gifCreateFailed": "Vytvoření GIF selhalo",
+    "purchaseFailed": "Nákup selhal",
+    "restoreFailed": "Nebyly nalezeny žádné nákupy k obnovení",
+    "subscriptionExpired": "Vaše předplatné vypršelo"
+  },
+  "success": {
+    "projectCreated": "Projekt vytvořen",
+    "projectSaved": "Projekt uložen",
+    "projectDeleted": "Projekt smazán",
+    "exported": "Úspěšně exportováno",
+    "purchaseComplete": "Nákup dokončen",
+    "cacheCleared": "Mezipaměť vymazána"
+  }
+}

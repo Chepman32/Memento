@@ -1,0 +1,237 @@
+{
+  "common": {
+    "cancel": "Hủy",
+    "done": "Xong",
+    "save": "Lưu",
+    "delete": "Xóa",
+    "edit": "Chỉnh sửa",
+    "share": "Chia sẻ",
+    "close": "Đóng",
+    "back": "Quay lại",
+    "next": "Tiếp theo",
+    "previous": "Trước đó",
+    "continue": "Tiếp tục",
+    "ok": "OK",
+    "yes": "Có",
+    "no": "Không",
+    "loading": "Đang tải...",
+    "retry": "Thử lại",
+    "error": "Lỗi",
+    "success": "Thành công"
+  },
+  "home": {
+    "title": "SlideMint",
+    "emptyStateTitle": "Tạo Kỷ Niệm Đầu Tiên",
+    "emptyStateSubtitle": "Biến ảnh thành trình chiếu kỳ diệu",
+    "getStartedButton": "Bắt đầu",
+    "yourProjects": "Dự án của bạn",
+    "createNewProject": "Tạo dự án mới",
+    "lastEdited": "Chỉnh sửa lần cuối {{time}}",
+    "projectCount": "{{count}} ảnh",
+    "projectCount_plural": "{{count}} ảnh"
+  },
+  "imageSelection": {
+    "title": "Chọn Ảnh",
+    "permissionRequired": "Cần Quyền Truy Cập Ảnh",
+    "permissionMessage": "Chúng tôi cần quyền truy cập ảnh của bạn",
+    "grantAccess": "Cấp Quyền Truy Cập",
+    "selectedCount": "Đã chọn {{count}}",
+    "createSlideshow": "Tạo trình chiếu ({{count}} ảnh)",
+    "maximumReached": "Tối đa {{count}} ảnh được phép",
+    "minimumRequired": "Chọn ít nhất {{count}} ảnh"
+  },
+  "editor": {
+    "title": "Chỉnh Sửa Trình Chiếu",
+    "transition": "Chuyển cảnh",
+    "duration": "Thời lượng ảnh",
+    "effects": "Hiệu ứng ảnh",
+    "music": "Nhạc nền",
+    "preview": "Xem trước",
+    "export": "Xuất",
+    "durationValue": "{{value}}s",
+    "saveChanges": "Lưu thay đổi",
+    "discardChanges": "Hủy thay đổi"
+  },
+  "transitions": {
+    "fade": "Mờ dần",
+    "slideLeft": "Trượt trái",
+    "slideRight": "Trượt phải",
+    "slideUp": "Trượt lên",
+    "slideDown": "Trượt xuống",
+    "zoom": "Phóng to",
+    "rotate": "Xoay",
+    "cube": "Khối lập phương",
+    "flip": "Lật",
+    "dissolve": "Hòa tan",
+    "blur": "Làm mờ",
+    "wipeCircle": "Xóa vòng tròn",
+    "push": "Đẩy"
+  },
+  "effects": {
+    "kenBurns": "Ken Burns",
+    "vignette": "Viền tối",
+    "sepia": "Sepia",
+    "blackWhite": "Đen trắng",
+    "vintage": "Cổ điển",
+    "filmGrain": "Hạt phim",
+    "colorPop": "Màu nổi bật",
+    "lightLeak": "Rò rỉ ánh sáng"
+  },
+  "preview": {
+    "title": "Xem trước",
+    "play": "Phát",
+    "pause": "Tạm dừng",
+    "position": "{{current}}/{{total}}",
+    "speed": "Tốc độ",
+    "loop": "Lặp lại",
+    "mute": "Tắt tiếng"
+  },
+  "export": {
+    "title": "Xuất Kỷ Niệm Của Bạn",
+    "subtitle": "{{count}} ảnh • {{duration}} giây",
+    "quality": "Chất lượng",
+    "format": "Định dạng",
+    "resolution": "Độ phân giải",
+    "saveToPhotos": "Lưu vào Ảnh",
+    "share": "Chia sẻ",
+    "saveToFiles": "Lưu vào Tệp",
+    "exporting": "Đang xuất...",
+    "progress": "{{percent}}% hoàn thành",
+    "estimatedTime": "Còn khoảng {{time}}",
+    "success": "Xuất thành công!",
+    "error": "Xuất thất bại",
+    "view": "Xem",
+    "done": "Xong",
+    "formats": {
+      "video": "Video (MP4)",
+      "gif": "GIF (Hoạt hình)"
+    },
+    "qualities": {
+      "720p": "HD (720p)",
+      "1080p": "Full HD (1080p)",
+      "4K": "4K Ultra HD"
+    },
+    "resolutions": {
+      "1:1": "Vuông (1:1)",
+      "9:16": "Dọc (9:16)",
+      "16:9": "Ngang (16:9)",
+      "21:9": "Rạp chiếu (21:9)"
+    },
+    "fileSizeEstimate": "Kích thước ước tính: {{size}}",
+    "tooLarge": "Kích thước tệp có thể vượt quá {{size}}MB"
+  },
+  "settings": {
+    "title": "Cài đặt",
+    "appearance": "Giao diện",
+    "feedback": "Phản hồi",
+    "theme": "Giao diện",
+    "soundEffects": "Hiệu ứng âm thanh",
+    "hapticFeedback": "Phản hồi xúc giác",
+    "hapticStrength": "Cường độ xúc giác",
+    "language": "Ngôn ngữ",
+    "storage": "Lưu trữ",
+    "cache": "Bộ nhớ đệm",
+    "clearCache": "Xóa bộ nhớ đệm",
+    "clear": "Xóa",
+    "cacheSize": "Kích thước bộ nhớ đệm: {{size}}",
+    "confirmClearCacheMessage": "Bạn có chắc chắn muốn xóa bộ nhớ đệm?",
+    "cacheClearedDescription": "Đã xóa bộ nhớ đệm thành công.",
+    "premium": "Premium",
+    "premiumActive": "⭐ Premium đang hoạt động",
+    "subscription": {
+      "monthly": "Gói hàng tháng",
+      "annual": "Gói hàng năm"
+    },
+    "renewsOn": "Gia hạn vào {{date}}",
+    "about": "Giới thiệu",
+    "versionLabel": "Phiên bản",
+    "version": "Phiên bản {{version}}",
+    "rateApp": "Đánh giá ứng dụng",
+    "shareApp": "Chia sẻ ứng dụng",
+    "helpSupport": "Trợ giúp & Hỗ trợ",
+    "privacyPolicy": "Chính sách bảo mật",
+    "termsOfService": "Điều khoản dịch vụ",
+    "licenses": "Giấy phép mã nguồn mở",
+    "hapticStrengthOptions": {
+      "light": "Nhẹ",
+      "medium": "Trung bình",
+      "heavy": "Mạnh"
+    }
+  },
+  "themes": {
+    "light": "Sáng",
+    "dark": "Tối",
+    "solar": "Nắng",
+    "mono": "Đơn sắc",
+    "description": {
+      "light": "Sạch sẽ và sáng sủa",
+      "dark": "Dễ nhìn",
+      "solar": "Ấm áp và sống động",
+      "mono": "Xám đơn giản"
+    }
+  },
+  "premium": {
+    "title": "Nâng cấp lên Premium",
+    "subtitle": "Mở khóa tất cả tính năng",
+    "features": {
+      "unlimitedPhotos": "Ảnh không giới hạn",
+      "unlimitedPhotosDesc": "Tạo trình chiếu với 50+ ảnh",
+      "premiumTransitions": "Chuyển cảnh Premium",
+      "premiumTransitionsDesc": "Truy cập 20+ hiệu ứng chuyển cảnh độc quyền",
+      "customMusic": "Nhạc tùy chỉnh",
+      "customMusicDesc": "Thêm nhạc nền của riêng bạn",
+      "export4K": "Xuất 4K",
+      "export4KDesc": "Xuất ở độ phân giải siêu cao",
+      "noWatermark": "Không có logo",
+      "noWatermarkDesc": "Xuất sạch, chuyên nghiệp",
+      "advancedEffects": "Hiệu ứng nâng cao",
+      "advancedEffectsDesc": "Ken Burns, chỉnh màu, lớp phủ văn bản",
+      "prioritySupport": "Hỗ trợ ưu tiên",
+      "prioritySupportDesc": "Nhận trợ giúp khi bạn cần",
+      "cloudSync": "Đồng bộ đám mây",
+      "cloudSyncDesc": "Đồng bộ dự án giữa các thiết bị"
+    },
+    "subscribe": "Đăng ký ngay",
+    "monthlyPlan": "Gói hàng tháng",
+    "annualPlan": "Gói hàng năm",
+    "freeTrial": "Bắt đầu dùng thử miễn phí",
+    "restore": "Khôi phục giao dịch mua",
+    "pricing": {
+      "monthly": "$4.99/tháng",
+      "annual": "$29.99/năm",
+      "annualMonthly": "$2.50/tháng",
+      "save": "Tiết kiệm 50%",
+      "trialMonthly": "3 ngày miễn phí, sau đó $4.99/tháng",
+      "trialAnnual": "7 ngày miễn phí, sau đó $29.99/năm"
+    },
+    "badges": {
+      "mostFlexible": "Linh hoạt nhất",
+      "bestValue": "Giá trị tốt nhất"
+    },
+    "legal": {
+      "cancelAnytime": "Hủy bất cứ lúc nào",
+      "autoRenewable": "Đăng ký tự động gia hạn",
+      "termsApply": "Điều khoản và điều kiện áp dụng"
+    }
+  },
+  "errors": {
+    "generic": "Đã xảy ra lỗi",
+    "networkError": "Lỗi mạng. Vui lòng thử lại.",
+    "permissionDenied": "Quyền bị từ chối",
+    "insufficientStorage": "Không đủ dung lượng lưu trữ",
+    "imageLoadFailed": "Tải ảnh thất bại",
+    "videoEncodeFailed": "Mã hóa video thất bại",
+    "gifCreateFailed": "Tạo GIF thất bại",
+    "purchaseFailed": "Mua hàng thất bại",
+    "restoreFailed": "Không tìm thấy giao dịch mua để khôi phục",
+    "subscriptionExpired": "Đăng ký của bạn đã hết hạn"
+  },
+  "success": {
+    "projectCreated": "Đã tạo dự án",
+    "projectSaved": "Đã lưu dự án",
+    "projectDeleted": "Đã xóa dự án",
+    "exported": "Đã xuất thành công",
+    "purchaseComplete": "Mua hàng hoàn tất",
+    "cacheCleared": "Đã xóa bộ nhớ đệm"
+  }
+}

@@ -1,0 +1,237 @@
+{
+  "common": {
+    "cancel": "Avbryt",
+    "done": "Klar",
+    "save": "Spara",
+    "delete": "Radera",
+    "edit": "Redigera",
+    "share": "Dela",
+    "close": "Stäng",
+    "back": "Tillbaka",
+    "next": "Nästa",
+    "previous": "Föregående",
+    "continue": "Fortsätt",
+    "ok": "OK",
+    "yes": "Ja",
+    "no": "Nej",
+    "loading": "Laddar...",
+    "retry": "Försök igen",
+    "error": "Fel",
+    "success": "Framgång"
+  },
+  "home": {
+    "title": "SlideMint",
+    "emptyStateTitle": "Skapa ditt första minne",
+    "emptyStateSubtitle": "Förvandla foton till magiska bildspel",
+    "getStartedButton": "Kom igång",
+    "yourProjects": "Dina projekt",
+    "createNewProject": "Skapa nytt projekt",
+    "lastEdited": "Senast redigerad {{time}}",
+    "projectCount": "{{count}} foto",
+    "projectCount_plural": "{{count}} foton"
+  },
+  "imageSelection": {
+    "title": "Välj foton",
+    "permissionRequired": "Tillgång till foton krävs",
+    "permissionMessage": "Vi behöver tillstånd för att komma åt dina foton",
+    "grantAccess": "Bevilja tillgång",
+    "selectedCount": "{{count}} valda",
+    "createSlideshow": "Skapa bildspel ({{count}} foton)",
+    "maximumReached": "Max {{count}} foton tillåtna",
+    "minimumRequired": "Välj minst {{count}} foton"
+  },
+  "editor": {
+    "title": "Redigera bildspel",
+    "transition": "Övergång",
+    "duration": "Fotolängd",
+    "effects": "Fotoefekter",
+    "music": "Bakgrundsmusik",
+    "preview": "Förhandsvisning",
+    "export": "Exportera",
+    "durationValue": "{{value}}s",
+    "saveChanges": "Spara ändringar",
+    "discardChanges": "Ignorera ändringar"
+  },
+  "transitions": {
+    "fade": "Tona bort",
+    "slideLeft": "Glid vänster",
+    "slideRight": "Glid höger",
+    "slideUp": "Glid upp",
+    "slideDown": "Glid ner",
+    "zoom": "Zooma",
+    "rotate": "Rotera",
+    "cube": "Kub",
+    "flip": "Vänd",
+    "dissolve": "Lös upp",
+    "blur": "Oskärpa",
+    "wipeCircle": "Cirkelövergång",
+    "push": "Tryck"
+  },
+  "effects": {
+    "kenBurns": "Ken Burns",
+    "vignette": "Vignett",
+    "sepia": "Sepia",
+    "blackWhite": "Svartvitt",
+    "vintage": "Vintage",
+    "filmGrain": "Filmkorn",
+    "colorPop": "Färgpop",
+    "lightLeak": "Ljusläckage"
+  },
+  "preview": {
+    "title": "Förhandsvisning",
+    "play": "Spela",
+    "pause": "Pausa",
+    "position": "{{current}}/{{total}}",
+    "speed": "Hastighet",
+    "loop": "Loopa",
+    "mute": "Dämpa"
+  },
+  "export": {
+    "title": "Exportera ditt minne",
+    "subtitle": "{{count}} foton • {{duration}} sekunder",
+    "quality": "Kvalitet",
+    "format": "Format",
+    "resolution": "Upplösning",
+    "saveToPhotos": "Spara till foton",
+    "share": "Dela",
+    "saveToFiles": "Spara till filer",
+    "exporting": "Exporterar...",
+    "progress": "{{percent}}% klar",
+    "estimatedTime": "Cirka {{time}} kvar",
+    "success": "Exporterat framgångsrikt!",
+    "error": "Export misslyckades",
+    "view": "Visa",
+    "done": "Klar",
+    "formats": {
+      "video": "Video (MP4)",
+      "gif": "GIF (Animerad)"
+    },
+    "qualities": {
+      "720p": "HD (720p)",
+      "1080p": "Full HD (1080p)",
+      "4K": "4K Ultra HD"
+    },
+    "resolutions": {
+      "1:1": "Kvadrat (1:1)",
+      "9:16": "Stående (9:16)",
+      "16:9": "Liggande (16:9)",
+      "21:9": "Bio (21:9)"
+    },
+    "fileSizeEstimate": "Uppskattad storlek: {{size}}",
+    "tooLarge": "Filstorleken kan överstiga {{size}}MB"
+  },
+  "settings": {
+    "title": "Inställningar",
+    "appearance": "Utseende",
+    "feedback": "Återkoppling",
+    "theme": "Tema",
+    "soundEffects": "Ljudeffekter",
+    "hapticFeedback": "Haptisk återkoppling",
+    "hapticStrength": "Haptisk styrka",
+    "language": "Språk",
+    "storage": "Lagring",
+    "cache": "Cache",
+    "clearCache": "Rensa cache",
+    "clear": "Rensa",
+    "cacheSize": "Cachestorlek: {{size}}",
+    "confirmClearCacheMessage": "Är du säker på att du vill rensa cachen?",
+    "cacheClearedDescription": "Cachen rensades framgångsrikt.",
+    "premium": "Premium",
+    "premiumActive": "⭐ Premium aktiv",
+    "subscription": {
+      "monthly": "Månadsplan",
+      "annual": "Årsplan"
+    },
+    "renewsOn": "Förnyas den {{date}}",
+    "about": "Om",
+    "versionLabel": "Version",
+    "version": "Version {{version}}",
+    "rateApp": "Betygsätt appen",
+    "shareApp": "Dela appen",
+    "helpSupport": "Hjälp & support",
+    "privacyPolicy": "Integritetspolicy",
+    "termsOfService": "Användarvillkor",
+    "licenses": "Öppna källkodslicenser",
+    "hapticStrengthOptions": {
+      "light": "Lätt",
+      "medium": "Medium",
+      "heavy": "Stark"
+    }
+  },
+  "themes": {
+    "light": "Ljus",
+    "dark": "Mörk",
+    "solar": "Sol",
+    "mono": "Mono",
+    "description": {
+      "light": "Ren och ljus",
+      "dark": "Skonsam för ögonen",
+      "solar": "Varm och livfull",
+      "mono": "Enkel gråskala"
+    }
+  },
+  "premium": {
+    "title": "Uppgradera till Premium",
+    "subtitle": "Lås upp alla funktioner",
+    "features": {
+      "unlimitedPhotos": "Obegränsade foton",
+      "unlimitedPhotosDesc": "Skapa bildspel med 50+ foton",
+      "premiumTransitions": "Premium-övergångar",
+      "premiumTransitionsDesc": "Tillgång till 20+ exklusiva övergångseffekter",
+      "customMusic": "Anpassad musik",
+      "customMusicDesc": "Lägg till din egen bakgrundsmusik",
+      "export4K": "4K-export",
+      "export4KDesc": "Exportera i ultrahög upplösning",
+      "noWatermark": "Inget vattenstämpel",
+      "noWatermarkDesc": "Ren, professionell export",
+      "advancedEffects": "Avancerade effekter",
+      "advancedEffectsDesc": "Ken Burns, färgjustering, textöverlägg",
+      "prioritySupport": "Prioriterad support",
+      "prioritySupportDesc": "Få hjälp när du behöver det",
+      "cloudSync": "Molnsynkronisering",
+      "cloudSyncDesc": "Synkronisera projekt mellan enheter"
+    },
+    "subscribe": "Prenumerera nu",
+    "monthlyPlan": "Månadsplan",
+    "annualPlan": "Årsplan",
+    "freeTrial": "Starta gratis provperiod",
+    "restore": "Återställ köp",
+    "pricing": {
+      "monthly": "$4.99/månad",
+      "annual": "$29.99/år",
+      "annualMonthly": "$2.50/månad",
+      "save": "Spara 50%",
+      "trialMonthly": "3 dagar gratis, sedan $4.99/månad",
+      "trialAnnual": "7 dagar gratis, sedan $29.99/år"
+    },
+    "badges": {
+      "mostFlexible": "Mest flexibel",
+      "bestValue": "Bästa värdet"
+    },
+    "legal": {
+      "cancelAnytime": "Avbryt när som helst",
+      "autoRenewable": "Automatiskt förnyad prenumeration",
+      "termsApply": "Villkor och bestämmelser gäller"
+    }
+  },
+  "errors": {
+    "generic": "Något gick fel",
+    "networkError": "Nätverksfel. Försök igen.",
+    "permissionDenied": "Tillstånd nekades",
+    "insufficientStorage": "Otillräckligt lagringsutrymme",
+    "imageLoadFailed": "Kunde inte ladda bild",
+    "videoEncodeFailed": "Kunde inte koda video",
+    "gifCreateFailed": "Kunde inte skapa GIF",
+    "purchaseFailed": "Köp misslyckades",
+    "restoreFailed": "Inga köp hittades att återställa",
+    "subscriptionExpired": "Din prenumeration har gått ut"
+  },
+  "success": {
+    "projectCreated": "Projekt skapat",
+    "projectSaved": "Projekt sparad",
+    "projectDeleted": "Projekt raderad",
+    "exported": "Exporterat framgångsrikt",
+    "purchaseComplete": "Köp slutfört",
+    "cacheCleared": "Cache rensad"
+  }
+}

@@ -1,0 +1,237 @@
+{
+  "common": {
+    "cancel": "Batal",
+    "done": "Selesai",
+    "save": "Simpan",
+    "delete": "Padam",
+    "edit": "Edit",
+    "share": "Kongsi",
+    "close": "Tutup",
+    "back": "Kembali",
+    "next": "Seterusnya",
+    "previous": "Sebelumnya",
+    "continue": "Teruskan",
+    "ok": "OK",
+    "yes": "Ya",
+    "no": "Tidak",
+    "loading": "Memuatkan...",
+    "retry": "Cuba lagi",
+    "error": "Ralat",
+    "success": "Berjaya"
+  },
+  "home": {
+    "title": "SlideMint",
+    "emptyStateTitle": "Cipta Kenangan Pertama Anda",
+    "emptyStateSubtitle": "Tukar foto menjadi tayangan slaid yang menakjubkan",
+    "getStartedButton": "Mula",
+    "yourProjects": "Projek Anda",
+    "createNewProject": "Cipta Projek Baru",
+    "lastEdited": "Terakhir disunting {{time}}",
+    "projectCount": "{{count}} foto",
+    "projectCount_plural": "{{count}} foto"
+  },
+  "imageSelection": {
+    "title": "Pilih Foto",
+    "permissionRequired": "Akses Foto Diperlukan",
+    "permissionMessage": "Kami memerlukan kebenaran untuk mengakses foto anda",
+    "grantAccess": "Beri Akses",
+    "selectedCount": "{{count}} dipilih",
+    "createSlideshow": "Cipta Tayangan Slaid ({{count}} foto)",
+    "maximumReached": "Maksimum {{count}} foto dibenarkan",
+    "minimumRequired": "Pilih sekurang-kurangnya {{count}} foto"
+  },
+  "editor": {
+    "title": "Edit Tayangan Slaid",
+    "transition": "Peralihan",
+    "duration": "Tempoh Foto",
+    "effects": "Kesan Foto",
+    "music": "Muzik Latar",
+    "preview": "Pratonton",
+    "export": "Eksport",
+    "durationValue": "{{value}}s",
+    "saveChanges": "Simpan Perubahan",
+    "discardChanges": "Buang Perubahan"
+  },
+  "transitions": {
+    "fade": "Luntur",
+    "slideLeft": "Luncur Kiri",
+    "slideRight": "Luncur Kanan",
+    "slideUp": "Luncur Atas",
+    "slideDown": "Luncur Bawah",
+    "zoom": "Zum",
+    "rotate": "Putar",
+    "cube": "Kiub",
+    "flip": "Terbalik",
+    "dissolve": "Larut",
+    "blur": "Kabur",
+    "wipeCircle": "Lap Bulatan",
+    "push": "Tolak"
+  },
+  "effects": {
+    "kenBurns": "Ken Burns",
+    "vignette": "Vignette",
+    "sepia": "Sepia",
+    "blackWhite": "Hitam Putih",
+    "vintage": "Vintage",
+    "filmGrain": "Butiran Filem",
+    "colorPop": "Warna Menonjol",
+    "lightLeak": "Kebocoran Cahaya"
+  },
+  "preview": {
+    "title": "Pratonton",
+    "play": "Main",
+    "pause": "Jeda",
+    "position": "{{current}}/{{total}}",
+    "speed": "Kelajuan",
+    "loop": "Ulang",
+    "mute": "Bisukan"
+  },
+  "export": {
+    "title": "Eksport Kenangan Anda",
+    "subtitle": "{{count}} foto • {{duration}} saat",
+    "quality": "Kualiti",
+    "format": "Format",
+    "resolution": "Resolusi",
+    "saveToPhotos": "Simpan ke Foto",
+    "share": "Kongsi",
+    "saveToFiles": "Simpan ke Fail",
+    "exporting": "Mengeksport...",
+    "progress": "{{percent}}% selesai",
+    "estimatedTime": "Lebih kurang {{time}} tinggal",
+    "success": "Berjaya Dieksport!",
+    "error": "Eksport Gagal",
+    "view": "Lihat",
+    "done": "Selesai",
+    "formats": {
+      "video": "Video (MP4)",
+      "gif": "GIF (Animasi)"
+    },
+    "qualities": {
+      "720p": "HD (720p)",
+      "1080p": "Full HD (1080p)",
+      "4K": "4K Ultra HD"
+    },
+    "resolutions": {
+      "1:1": "Segi Empat Sama (1:1)",
+      "9:16": "Potret (9:16)",
+      "16:9": "Landskap (16:9)",
+      "21:9": "Pawagam (21:9)"
+    },
+    "fileSizeEstimate": "Anggaran saiz: {{size}}",
+    "tooLarge": "Saiz fail mungkin melebihi {{size}}MB"
+  },
+  "settings": {
+    "title": "Tetapan",
+    "appearance": "Penampilan",
+    "feedback": "Maklum Balas",
+    "theme": "Tema",
+    "soundEffects": "Kesan Bunyi",
+    "hapticFeedback": "Maklum Balas Haptic",
+    "hapticStrength": "Kekuatan Haptic",
+    "language": "Bahasa",
+    "storage": "Penyimpanan",
+    "cache": "Cache",
+    "clearCache": "Kosongkan Cache",
+    "clear": "Kosongkan",
+    "cacheSize": "Saiz cache: {{size}}",
+    "confirmClearCacheMessage": "Adakah anda pasti mahu mengosongkan cache?",
+    "cacheClearedDescription": "Cache berjaya dikosongkan.",
+    "premium": "Premium",
+    "premiumActive": "⭐ Premium Aktif",
+    "subscription": {
+      "monthly": "Pelan Bulanan",
+      "annual": "Pelan Tahunan"
+    },
+    "renewsOn": "Diperbaharui pada {{date}}",
+    "about": "Mengenai",
+    "versionLabel": "Versi",
+    "version": "Versi {{version}}",
+    "rateApp": "Nilai Aplikasi",
+    "shareApp": "Kongsi Aplikasi",
+    "helpSupport": "Bantuan & Sokongan",
+    "privacyPolicy": "Dasar Privasi",
+    "termsOfService": "Terma Perkhidmatan",
+    "licenses": "Lesen Sumber Terbuka",
+    "hapticStrengthOptions": {
+      "light": "Ringan",
+      "medium": "Sederhana",
+      "heavy": "Kuat"
+    }
+  },
+  "themes": {
+    "light": "Terang",
+    "dark": "Gelap",
+    "solar": "Matahari",
+    "mono": "Mono",
+    "description": {
+      "light": "Bersih dan terang",
+      "dark": "Selesa untuk mata",
+      "solar": "Hangat dan meriah",
+      "mono": "Kelabu mudah"
+    }
+  },
+  "premium": {
+    "title": "Naik Taraf ke Premium",
+    "subtitle": "Buka kunci semua ciri",
+    "features": {
+      "unlimitedPhotos": "Foto Tanpa Had",
+      "unlimitedPhotosDesc": "Cipta tayangan slaid dengan 50+ foto",
+      "premiumTransitions": "Peralihan Premium",
+      "premiumTransitionsDesc": "Akses 20+ kesan peralihan eksklusif",
+      "customMusic": "Muzik Tersuai",
+      "customMusicDesc": "Tambah muzik latar anda sendiri",
+      "export4K": "Eksport 4K",
+      "export4KDesc": "Eksport dalam definisi ultra tinggi",
+      "noWatermark": "Tiada Tanda Air",
+      "noWatermarkDesc": "Eksport bersih, profesional",
+      "advancedEffects": "Kesan Lanjutan",
+      "advancedEffectsDesc": "Ken Burns, pembetulan warna, hamparan teks",
+      "prioritySupport": "Sokongan Keutamaan",
+      "prioritySupportDesc": "Dapatkan bantuan apabila anda memerlukannya",
+      "cloudSync": "Segerakan Awan",
+      "cloudSyncDesc": "Segerakan projek merentas peranti"
+    },
+    "subscribe": "Langgan Sekarang",
+    "monthlyPlan": "Pelan Bulanan",
+    "annualPlan": "Pelan Tahunan",
+    "freeTrial": "Mula Percubaan Percuma",
+    "restore": "Pulihkan Pembelian",
+    "pricing": {
+      "monthly": "$4.99/bulan",
+      "annual": "$29.99/tahun",
+      "annualMonthly": "$2.50/bulan",
+      "save": "Jimat 50%",
+      "trialMonthly": "3 hari percuma, kemudian $4.99/bulan",
+      "trialAnnual": "7 hari percuma, kemudian $29.99/tahun"
+    },
+    "badges": {
+      "mostFlexible": "Paling Fleksibel",
+      "bestValue": "Nilai Terbaik"
+    },
+    "legal": {
+      "cancelAnytime": "Batal pada bila-bila masa",
+      "autoRenewable": "Langganan diperbaharui secara automatik",
+      "termsApply": "Terma dan syarat terpakai"
+    }
+  },
+  "errors": {
+    "generic": "Sesuatu telah berlaku",
+    "networkError": "Ralat rangkaian. Sila cuba lagi.",
+    "permissionDenied": "Kebenaran ditolak",
+    "insufficientStorage": "Ruang simpanan tidak mencukupi",
+    "imageLoadFailed": "Gagal memuatkan imej",
+    "videoEncodeFailed": "Gagal mengekod video",
+    "gifCreateFailed": "Gagal mencipta GIF",
+    "purchaseFailed": "Pembelian gagal",
+    "restoreFailed": "Tiada pembelian ditemui untuk dipulihkan",
+    "subscriptionExpired": "Langganan anda telah tamat tempoh"
+  },
+  "success": {
+    "projectCreated": "Projek dicipta",
+    "projectSaved": "Projek disimpan",
+    "projectDeleted": "Projek dipadam",
+    "exported": "Berjaya dieksport",
+    "purchaseComplete": "Pembelian selesai",
+    "cacheCleared": "Cache dikosongkan"
+  }
+}

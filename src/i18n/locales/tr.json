@@ -1,0 +1,237 @@
+{
+  "common": {
+    "cancel": "İptal",
+    "done": "Tamam",
+    "save": "Kaydet",
+    "delete": "Sil",
+    "edit": "Düzenle",
+    "share": "Paylaş",
+    "close": "Kapat",
+    "back": "Geri",
+    "next": "İleri",
+    "previous": "Önceki",
+    "continue": "Devam et",
+    "ok": "Tamam",
+    "yes": "Evet",
+    "no": "Hayır",
+    "loading": "Yükleniyor...",
+    "retry": "Yeniden dene",
+    "error": "Hata",
+    "success": "Başarılı"
+  },
+  "home": {
+    "title": "SlideMint",
+    "emptyStateTitle": "İlk Anınızı Oluşturun",
+    "emptyStateSubtitle": "Fotoğrafları büyülü slayt gösterilerine dönüştürün",
+    "getStartedButton": "Başlayın",
+    "yourProjects": "Projeleriniz",
+    "createNewProject": "Yeni Proje Oluştur",
+    "lastEdited": "Son düzenleme {{time}}",
+    "projectCount": "{{count}} fotoğraf",
+    "projectCount_plural": "{{count}} fotoğraf"
+  },
+  "imageSelection": {
+    "title": "Fotoğraf Seç",
+    "permissionRequired": "Fotoğraflara Erişim Gerekli",
+    "permissionMessage": "Fotoğraflarınıza erişmek için izne ihtiyacımız var",
+    "grantAccess": "Erişim İzni Ver",
+    "selectedCount": "{{count}} seçildi",
+    "createSlideshow": "Slayt Gösterisi Oluştur ({{count}} fotoğraf)",
+    "maximumReached": "Maksimum {{count}} fotoğraf izin verilir",
+    "minimumRequired": "En az {{count}} fotoğraf seçin"
+  },
+  "editor": {
+    "title": "Slayt Gösterisini Düzenle",
+    "transition": "Geçiş",
+    "duration": "Fotoğraf Süresi",
+    "effects": "Fotoğraf Efektleri",
+    "music": "Arka Plan Müziği",
+    "preview": "Önizleme",
+    "export": "Dışa Aktar",
+    "durationValue": "{{value}}s",
+    "saveChanges": "Değişiklikleri Kaydet",
+    "discardChanges": "Değişiklikleri İptal Et"
+  },
+  "transitions": {
+    "fade": "Soldurma",
+    "slideLeft": "Sola Kaydır",
+    "slideRight": "Sağa Kaydır",
+    "slideUp": "Yukarı Kaydır",
+    "slideDown": "Aşağı Kaydır",
+    "zoom": "Yakınlaştır",
+    "rotate": "Döndür",
+    "cube": "Küp",
+    "flip": "Çevir",
+    "dissolve": "Çözünme",
+    "blur": "Bulanıklaştır",
+    "wipeCircle": "Dairesel Geçiş",
+    "push": "İtme"
+  },
+  "effects": {
+    "kenBurns": "Ken Burns",
+    "vignette": "Vinyet",
+    "sepia": "Sepya",
+    "blackWhite": "Siyah Beyaz",
+    "vintage": "Vintage",
+    "filmGrain": "Film Tanecikliği",
+    "colorPop": "Renk Patlaması",
+    "lightLeak": "Işık Sızıntısı"
+  },
+  "preview": {
+    "title": "Önizleme",
+    "play": "Oynat",
+    "pause": "Duraklat",
+    "position": "{{current}}/{{total}}",
+    "speed": "Hız",
+    "loop": "Döngü",
+    "mute": "Sessiz"
+  },
+  "export": {
+    "title": "Anınızı Dışa Aktarın",
+    "subtitle": "{{count}} fotoğraf • {{duration}} saniye",
+    "quality": "Kalite",
+    "format": "Biçim",
+    "resolution": "Çözünürlük",
+    "saveToPhotos": "Fotoğraflara Kaydet",
+    "share": "Paylaş",
+    "saveToFiles": "Dosyalara Kaydet",
+    "exporting": "Dışa aktarılıyor...",
+    "progress": "%{{percent}} tamamlandı",
+    "estimatedTime": "Yaklaşık {{time}} kaldı",
+    "success": "Başarıyla Dışa Aktarıldı!",
+    "error": "Dışa Aktarma Başarısız",
+    "view": "Görüntüle",
+    "done": "Tamam",
+    "formats": {
+      "video": "Video (MP4)",
+      "gif": "GIF (Animasyonlu)"
+    },
+    "qualities": {
+      "720p": "HD (720p)",
+      "1080p": "Full HD (1080p)",
+      "4K": "4K Ultra HD"
+    },
+    "resolutions": {
+      "1:1": "Kare (1:1)",
+      "9:16": "Dikey (9:16)",
+      "16:9": "Yatay (16:9)",
+      "21:9": "Sinema (21:9)"
+    },
+    "fileSizeEstimate": "Tahmini boyut: {{size}}",
+    "tooLarge": "Dosya boyutu {{size}}MB'ı aşabilir"
+  },
+  "settings": {
+    "title": "Ayarlar",
+    "appearance": "Görünüm",
+    "feedback": "Geri Bildirim",
+    "theme": "Tema",
+    "soundEffects": "Ses Efektleri",
+    "hapticFeedback": "Dokunsal Geri Bildirim",
+    "hapticStrength": "Dokunsal Güç",
+    "language": "Dil",
+    "storage": "Depolama",
+    "cache": "Önbellek",
+    "clearCache": "Önbelleği Temizle",
+    "clear": "Temizle",
+    "cacheSize": "Önbellek boyutu: {{size}}",
+    "confirmClearCacheMessage": "Önbelleği temizlemek istediğinizden emin misiniz?",
+    "cacheClearedDescription": "Önbellek başarıyla temizlendi.",
+    "premium": "Premium",
+    "premiumActive": "⭐ Premium Aktif",
+    "subscription": {
+      "monthly": "Aylık Plan",
+      "annual": "Yıllık Plan"
+    },
+    "renewsOn": "{{date}} tarihinde yenilenecek",
+    "about": "Hakkında",
+    "versionLabel": "Sürüm",
+    "version": "Sürüm {{version}}",
+    "rateApp": "Uygulamayı Değerlendir",
+    "shareApp": "Uygulamayı Paylaş",
+    "helpSupport": "Yardım & Destek",
+    "privacyPolicy": "Gizlilik Politikası",
+    "termsOfService": "Hizmet Şartları",
+    "licenses": "Açık Kaynak Lisansları",
+    "hapticStrengthOptions": {
+      "light": "Hafif",
+      "medium": "Orta",
+      "heavy": "Güçlü"
+    }
+  },
+  "themes": {
+    "light": "Açık",
+    "dark": "Koyu",
+    "solar": "Güneş",
+    "mono": "Mono",
+    "description": {
+      "light": "Temiz ve parlak",
+      "dark": "Göz yormayan",
+      "solar": "Sıcak ve canlı",
+      "mono": "Basit gri tonları"
+    }
+  },
+  "premium": {
+    "title": "Premium'a Yükselt",
+    "subtitle": "Tüm özelliklerin kilidini aç",
+    "features": {
+      "unlimitedPhotos": "Sınırsız Fotoğraf",
+      "unlimitedPhotosDesc": "50+ fotoğrafla slayt gösterileri oluşturun",
+      "premiumTransitions": "Premium Geçişler",
+      "premiumTransitionsDesc": "20+ özel geçiş efektine erişin",
+      "customMusic": "Özel Müzik",
+      "customMusicDesc": "Kendi arka plan müziğinizi ekleyin",
+      "export4K": "4K Dışa Aktarma",
+      "export4KDesc": "Ultra yüksek çözünürlükte dışa aktarın",
+      "noWatermark": "Filigran Yok",
+      "noWatermarkDesc": "Temiz, profesyonel dışa aktarmalar",
+      "advancedEffects": "Gelişmiş Efektler",
+      "advancedEffectsDesc": "Ken Burns, renk düzenleme, metin katmanları",
+      "prioritySupport": "Öncelikli Destek",
+      "prioritySupportDesc": "İhtiyacınız olduğunda yardım alın",
+      "cloudSync": "Bulut Senkronizasyonu",
+      "cloudSyncDesc": "Projeleri cihazlar arasında senkronize edin"
+    },
+    "subscribe": "Şimdi Abone Ol",
+    "monthlyPlan": "Aylık Plan",
+    "annualPlan": "Yıllık Plan",
+    "freeTrial": "Ücretsiz Denemeyi Başlat",
+    "restore": "Satın Alımları Geri Yükle",
+    "pricing": {
+      "monthly": "$4,99/ay",
+      "annual": "$29,99/yıl",
+      "annualMonthly": "$2,50/ay",
+      "save": "%50 Tasarruf",
+      "trialMonthly": "3 gün ücretsiz, sonra $4,99/ay",
+      "trialAnnual": "7 gün ücretsiz, sonra $29,99/yıl"
+    },
+    "badges": {
+      "mostFlexible": "En Esnek",
+      "bestValue": "En İyi Değer"
+    },
+    "legal": {
+      "cancelAnytime": "İstediğiniz zaman iptal edin",
+      "autoRenewable": "Otomatik yenilenen abonelik",
+      "termsApply": "Şartlar ve koşullar geçerlidir"
+    }
+  },
+  "errors": {
+    "generic": "Bir şeyler yanlış gitti",
+    "networkError": "Ağ hatası. Lütfen tekrar deneyin.",
+    "permissionDenied": "İzin reddedildi",
+    "insufficientStorage": "Yetersiz depolama alanı",
+    "imageLoadFailed": "Fotoğraf yüklenemedi",
+    "videoEncodeFailed": "Video kodlanamadı",
+    "gifCreateFailed": "GIF oluşturulamadı",
+    "purchaseFailed": "Satın alma başarısız",
+    "restoreFailed": "Geri yüklenecek satın alım bulunamadı",
+    "subscriptionExpired": "Aboneliğinizin süresi doldu"
+  },
+  "success": {
+    "projectCreated": "Proje oluşturuldu",
+    "projectSaved": "Proje kaydedildi",
+    "projectDeleted": "Proje silindi",
+    "exported": "Başarıyla dışa aktarıldı",
+    "purchaseComplete": "Satın alma tamamlandı",
+    "cacheCleared": "Önbellek temizlendi"
+  }
+}

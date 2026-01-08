@@ -1,0 +1,237 @@
+{
+  "common": {
+    "cancel": "Ακύρωση",
+    "done": "Ολοκληρώθηκε",
+    "save": "Αποθήκευση",
+    "delete": "Διαγραφή",
+    "edit": "Επεξεργασία",
+    "share": "Κοινοποίηση",
+    "close": "Κλείσιμο",
+    "back": "Πίσω",
+    "next": "Επόμενο",
+    "previous": "Προηγούμενο",
+    "continue": "Συνέχεια",
+    "ok": "OK",
+    "yes": "Ναι",
+    "no": "Όχι",
+    "loading": "Φόρτωση...",
+    "retry": "Επανάληψη",
+    "error": "Σφάλμα",
+    "success": "Επιτυχία"
+  },
+  "home": {
+    "title": "SlideMint",
+    "emptyStateTitle": "Δημιούργησε την πρώτη σου ανάμνηση",
+    "emptyStateSubtitle": "Μετατρέψε φωτογραφίες σε μαγικές παρουσιάσεις",
+    "getStartedButton": "Ξεκίνα",
+    "yourProjects": "Τα έργα σου",
+    "createNewProject": "Δημιούργησε νέο έργο",
+    "lastEdited": "Τελευταία επεξεργασία {{time}}",
+    "projectCount": "{{count}} φωτογραφία",
+    "projectCount_plural": "{{count}} φωτογραφίες"
+  },
+  "imageSelection": {
+    "title": "Επιλογή φωτογραφιών",
+    "permissionRequired": "Απαιτείται πρόσβαση σε φωτογραφίες",
+    "permissionMessage": "Χρειαζόμαστε άδεια για πρόσβαση στις φωτογραφίες σου",
+    "grantAccess": "Παροχή πρόσβασης",
+    "selectedCount": "{{count}} επιλεγμένες",
+    "createSlideshow": "Δημιούργησε παρουσίαση ({{count}} φωτογραφίες)",
+    "maximumReached": "Μέγιστο {{count}} φωτογραφίες επιτρέπονται",
+    "minimumRequired": "Επίλεξε τουλάχιστον {{count}} φωτογραφίες"
+  },
+  "editor": {
+    "title": "Επεξεργασία παρουσίασης",
+    "transition": "Μετάβαση",
+    "duration": "Διάρκεια φωτογραφίας",
+    "effects": "Εφέ φωτογραφίας",
+    "music": "Μουσική φόντου",
+    "preview": "Προεπισκόπηση",
+    "export": "Εξαγωγή",
+    "durationValue": "{{value}}s",
+    "saveChanges": "Αποθήκευση αλλαγών",
+    "discardChanges": "Απόρριψη αλλαγών"
+  },
+  "transitions": {
+    "fade": "Σβήσιμο",
+    "slideLeft": "Ολίσθηση αριστερά",
+    "slideRight": "Ολίσθηση δεξιά",
+    "slideUp": "Ολίσθηση πάνω",
+    "slideDown": "Ολίσθηση κάτω",
+    "zoom": "Μεγέθυνση",
+    "rotate": "Περιστροφή",
+    "cube": "Κύβος",
+    "flip": "Αναποδογύρισμα",
+    "dissolve": "Διάλυση",
+    "blur": "Θόλωμα",
+    "wipeCircle": "Κυκλική διαγραφή",
+    "push": "Ώθηση"
+  },
+  "effects": {
+    "kenBurns": "Ken Burns",
+    "vignette": "Βινιέτα",
+    "sepia": "Σέπια",
+    "blackWhite": "Ασπρόμαυρο",
+    "vintage": "Βίνταζ",
+    "filmGrain": "Κόκκος φιλμ",
+    "colorPop": "Έντονο χρώμα",
+    "lightLeak": "Διαφυγή φωτός"
+  },
+  "preview": {
+    "title": "Προεπισκόπηση",
+    "play": "Αναπαραγωγή",
+    "pause": "Παύση",
+    "position": "{{current}}/{{total}}",
+    "speed": "Ταχύτητα",
+    "loop": "Επανάληψη",
+    "mute": "Σίγαση"
+  },
+  "export": {
+    "title": "Εξαγωγή της ανάμνησής σου",
+    "subtitle": "{{count}} φωτογραφίες • {{duration}} δευτερόλεπτα",
+    "quality": "Ποιότητα",
+    "format": "Μορφή",
+    "resolution": "Ανάλυση",
+    "saveToPhotos": "Αποθήκευση σε φωτογραφίες",
+    "share": "Κοινοποίηση",
+    "saveToFiles": "Αποθήκευση σε αρχεία",
+    "exporting": "Εξαγωγή...",
+    "progress": "{{percent}}% ολοκληρώθηκε",
+    "estimatedTime": "Περίπου {{time}} απομένουν",
+    "success": "Εξήχθη με επιτυχία!",
+    "error": "Η εξαγωγή απέτυχε",
+    "view": "Προβολή",
+    "done": "Ολοκληρώθηκε",
+    "formats": {
+      "video": "Βίντεο (MP4)",
+      "gif": "GIF (Κινούμενο)"
+    },
+    "qualities": {
+      "720p": "HD (720p)",
+      "1080p": "Full HD (1080p)",
+      "4K": "4K Ultra HD"
+    },
+    "resolutions": {
+      "1:1": "Τετράγωνο (1:1)",
+      "9:16": "Κατακόρυφο (9:16)",
+      "16:9": "Οριζόντιο (16:9)",
+      "21:9": "Σινεμά (21:9)"
+    },
+    "fileSizeEstimate": "Εκτιμώμενο μέγεθος: {{size}}",
+    "tooLarge": "Το μέγεθος αρχείου μπορεί να υπερβαίνει τα {{size}}MB"
+  },
+  "settings": {
+    "title": "Ρυθμίσεις",
+    "appearance": "Εμφάνιση",
+    "feedback": "Ανατροφοδότηση",
+    "theme": "Θέμα",
+    "soundEffects": "Ηχητικά εφέ",
+    "hapticFeedback": "Αφητική ανατροφοδότηση",
+    "hapticStrength": "Ισχύς αφής",
+    "language": "Γλώσσα",
+    "storage": "Αποθήκευση",
+    "cache": "Προσωρινή μνήμη",
+    "clearCache": "Εκκαθάριση προσωρινής μνήμης",
+    "clear": "Εκκαθάριση",
+    "cacheSize": "Μέγεθος προσωρινής μνήμης: {{size}}",
+    "confirmClearCacheMessage": "Είσαι σίγουρος ότι θέλεις να εκκαθαρίσεις την προσωρινή μνήμη;",
+    "cacheClearedDescription": "Η προσωρινή μνήμη εκκαθαρίστηκε με επιτυχία.",
+    "premium": "Premium",
+    "premiumActive": "⭐ Premium ενεργό",
+    "subscription": {
+      "monthly": "Μηνιαίο πλάνο",
+      "annual": "Ετήσιο πλάνο"
+    },
+    "renewsOn": "Ανανέωση στις {{date}}",
+    "about": "Σχετικά",
+    "versionLabel": "Έκδοση",
+    "version": "Έκδοση {{version}}",
+    "rateApp": "Αξιολόγηση εφαρμογής",
+    "shareApp": "Κοινοποίηση εφαρμογής",
+    "helpSupport": "Βοήθεια & Υποστήριξη",
+    "privacyPolicy": "Πολιτική απορρήτου",
+    "termsOfService": "Όροι χρήσης",
+    "licenses": "Άδειες ανοιχτού κώδικα",
+    "hapticStrengthOptions": {
+      "light": "Απαλό",
+      "medium": "Μέτριο",
+      "heavy": "Δυνατό"
+    }
+  },
+  "themes": {
+    "light": "Φωτεινό",
+    "dark": "Σκοτεινό",
+    "solar": "Ηλιακό",
+    "mono": "Μονό",
+    "description": {
+      "light": "Καθαρό και φωτεινό",
+      "dark": "Φιλικό προς τα μάτια",
+      "solar": "Ζεστό και ζωντανό",
+      "mono": "Απλή κλίμακα γκρι"
+    }
+  },
+  "premium": {
+    "title": "Αναβάθμιση σε Premium",
+    "subtitle": "Ξεκλείδωσε όλες τις λειτουργίες",
+    "features": {
+      "unlimitedPhotos": "Απεριόριστες φωτογραφίες",
+      "unlimitedPhotosDesc": "Δημιούργησε παρουσιάσεις με 50+ φωτογραφίες",
+      "premiumTransitions": "Premium μεταβάσεις",
+      "premiumTransitionsDesc": "Πρόσβαση σε 20+ αποκλειστικά εφέ μετάβασης",
+      "customMusic": "Προσαρμοσμένη μουσική",
+      "customMusicDesc": "Πρόσθεσε τη δική σου μουσική φόντου",
+      "export4K": "Εξαγωγή 4K",
+      "export4KDesc": "Εξαγωγή σε υπερ-υψηλή ανάλυση",
+      "noWatermark": "Χωρίς υδατόσημο",
+      "noWatermarkDesc": "Καθαρές, επαγγελματικές εξαγωγές",
+      "advancedEffects": "Προηγμένα εφέ",
+      "advancedEffectsDesc": "Ken Burns, διόρθωση χρώματος, επικαλύψεις κειμένου",
+      "prioritySupport": "Υποστήριξη προτεραιότητας",
+      "prioritySupportDesc": "Λάβε βοήθεια όταν τη χρειάζεσαι",
+      "cloudSync": "Συγχρονισμός cloud",
+      "cloudSyncDesc": "Συγχρονισμός έργων μεταξύ συσκευών"
+    },
+    "subscribe": "Εγγραφή τώρα",
+    "monthlyPlan": "Μηνιαίο πλάνο",
+    "annualPlan": "Ετήσιο πλάνο",
+    "freeTrial": "Ξεκίνα δωρεάν δοκιμή",
+    "restore": "Επαναφορά αγορών",
+    "pricing": {
+      "monthly": "$4.99/μήνα",
+      "annual": "$29.99/έτος",
+      "annualMonthly": "$2.50/μήνα",
+      "save": "Εξοικονόμηση 50%",
+      "trialMonthly": "3 ημέρες δωρεάν, μετά $4.99/μήνα",
+      "trialAnnual": "7 ημέρες δωρεάν, μετά $29.99/έτος"
+    },
+    "badges": {
+      "mostFlexible": "Πιο ευέλικτο",
+      "bestValue": "Καλύτερη αξία"
+    },
+    "legal": {
+      "cancelAnytime": "Ακύρωση οποιαδήποτε στιγμή",
+      "autoRenewable": "Αυτόματη ανανέωση συνδρομής",
+      "termsApply": "Ισχύουν οι όροι και οι προϋποθέσεις"
+    }
+  },
+  "errors": {
+    "generic": "Κάτι πήγε στραβά",
+    "networkError": "Σφάλμα δικτύου. Παρακαλώ δοκίμασε ξανά.",
+    "permissionDenied": "Άδεια απορρίφθηκε",
+    "insufficientStorage": "Ανεπαρκής χώρος αποθήκευσης",
+    "imageLoadFailed": "Αποτυχία φόρτωσης εικόνας",
+    "videoEncodeFailed": "Αποτυχία κωδικοποίησης βίντεο",
+    "gifCreateFailed": "Αποτυχία δημιουργίας GIF",
+    "purchaseFailed": "Η αγορά απέτυχε",
+    "restoreFailed": "Δεν βρέθηκαν αγορές για επαναφορά",
+    "subscriptionExpired": "Η συνδρομή σου έληξε"
+  },
+  "success": {
+    "projectCreated": "Έργο δημιουργήθηκε",
+    "projectSaved": "Έργο αποθηκεύτηκε",
+    "projectDeleted": "Έργο διαγράφηκε",
+    "exported": "Εξήχθη με επιτυχία",
+    "purchaseComplete": "Η αγορά ολοκληρώθηκε",
+    "cacheCleared": "Η προσωρινή μνήμη εκκαθαρίστηκε"
+  }
+}

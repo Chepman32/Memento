@@ -1,0 +1,237 @@
+{
+  "common": {
+    "cancel": "Peruuta",
+    "done": "Valmis",
+    "save": "Tallenna",
+    "delete": "Poista",
+    "edit": "Muokkaa",
+    "share": "Jaa",
+    "close": "Sulje",
+    "back": "Takaisin",
+    "next": "Seuraava",
+    "previous": "Edellinen",
+    "continue": "Jatka",
+    "ok": "OK",
+    "yes": "Kyllä",
+    "no": "Ei",
+    "loading": "Ladataan...",
+    "retry": "Yritä uudelleen",
+    "error": "Virhe",
+    "success": "Onnistui"
+  },
+  "home": {
+    "title": "SlideMint",
+    "emptyStateTitle": "Luo ensimmäinen muistosi",
+    "emptyStateSubtitle": "Muunna kuvat maagisiksi diaesityksiksi",
+    "getStartedButton": "Aloita",
+    "yourProjects": "Projektisi",
+    "createNewProject": "Luo uusi projekti",
+    "lastEdited": "Viimeksi muokattu {{time}}",
+    "projectCount": "{{count}} kuva",
+    "projectCount_plural": "{{count}} kuvaa"
+  },
+  "imageSelection": {
+    "title": "Valitse kuvat",
+    "permissionRequired": "Kuvien käyttöoikeus vaaditaan",
+    "permissionMessage": "Tarvitsemme luvan käyttää kuviasi",
+    "grantAccess": "Anna käyttöoikeus",
+    "selectedCount": "{{count}} valittu",
+    "createSlideshow": "Luo diaesitys ({{count}} kuvaa)",
+    "maximumReached": "Maksimi {{count}} kuvaa sallittu",
+    "minimumRequired": "Valitse vähintään {{count}} kuvaa"
+  },
+  "editor": {
+    "title": "Muokkaa diaesitystä",
+    "transition": "Siirtymä",
+    "duration": "Kuvan kesto",
+    "effects": "Kuvaeffektit",
+    "music": "Taustamusiikki",
+    "preview": "Esikatselu",
+    "export": "Vie",
+    "durationValue": "{{value}}s",
+    "saveChanges": "Tallenna muutokset",
+    "discardChanges": "Hylkää muutokset"
+  },
+  "transitions": {
+    "fade": "Häivytys",
+    "slideLeft": "Liuku vasemmalle",
+    "slideRight": "Liuku oikealle",
+    "slideUp": "Liuku ylös",
+    "slideDown": "Liuku alas",
+    "zoom": "Zoomaus",
+    "rotate": "Kierrä",
+    "cube": "Kuutio",
+    "flip": "Käännä",
+    "dissolve": "Liukene",
+    "blur": "Sumeutus",
+    "wipeCircle": "Ympyräsiirtymä",
+    "push": "Työnnä"
+  },
+  "effects": {
+    "kenBurns": "Ken Burns",
+    "vignette": "Vignetti",
+    "sepia": "Sepia",
+    "blackWhite": "Musta-valkoinen",
+    "vintage": "Vintage",
+    "filmGrain": "Filminjyvät",
+    "colorPop": "Väripop",
+    "lightLeak": "Valonvuoto"
+  },
+  "preview": {
+    "title": "Esikatselu",
+    "play": "Toista",
+    "pause": "Tauko",
+    "position": "{{current}}/{{total}}",
+    "speed": "Nopeus",
+    "loop": "Silmukka",
+    "mute": "Mykistä"
+  },
+  "export": {
+    "title": "Vie muistosi",
+    "subtitle": "{{count}} kuvaa • {{duration}} sekuntia",
+    "quality": "Laatu",
+    "format": "Muoto",
+    "resolution": "Resoluutio",
+    "saveToPhotos": "Tallenna kuvat",
+    "share": "Jaa",
+    "saveToFiles": "Tallenna tiedostoihin",
+    "exporting": "Viedään...",
+    "progress": "{{percent}}% valmis",
+    "estimatedTime": "Noin {{time}} jäljellä",
+    "success": "Viety onnistuneesti!",
+    "error": "Vienti epäonnistui",
+    "view": "Näytä",
+    "done": "Valmis",
+    "formats": {
+      "video": "Video (MP4)",
+      "gif": "GIF (Animoitu)"
+    },
+    "qualities": {
+      "720p": "HD (720p)",
+      "1080p": "Full HD (1080p)",
+      "4K": "4K Ultra HD"
+    },
+    "resolutions": {
+      "1:1": "Neliö (1:1)",
+      "9:16": "Pysty (9:16)",
+      "16:9": "Vaaka (16:9)",
+      "21:9": "Elokuva (21:9)"
+    },
+    "fileSizeEstimate": "Arvioitu koko: {{size}}",
+    "tooLarge": "Tiedostokoko voi ylittää {{size}}MB"
+  },
+  "settings": {
+    "title": "Asetukset",
+    "appearance": "Ulkoasu",
+    "feedback": "Palaute",
+    "theme": "Teema",
+    "soundEffects": "Ääniefektit",
+    "hapticFeedback": "Haptinen palaute",
+    "hapticStrength": "Haptinen voimakkuus",
+    "language": "Kieli",
+    "storage": "Tallennus",
+    "cache": "Välimuisti",
+    "clearCache": "Tyhjennä välimuisti",
+    "clear": "Tyhjennä",
+    "cacheSize": "Välimuistin koko: {{size}}",
+    "confirmClearCacheMessage": "Haluatko varmasti tyhjentää välimuistin?",
+    "cacheClearedDescription": "Välimuisti tyhjennettiin onnistuneesti.",
+    "premium": "Premium",
+    "premiumActive": "⭐ Premium aktiivinen",
+    "subscription": {
+      "monthly": "Kuukausiplan",
+      "annual": "Vuosipakkaus"
+    },
+    "renewsOn": "Uusitaan {{date}}",
+    "about": "Tietoja",
+    "versionLabel": "Versio",
+    "version": "Versio {{version}}",
+    "rateApp": "Arvioi sovellus",
+    "shareApp": "Jaa sovellus",
+    "helpSupport": "Ohje & tuki",
+    "privacyPolicy": "Tietosuojakäytäntö",
+    "termsOfService": "Käyttöehdot",
+    "licenses": "Avoimen lähdekoodin lisenssit",
+    "hapticStrengthOptions": {
+      "light": "Kevyt",
+      "medium": "Keskitaso",
+      "heavy": "Voimakas"
+    }
+  },
+  "themes": {
+    "light": "Vaalea",
+    "dark": "Tumma",
+    "solar": "Aurinko",
+    "mono": "Mono",
+    "description": {
+      "light": "Puhdas ja kirkas",
+      "dark": "Silmille miellyttävä",
+      "solar": "Lämmin ja eloisa",
+      "mono": "Yksinkertainen harmaasävy"
+    }
+  },
+  "premium": {
+    "title": "Päivitä Premiumiin",
+    "subtitle": "Avaa kaikki ominaisuudet",
+    "features": {
+      "unlimitedPhotos": "Rajoittamattomat kuvat",
+      "unlimitedPhotosDesc": "Luo diaesityksiä 50+ kuvalla",
+      "premiumTransitions": "Premium-siirtymät",
+      "premiumTransitionsDesc": "Pääsy 20+ eksklusiiviseen siirtymäefektiin",
+      "customMusic": "Mukautettu musiikki",
+      "customMusicDesc": "Lisää oma taustamusiikkisi",
+      "export4K": "4K-vienti",
+      "export4KDesc": "Vie ultra-korkealla resoluutiolla",
+      "noWatermark": "Ei vesileimaa",
+      "noWatermarkDesc": "Puhdas, ammattimainen vienti",
+      "advancedEffects": "Edistyneet efektit",
+      "advancedEffectsDesc": "Ken Burns, värisäätö, tekstipäällykset",
+      "prioritySupport": "Prioriteettituki",
+      "prioritySupportDesc": "Saa apua tarvitsessasi",
+      "cloudSync": "Pilvisynkronointi",
+      "cloudSyncDesc": "Synkronoi projektit laitteiden välillä"
+    },
+    "subscribe": "Tilaa nyt",
+    "monthlyPlan": "Kuukausiplan",
+    "annualPlan": "Vuosipakkaus",
+    "freeTrial": "Aloita ilmainen kokeilu",
+    "restore": "Palauta ostoja",
+    "pricing": {
+      "monthly": "$4.99/kk",
+      "annual": "$29.99/vuosi",
+      "annualMonthly": "$2.50/kk",
+      "save": "Säästä 50%",
+      "trialMonthly": "3 päivää ilmaiseksi, sitten $4.99/kk",
+      "trialAnnual": "7 päivää ilmaiseksi, sitten $29.99/vuosi"
+    },
+    "badges": {
+      "mostFlexible": "Joustavin",
+      "bestValue": "Paras arvo"
+    },
+    "legal": {
+      "cancelAnytime": "Peruuta milloin tahansa",
+      "autoRenewable": "Automaattisesti uusiutuva tilaus",
+      "termsApply": "Ehdot ja säännöt pätevät"
+    }
+  },
+  "errors": {
+    "generic": "Jotain meni pieleen",
+    "networkError": "Verkkovirhe. Yritä uudelleen.",
+    "permissionDenied": "Käyttöoikeus evätty",
+    "insufficientStorage": "Riittämätön tallennustila",
+    "imageLoadFailed": "Kuvan lataus epäonnistui",
+    "videoEncodeFailed": "Videon koodaus epäonnistui",
+    "gifCreateFailed": "GIF:n luonti epäonnistui",
+    "purchaseFailed": "Osto epäonnistui",
+    "restoreFailed": "Ei löytynyt ostoja palautettavaksi",
+    "subscriptionExpired": "Tilauksesi on vanhentunut"
+  },
+  "success": {
+    "projectCreated": "Projekti luotu",
+    "projectSaved": "Projekti tallennettu",
+    "projectDeleted": "Projekti poistettu",
+    "exported": "Viety onnistuneesti",
+    "purchaseComplete": "Osto valmis",
+    "cacheCleared": "Välimuisti tyhjennetty"
+  }
+}

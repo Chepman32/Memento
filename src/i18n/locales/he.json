@@ -1,0 +1,237 @@
+{
+  "common": {
+    "cancel": "ביטול",
+    "done": "סיום",
+    "save": "שמירה",
+    "delete": "מחיקה",
+    "edit": "עריכה",
+    "share": "שיתוף",
+    "close": "סגירה",
+    "back": "חזרה",
+    "next": "הבא",
+    "previous": "הקודם",
+    "continue": "המשך",
+    "ok": "אישור",
+    "yes": "כן",
+    "no": "לא",
+    "loading": "טוען...",
+    "retry": "נסה שוב",
+    "error": "שגיאה",
+    "success": "הצלחה"
+  },
+  "home": {
+    "title": "SlideMint",
+    "emptyStateTitle": "צור את הזיכרון הראשון שלך",
+    "emptyStateSubtitle": "הפוך תמונות למצגות קסומות",
+    "getStartedButton": "התחל",
+    "yourProjects": "הפרויקטים שלך",
+    "createNewProject": "צור פרויקט חדש",
+    "lastEdited": "נערך לאחרונה {{time}}",
+    "projectCount": "{{count}} תמונה",
+    "projectCount_plural": "{{count}} תמונות"
+  },
+  "imageSelection": {
+    "title": "בחר תמונות",
+    "permissionRequired": "נדרש גישה לתמונות",
+    "permissionMessage": "אנחנו צריכים הרשאה לגשת לתמונות שלך",
+    "grantAccess": "אשר גישה",
+    "selectedCount": "{{count}} נבחרו",
+    "createSlideshow": "צור מצגת ({{count}} תמונות)",
+    "maximumReached": "מקסימום {{count}} תמונות מותר",
+    "minimumRequired": "בחר לפחות {{count}} תמונות"
+  },
+  "editor": {
+    "title": "ערוך מצגת",
+    "transition": "מעבר",
+    "duration": "משך התמונה",
+    "effects": "אפקטי תמונה",
+    "music": "מוזיקת רקע",
+    "preview": "תצוגה מקדימה",
+    "export": "ייצוא",
+    "durationValue": "{{value}}s",
+    "saveChanges": "שמור שינויים",
+    "discardChanges": "בטל שינויים"
+  },
+  "transitions": {
+    "fade": "דעיכה",
+    "slideLeft": "החלקה שמאלה",
+    "slideRight": "החלקה ימינה",
+    "slideUp": "החלקה למעלה",
+    "slideDown": "החלקה למטה",
+    "zoom": "זום",
+    "rotate": "סיבוב",
+    "cube": "קובייה",
+    "flip": "היפוך",
+    "dissolve": "המסה",
+    "blur": "טשטוש",
+    "wipeCircle": "מחיקה מעגלית",
+    "push": "דחיפה"
+  },
+  "effects": {
+    "kenBurns": "קן ברנס",
+    "vignette": "ויניאטה",
+    "sepia": "ספיה",
+    "blackWhite": "שחור לבן",
+    "vintage": "וינטג'",
+    "filmGrain": "גרגירי סרט",
+    "colorPop": "צבע בולט",
+    "lightLeak": "דליפת אור"
+  },
+  "preview": {
+    "title": "תצוגה מקדימה",
+    "play": "נגן",
+    "pause": "השהה",
+    "position": "{{current}}/{{total}}",
+    "speed": "מהירות",
+    "loop": "לולאה",
+    "mute": "השתק"
+  },
+  "export": {
+    "title": "ייצא את הזיכרון שלך",
+    "subtitle": "{{count}} תמונות • {{duration}} שניות",
+    "quality": "איכות",
+    "format": "פורמט",
+    "resolution": "רזולוציה",
+    "saveToPhotos": "שמור לתמונות",
+    "share": "שתף",
+    "saveToFiles": "שמור לקבצים",
+    "exporting": "מייצא...",
+    "progress": "{{percent}}% הושלם",
+    "estimatedTime": "כ-{{time}} נותרו",
+    "success": "יוצא בהצלחה!",
+    "error": "ייצוא נכשל",
+    "view": "צפה",
+    "done": "סיום",
+    "formats": {
+      "video": "וידאו (MP4)",
+      "gif": "GIF (אנימציה)"
+    },
+    "qualities": {
+      "720p": "HD (720p)",
+      "1080p": "Full HD (1080p)",
+      "4K": "4K Ultra HD"
+    },
+    "resolutions": {
+      "1:1": "מרובע (1:1)",
+      "9:16": "אנכי (9:16)",
+      "16:9": "אופקי (16:9)",
+      "21:9": "קולנוע (21:9)"
+    },
+    "fileSizeEstimate": "גודל משוער: {{size}}",
+    "tooLarge": "גודל הקובץ עלול לעלות על {{size}}MB"
+  },
+  "settings": {
+    "title": "הגדרות",
+    "appearance": "מראה",
+    "feedback": "משוב",
+    "theme": "ערכת נושא",
+    "soundEffects": "אפקטי קול",
+    "hapticFeedback": "משוב מישוש",
+    "hapticStrength": "עוצמת מישוש",
+    "language": "שפה",
+    "storage": "אחסון",
+    "cache": "מטמון",
+    "clearCache": "נקה מטמון",
+    "clear": "נקה",
+    "cacheSize": "גודל מטמון: {{size}}",
+    "confirmClearCacheMessage": "האם אתה בטוח שברצונך לנקות את המטמון?",
+    "cacheClearedDescription": "המטמון נוקה בהצלחה.",
+    "premium": "פרימיום",
+    "premiumActive": "⭐ פרימיום פעיל",
+    "subscription": {
+      "monthly": "תוכנית חודשית",
+      "annual": "תוכנית שנתית"
+    },
+    "renewsOn": "מתחדש ב-{{date}}",
+    "about": "אודות",
+    "versionLabel": "גרסה",
+    "version": "גרסה {{version}}",
+    "rateApp": "דרג את האפליקציה",
+    "shareApp": "שתף את האפליקציה",
+    "helpSupport": "עזרה ותמיכה",
+    "privacyPolicy": "מדיניות פרטיות",
+    "termsOfService": "תנאי שירות",
+    "licenses": "רישיונות קוד פתוח",
+    "hapticStrengthOptions": {
+      "light": "קל",
+      "medium": "בינוני",
+      "heavy": "חזק"
+    }
+  },
+  "themes": {
+    "light": "בהיר",
+    "dark": "כהה",
+    "solar": "שמש",
+    "mono": "מונו",
+    "description": {
+      "light": "נקי ובהיר",
+      "dark": "נוח לעיניים",
+      "solar": "חם וחי",
+      "mono": "גווני אפור פשוטים"
+    }
+  },
+  "premium": {
+    "title": "שדרג לפרימיום",
+    "subtitle": "פתח את כל התכונות",
+    "features": {
+      "unlimitedPhotos": "תמונות ללא הגבלה",
+      "unlimitedPhotosDesc": "צור מצגות עם 50+ תמונות",
+      "premiumTransitions": "מעברים פרימיום",
+      "premiumTransitionsDesc": "גישה ל-20+ אפקטי מעבר בלעדיים",
+      "customMusic": "מוזיקה מותאמת אישית",
+      "customMusicDesc": "הוסף את מוזיקת הרקע שלך",
+      "export4K": "ייצוא 4K",
+      "export4KDesc": "ייצא ברזולוציה אולטרה גבוהה",
+      "noWatermark": "ללא סימן מים",
+      "noWatermarkDesc": "ייצוא נקי ומקצועי",
+      "advancedEffects": "אפקטים מתקדמים",
+      "advancedEffectsDesc": "קן ברנס, עריכת צבע, שכבות טקסט",
+      "prioritySupport": "תמיכה בעדיפות",
+      "prioritySupportDesc": "קבל עזרה כשאתה צריך",
+      "cloudSync": "סנכרון ענן",
+      "cloudSyncDesc": "סנכרן פרויקטים בין מכשירים"
+    },
+    "subscribe": "הירשם עכשיו",
+    "monthlyPlan": "תוכנית חודשית",
+    "annualPlan": "תוכנית שנתית",
+    "freeTrial": "התחל ניסיון חינם",
+    "restore": "שחזר רכישות",
+    "pricing": {
+      "monthly": "$4.99/חודש",
+      "annual": "$29.99/שנה",
+      "annualMonthly": "$2.50/חודש",
+      "save": "חסוך 50%",
+      "trialMonthly": "3 ימים חינם, ואז $4.99/חודש",
+      "trialAnnual": "7 ימים חינם, ואז $29.99/שנה"
+    },
+    "badges": {
+      "mostFlexible": "הכי גמיש",
+      "bestValue": "הערך הטוב ביותר"
+    },
+    "legal": {
+      "cancelAnytime": "בטל בכל עת",
+      "autoRenewable": "מנוי מתחדש אוטומטית",
+      "termsApply": "תנאים והגבלות חלים"
+    }
+  },
+  "errors": {
+    "generic": "משהו השתבש",
+    "networkError": "שגיאת רשת. אנא נסה שוב.",
+    "permissionDenied": "הרשאה נדחתה",
+    "insufficientStorage": "מקום אחסון לא מספיק",
+    "imageLoadFailed": "טעינת תמונה נכשלה",
+    "videoEncodeFailed": "קידוד וידאו נכשל",
+    "gifCreateFailed": "יצירת GIF נכשלה",
+    "purchaseFailed": "רכישה נכשלה",
+    "restoreFailed": "לא נמצאו רכישות לשחזור",
+    "subscriptionExpired": "המנוי שלך פג"
+  },
+  "success": {
+    "projectCreated": "פרויקט נוצר",
+    "projectSaved": "פרויקט נשמר",
+    "projectDeleted": "פרויקט נמחק",
+    "exported": "יוצא בהצלחה",
+    "purchaseComplete": "רכישה הושלמה",
+    "cacheCleared": "מטמון נוקה"
+  }
+}

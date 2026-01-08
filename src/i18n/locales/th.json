@@ -1,0 +1,237 @@
+{
+  "common": {
+    "cancel": "ยกเลิก",
+    "done": "เสร็จสิ้น",
+    "save": "บันทึก",
+    "delete": "ลบ",
+    "edit": "แก้ไข",
+    "share": "แชร์",
+    "close": "ปิด",
+    "back": "กลับ",
+    "next": "ถัดไป",
+    "previous": "ก่อนหน้า",
+    "continue": "ดำเนินการต่อ",
+    "ok": "ตกลง",
+    "yes": "ใช่",
+    "no": "ไม่",
+    "loading": "กำลังโหลด...",
+    "retry": "ลองอีกครั้ง",
+    "error": "ข้อผิดพลาด",
+    "success": "สำเร็จ"
+  },
+  "home": {
+    "title": "SlideMint",
+    "emptyStateTitle": "สร้างความทรงจำแรกของคุณ",
+    "emptyStateSubtitle": "เปลี่ยนรูปภาพเป็นสไลด์โชว์ที่น่าทึ่ง",
+    "getStartedButton": "เริ่มต้น",
+    "yourProjects": "โปรเจกต์ของคุณ",
+    "createNewProject": "สร้างโปรเจกต์ใหม่",
+    "lastEdited": "แก้ไขล่าสุด {{time}}",
+    "projectCount": "{{count}} รูปภาพ",
+    "projectCount_plural": "{{count}} รูปภาพ"
+  },
+  "imageSelection": {
+    "title": "เลือกรูปภาพ",
+    "permissionRequired": "ต้องการการเข้าถึงรูปภาพ",
+    "permissionMessage": "เราต้องการสิทธิ์ในการเข้าถึงรูปภาพของคุณ",
+    "grantAccess": "ให้สิทธิ์เข้าถึง",
+    "selectedCount": "เลือก {{count}} รูป",
+    "createSlideshow": "สร้างสไลด์โชว์ ({{count}} รูปภาพ)",
+    "maximumReached": "สูงสุด {{count}} รูปภาพที่อนุญาต",
+    "minimumRequired": "เลือกอย่างน้อย {{count}} รูปภาพ"
+  },
+  "editor": {
+    "title": "แก้ไขสไลด์โชว์",
+    "transition": "การเปลี่ยนภาพ",
+    "duration": "ระยะเวลารูปภาพ",
+    "effects": "เอฟเฟกต์รูปภาพ",
+    "music": "เพลงพื้นหลัง",
+    "preview": "ตัวอย่าง",
+    "export": "ส่งออก",
+    "durationValue": "{{value}}s",
+    "saveChanges": "บันทึกการเปลี่ยนแปลง",
+    "discardChanges": "ยกเลิกการเปลี่ยนแปลง"
+  },
+  "transitions": {
+    "fade": "จางหาย",
+    "slideLeft": "เลื่อนซ้าย",
+    "slideRight": "เลื่อนขวา",
+    "slideUp": "เลื่อนขึ้น",
+    "slideDown": "เลื่อนลง",
+    "zoom": "ซูม",
+    "rotate": "หมุน",
+    "cube": "ลูกบาศก์",
+    "flip": "พลิก",
+    "dissolve": "ละลาย",
+    "blur": "เบลอ",
+    "wipeCircle": "ลบแบบวงกลม",
+    "push": "ผลัก"
+  },
+  "effects": {
+    "kenBurns": "Ken Burns",
+    "vignette": "วิเนตต์",
+    "sepia": "ซีเปีย",
+    "blackWhite": "ขาวดำ",
+    "vintage": "วินเทจ",
+    "filmGrain": "เม็ดฟิล์ม",
+    "colorPop": "สีเด่น",
+    "lightLeak": "แสงรั่ว"
+  },
+  "preview": {
+    "title": "ตัวอย่าง",
+    "play": "เล่น",
+    "pause": "หยุดชั่วคราว",
+    "position": "{{current}}/{{total}}",
+    "speed": "ความเร็ว",
+    "loop": "วนซ้ำ",
+    "mute": "ปิดเสียง"
+  },
+  "export": {
+    "title": "ส่งออกความทรงจำของคุณ",
+    "subtitle": "{{count}} รูปภาพ • {{duration}} วินาที",
+    "quality": "คุณภาพ",
+    "format": "รูปแบบ",
+    "resolution": "ความละเอียด",
+    "saveToPhotos": "บันทึกลงรูปภาพ",
+    "share": "แชร์",
+    "saveToFiles": "บันทึกลงไฟล์",
+    "exporting": "กำลังส่งออก...",
+    "progress": "{{percent}}% เสร็จสมบูรณ์",
+    "estimatedTime": "ประมาณ {{time}} คงเหลือ",
+    "success": "ส่งออกสำเร็จ!",
+    "error": "ส่งออกล้มเหลว",
+    "view": "ดู",
+    "done": "เสร็จสิ้น",
+    "formats": {
+      "video": "วิดีโอ (MP4)",
+      "gif": "GIF (เคลื่อนไหว)"
+    },
+    "qualities": {
+      "720p": "HD (720p)",
+      "1080p": "Full HD (1080p)",
+      "4K": "4K Ultra HD"
+    },
+    "resolutions": {
+      "1:1": "สี่เหลี่ยมจัตุรัส (1:1)",
+      "9:16": "แนวตั้ง (9:16)",
+      "16:9": "แนวนอน (16:9)",
+      "21:9": "โรงภาพยนตร์ (21:9)"
+    },
+    "fileSizeEstimate": "ขนาดโดยประมาณ: {{size}}",
+    "tooLarge": "ขนาดไฟล์อาจเกิน {{size}}MB"
+  },
+  "settings": {
+    "title": "การตั้งค่า",
+    "appearance": "รูปลักษณ์",
+    "feedback": "ความคิดเห็น",
+    "theme": "ธีม",
+    "soundEffects": "เอฟเฟกต์เสียง",
+    "hapticFeedback": "การตอบสนองแบบสัมผัส",
+    "hapticStrength": "ความแรงของการสัมผัส",
+    "language": "ภาษา",
+    "storage": "ที่เก็บข้อมูล",
+    "cache": "แคช",
+    "clearCache": "ล้างแคช",
+    "clear": "ล้าง",
+    "cacheSize": "ขนาดแคช: {{size}}",
+    "confirmClearCacheMessage": "คุณแน่ใจหรือไม่ว่าต้องการล้างแคช?",
+    "cacheClearedDescription": "ล้างแคชสำเร็จแล้ว",
+    "premium": "พรีเมียม",
+    "premiumActive": "⭐ พรีเมียมใช้งานอยู่",
+    "subscription": {
+      "monthly": "แผนรายเดือน",
+      "annual": "แผนรายปี"
+    },
+    "renewsOn": "ต่ออายุใน {{date}}",
+    "about": "เกี่ยวกับ",
+    "versionLabel": "เวอร์ชัน",
+    "version": "เวอร์ชัน {{version}}",
+    "rateApp": "ให้คะแนนแอป",
+    "shareApp": "แชร์แอป",
+    "helpSupport": "ช่วยเหลือและสนับสนุน",
+    "privacyPolicy": "นโยบายความเป็นส่วนตัว",
+    "termsOfService": "เงื่อนไขการให้บริการ",
+    "licenses": "ใบอนุญาตโอเพนซอร์ส",
+    "hapticStrengthOptions": {
+      "light": "เบา",
+      "medium": "ปานกลาง",
+      "heavy": "แรง"
+    }
+  },
+  "themes": {
+    "light": "สว่าง",
+    "dark": "มืด",
+    "solar": "แสงแดด",
+    "mono": "โมโน",
+    "description": {
+      "light": "สะอาดและสว่าง",
+      "dark": "สบายตา",
+      "solar": "อบอุ่นและมีชีวิตชีวา",
+      "mono": "ขาวดำเรียบง่าย"
+    }
+  },
+  "premium": {
+    "title": "อัปเกรดเป็นพรีเมียม",
+    "subtitle": "ปลดล็อกฟีเจอร์ทั้งหมด",
+    "features": {
+      "unlimitedPhotos": "รูปภาพไม่จำกัด",
+      "unlimitedPhotosDesc": "สร้างสไลด์โชว์ด้วยรูปภาพ 50+ รูป",
+      "premiumTransitions": "การเปลี่ยนภาพพรีเมียม",
+      "premiumTransitionsDesc": "เข้าถึงเอฟเฟกต์การเปลี่ยนภาพพิเศษ 20+ แบบ",
+      "customMusic": "เพลงกำหนดเอง",
+      "customMusicDesc": "เพิ่มเพลงพื้นหลังของคุณเอง",
+      "export4K": "ส่งออก 4K",
+      "export4KDesc": "ส่งออกด้วยความละเอียดสูงพิเศษ",
+      "noWatermark": "ไม่มีลายน้ำ",
+      "noWatermarkDesc": "ส่งออกที่สะอาดและเป็นมืออาชีพ",
+      "advancedEffects": "เอฟเฟกต์ขั้นสูง",
+      "advancedEffectsDesc": "Ken Burns, การปรับสี, ข้อความทับซ้อน",
+      "prioritySupport": "การสนับสนุนแบบลำดับความสำคัญ",
+      "prioritySupportDesc": "รับความช่วยเหลือเมื่อคุณต้องการ",
+      "cloudSync": "ซิงค์คลาวด์",
+      "cloudSyncDesc": "ซิงค์โปรเจกต์ระหว่างอุปกรณ์"
+    },
+    "subscribe": "สมัครสมาชิกตอนนี้",
+    "monthlyPlan": "แผนรายเดือน",
+    "annualPlan": "แผนรายปี",
+    "freeTrial": "เริ่มทดลองใช้ฟรี",
+    "restore": "กู้คืนการซื้อ",
+    "pricing": {
+      "monthly": "$4.99/เดือน",
+      "annual": "$29.99/ปี",
+      "annualMonthly": "$2.50/เดือน",
+      "save": "ประหยัด 50%",
+      "trialMonthly": "ฟรี 3 วัน จากนั้น $4.99/เดือน",
+      "trialAnnual": "ฟรี 7 วัน จากนั้น $29.99/ปี"
+    },
+    "badges": {
+      "mostFlexible": "ยืดหยุ่นที่สุด",
+      "bestValue": "คุ้มค่าที่สุด"
+    },
+    "legal": {
+      "cancelAnytime": "ยกเลิกได้ตลอดเวลา",
+      "autoRenewable": "การสมัครสมาชิกต่ออายุอัตโนมัติ",
+      "termsApply": "เงื่อนไขและข้อกำหนดมีผลบังคับใช้"
+    }
+  },
+  "errors": {
+    "generic": "เกิดข้อผิดพลาด",
+    "networkError": "ข้อผิดพลาดเครือข่าย กรุณาลองอีกครั้ง",
+    "permissionDenied": "ปฏิเสธการอนุญาต",
+    "insufficientStorage": "พื้นที่เก็บข้อมูลไม่เพียงพอ",
+    "imageLoadFailed": "โหลดรูปภาพล้มเหลว",
+    "videoEncodeFailed": "เข้ารหัสวิดีโอล้มเหลว",
+    "gifCreateFailed": "สร้าง GIF ล้มเหลว",
+    "purchaseFailed": "การซื้อล้มเหลว",
+    "restoreFailed": "ไม่พบการซื้อเพื่อกู้คืน",
+    "subscriptionExpired": "การสมัครสมาชิกของคุณหมดอายุแล้ว"
+  },
+  "success": {
+    "projectCreated": "สร้างโปรเจกต์แล้ว",
+    "projectSaved": "บันทึกโปรเจกต์แล้ว",
+    "projectDeleted": "ลบโปรเจกต์แล้ว",
+    "exported": "ส่งออกสำเร็จ",
+    "purchaseComplete": "การซื้อเสร็จสมบูรณ์",
+    "cacheCleared": "ล้างแคชแล้ว"
+  }
+}
