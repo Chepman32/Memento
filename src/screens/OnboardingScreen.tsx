@@ -15,11 +15,8 @@ import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context'
 import LottieView from 'lottie-react-native';
 import Svg, {
   Circle,
-  Defs,
-  LinearGradient,
   Path,
   Rect,
-  Stop,
 } from 'react-native-svg';
 import { useTranslation } from 'react-i18next';
 import { RootStackParamList } from '../navigation/navigationTypes';
@@ -32,6 +29,7 @@ import { haptics } from '../utils/hapticFeedback';
 const VIEWBOX_WIDTH = 300;
 const VIEWBOX_HEIGHT = 220;
 const hookAnimation = require('../assets/animations/Hook.json');
+const intendedTransitionsAnimation = require('../assets/animations/IntendedTransitions.json');
 const exportMomentAnimation = require('../assets/animations/Export for the moment.json');
 
 const withAlpha = (hex: string, alpha: number) => {
@@ -152,96 +150,17 @@ const RhythmIllustration: React.FC<IllustrationProps> = ({ width, height, colors
   );
 };
 
-const TransitionIllustration: React.FC<IllustrationProps> = ({ width, height, colors }) => {
-  const fade = useRef(new Animated.Value(0)).current;
-
-  useEffect(() => {
-    const loop = Animated.loop(
-      Animated.sequence([
-        Animated.timing(fade, {
-          toValue: 1,
-          duration: 1800,
-          easing: Easing.inOut(Easing.quad),
-          useNativeDriver: false,
-        }),
-        Animated.timing(fade, {
-          toValue: 0,
-          duration: 1800,
-          easing: Easing.inOut(Easing.quad),
-          useNativeDriver: false,
-        }),
-      ]),
-    );
-
-    loop.start();
-    return () => loop.stop();
-  }, [fade]);
-
-  const overlayOpacity = fade.interpolate({
-    inputRange: [0, 1],
-    outputRange: [0.2, 0.85],
-  });
-
-  const AnimatedRect = Animated.createAnimatedComponent(Rect);
-
-  return (
-    <View style={[styles.illustrationCanvas, { width, height }]}>
-      <Svg width={width} height={height} viewBox={`0 0 ${VIEWBOX_WIDTH} ${VIEWBOX_HEIGHT}`}>
-        <Circle cx={232} cy={68} r={46} fill={withAlpha(colors.primary, 0.14)} />
-        <Rect
-          x={36}
-          y={50}
-          width={180}
-          height={120}
-          rx={18}
-          fill={withAlpha(colors.surface, 0.95)}
-          stroke={withAlpha(colors.border, 0.75)}
-          strokeWidth={2}
-        />
-        <Rect
-          x={70}
-          y={30}
-          width={190}
-          height={130}
-          rx={18}
-          fill={withAlpha(colors.primary, 0.15)}
-          stroke={withAlpha(colors.border, 0.8)}
-          strokeWidth={2}
-        />
-        <Defs>
-          <LinearGradient id="fade" x1="0" y1="0" x2="1" y2="1">
-            <Stop offset="0" stopColor={withAlpha(colors.secondary, 0.2)} />
-            <Stop offset="1" stopColor={withAlpha(colors.accent, 0.45)} />
-          </LinearGradient>
-        </Defs>
-        <AnimatedRect
-          x={70}
-          y={30}
-          width={190}
-          height={130}
-          rx={18}
-          fill="url(#fade)"
-          opacity={overlayOpacity}
-        />
-        <Path
-          d="M118 92c18 16 46 16 64 0"
-          stroke={colors.accent}
-          strokeWidth={4}
-          strokeLinecap="round"
-          strokeLinejoin="round"
-        />
-        <Path
-          d="M176 76l18 6-12 15"
-          stroke={colors.accent}
-          strokeWidth={4}
-          strokeLinecap="round"
-          strokeLinejoin="round"
-          fill="none"
-        />
-      </Svg>
-    </View>
-  );
-};
+const TransitionIllustration: React.FC<IllustrationProps> = ({ width, height }) => (
+  <View style={[styles.illustrationCanvas, { width, height }]}>
+    <LottieView
+      source={intendedTransitionsAnimation}
+      autoPlay
+      loop
+      resizeMode="contain"
+      style={styles.lottie}
+    />
+  </View>
+);
 
 const ExportIllustration: React.FC<IllustrationProps> = ({ width, height }) => (
   <View style={[styles.illustrationCanvas, { width, height }]}>
