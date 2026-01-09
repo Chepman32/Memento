@@ -11,6 +11,7 @@ import {
   Animated,
   TouchableWithoutFeedback,
 } from 'react-native';
+import { useTranslation } from 'react-i18next';
 import { useThemeStore } from '../../store/themeStore';
 import { SPACING, TYPOGRAPHY, RADII } from '../../constants/theme';
 import { haptics } from '../../utils/hapticFeedback';
@@ -33,16 +34,25 @@ export const InputModal: React.FC<InputModalProps> = ({
   message,
   placeholder = '',
   initialValue = '',
-  confirmText = 'Save',
-  cancelText = 'Cancel',
+  confirmText,
+  cancelText,
   onConfirm,
   onCancel,
 }) => {
+  const { t } = useTranslation();
   const { colors } = useThemeStore();
   const [value, setValue] = useState(initialValue);
   const inputRef = useRef<TextInput>(null);
   const fadeAnim = useRef(new Animated.Value(0)).current;
   const scaleAnim = useRef(new Animated.Value(0.9)).current;
+  const resolvedConfirmText =
+    confirmText && confirmText.trim().length > 0
+      ? confirmText
+      : t('common.save');
+  const resolvedCancelText =
+    cancelText && cancelText.trim().length > 0
+      ? cancelText
+      : t('common.cancel');
 
   useEffect(() => {
     if (visible) {
@@ -160,7 +170,7 @@ export const InputModal: React.FC<InputModalProps> = ({
                       { color: colors.textSecondary },
                     ]}
                   >
-                    {cancelText}
+                    {resolvedCancelText}
                   </Text>
                 </TouchableOpacity>
 
@@ -175,7 +185,9 @@ export const InputModal: React.FC<InputModalProps> = ({
                   activeOpacity={0.7}
                   disabled={!value.trim()}
                 >
-                  <Text style={styles.confirmButtonText}>{confirmText}</Text>
+                  <Text style={styles.confirmButtonText}>
+                    {resolvedConfirmText}
+                  </Text>
                 </TouchableOpacity>
               </View>
             </Animated.View>

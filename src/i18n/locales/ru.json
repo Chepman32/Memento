@@ -28,7 +28,28 @@
     "createNewProject": "Создать новый проект",
     "lastEdited": "Последнее изменение {{time}}",
     "projectCount": "{{count}} фото",
-    "projectCount_plural": "{{count}} фото"
+    "projectCount_plural": "{{count}} фото",
+    "allProjects": "Все проекты",
+    "photos": "фото",
+    "noPreview": "Без предпросмотра",
+    "deleteProject": "Удалить проект",
+    "deleteProjectConfirm": "Вы уверены, что хотите удалить этот проект?",
+    "renameProject": "Переименовать проект",
+    "renameProjectMessage": "Введите новое имя проекта",
+    "newFolder": "Новая папка",
+    "newFolderMessage": "Введите имя новой папки",
+    "renameFolder": "Переименовать папку",
+    "renameFolderMessage": "Введите новое имя папки",
+    "deleteFolder": "Удалить папку",
+    "deleteFolderMessage": "Проекты в этой папке будут перемещены в «Все проекты».",
+    "contextMenu": {
+      "rename": "Переименовать",
+      "duplicate": "Дублировать",
+      "moveToFolder": "Переместить в папку",
+      "archive": "Архивировать",
+      "unarchive": "Восстановить из архива",
+      "delete": "Удалить"
+    }
   },
   "imageSelection": {
     "title": "Выбрать фото",
@@ -38,7 +59,22 @@
     "selectedCount": "Выбрано: {{count}}",
     "createSlideshow": "Создать слайд-шоу ({{count}} фото)",
     "maximumReached": "Максимум {{count}} фотографий",
-    "minimumRequired": "Выберите хотя бы {{count}} фото"
+    "minimumRequired": "Выберите хотя бы {{count}} фото",
+    "selectedCountOnly": "Выбрано: {{count}}",
+    "noPhotosSelected": "Фото еще не выбраны",
+    "addPhotos": "Добавить фото",
+    "continue": "Продолжить",
+    "permissionRequiredTitle": "Требуется разрешение",
+    "permissionRequiredMessageIOS": "Разрешите доступ к фото в настройках, чтобы выбрать изображения для слайд-шоу.",
+    "permissionRequiredMessageAndroid": "Разрешите доступ к фото, чтобы выбрать изображения для слайд-шоу.",
+    "openSettings": "Открыть настройки",
+    "settingsError": "Не удалось открыть настройки. Включите разрешения вручную.",
+    "photoLimitReached": "Достигнут лимит фото",
+    "photoLimitMessage": "Удалите фото перед добавлением новых.",
+    "grantPhotoAccess": "Разрешите доступ к медиатеке в настройках, чтобы выбрать фото.",
+    "loadPhotosError": "Не удалось загрузить фото. Попробуйте еще раз.",
+    "notEnoughPhotos": "Недостаточно фото",
+    "notEnoughPhotosMessage": "Выберите как минимум 2 фото для создания слайд-шоу."
   },
   "editor": {
     "title": "Редактирование слайд-шоу",
@@ -50,7 +86,12 @@
     "export": "Экспорт",
     "durationValue": "{{value}} сек",
     "saveChanges": "Сохранить изменения",
-    "discardChanges": "Отменить изменения"
+    "discardChanges": "Отменить изменения",
+    "durationLabel": "Длительность: {{value}} сек",
+    "remove": "Удалить",
+    "selectSlidePlaceholder": "Нажмите на слайд на таймлайне, чтобы выбрать его",
+    "selectTransitionPlaceholder": "Нажмите на переход или слайд на таймлайне",
+    "newSlideshow": "Новое слайд-шоу"
   },
   "transitions": {
     "fade": "Затухание",
@@ -84,7 +125,9 @@
     "position": "{{current}}/{{total}}",
     "speed": "Скорость",
     "loop": "Цикл",
-    "mute": "Без звука"
+    "mute": "Без звука",
+    "export": "Экспорт",
+    "noProjectFound": "Проект не найден"
   },
   "export": {
     "title": "Экспорт вашего воспоминания",
@@ -104,21 +147,43 @@
     "done": "Готово",
     "formats": {
       "video": "Видео (MP4)",
-      "gif": "GIF (Анимированный)"
+      "gif": "GIF (Анимированный)",
+      "videoSubtitle": "Высокое качество",
+      "gifSubtitle": "Анимированный"
     },
     "qualities": {
       "720p": "HD (720p)",
       "1080p": "Full HD (1080p)",
-      "4K": "4K Ultra HD"
+      "4K": "4K Ultra HD",
+      "720pSubtitle": "720p",
+      "1080pSubtitle": "1080p",
+      "4KSubtitle": "Ultra HD"
     },
     "resolutions": {
       "1:1": "Квадрат (1:1)",
       "9:16": "Портрет (9:16)",
       "16:9": "Альбомная (16:9)",
-      "21:9": "Кино (21:9)"
+      "21:9": "Кино (21:9)",
+      "1:1Subtitle": "1:1",
+      "9:16Subtitle": "9:16",
+      "16:9Subtitle": "16:9",
+      "21:9Subtitle": "21:9"
     },
     "fileSizeEstimate": "Ожидаемый размер: {{size}}",
-    "tooLarge": "Размер файла может превысить {{size}}МБ"
+    "tooLarge": "Размер файла может превысить {{size}}МБ",
+    "exportYourMemory": "Экспорт вашего воспоминания",
+    "projectMeta": "{{count}} фото • {{duration}}с",
+    "aspectRatio": "Соотношение сторон",
+    "exportingProgress": "Экспорт... {{percent}}%",
+    "exportNow": "Экспортировать",
+    "exportComplete": "Экспорт завершен",
+    "videoSaved": "Ваше видео сохранено в галерее!",
+    "gifSaved": "GIF сохранен в галерее ({{size}})",
+    "showInGallery": "Показать в галерее",
+    "videoSaveError": "Видео экспортировано, но не удалось сохранить в галерею. Проверьте разрешения.",
+    "gifSaveError": "GIF экспортирован ({{size}}), но не удалось сохранить в галерею. Проверьте разрешения.",
+    "cancelExport": "Отменить экспорт?",
+    "cancelExportMessage": "Вы уверены, что хотите отменить экспорт?"
   },
   "settings": {
     "title": "Настройки",
@@ -220,7 +285,7 @@
     "tipLabel": "Совет {{index}} из {{total}}",
     "slides": {
       "hook": {
-        "title": "Начните с крючка",
+        "title": "Начните эффектно",
         "body": "Откройте самой сильной фотографией. Двигайтесь от широких планов к деталям, чтобы рассказать четкую историю."
       },
       "rhythm": {
@@ -228,11 +293,11 @@
         "body": "Большинство фотографий отлично смотрятся при 2-3 секундах. Задерживайтесь дольше на моментах, которые важны."
       },
       "transitions": {
-        "title": "Переходы с намерением",
+        "title": "Переходы со смыслом",
         "body": "Выберите один характерный переход и используйте его экономно. Тонкое побеждает загруженное."
       },
       "export": {
-        "title": "Экспортируйте для момента",
+        "title": "Экспорт под задачу",
         "body": "Выберите 9:16 для сторис или 16:9 для ТВ. Сохраните высококачественный мастер один раз."
       }
     }

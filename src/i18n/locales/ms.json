@@ -28,7 +28,28 @@
     "createNewProject": "Cipta Projek Baru",
     "lastEdited": "Terakhir disunting {{time}}",
     "projectCount": "{{count}} foto",
-    "projectCount_plural": "{{count}} foto"
+    "projectCount_plural": "{{count}} foto",
+    "allProjects": "All Projects",
+    "photos": "photos",
+    "noPreview": "No Preview",
+    "deleteProject": "Delete Project",
+    "deleteProjectConfirm": "Are you sure you want to delete this project?",
+    "renameProject": "Rename Project",
+    "renameProjectMessage": "Enter a new name for this project",
+    "newFolder": "New Folder",
+    "newFolderMessage": "Enter a name for the new folder",
+    "renameFolder": "Rename Folder",
+    "renameFolderMessage": "Enter a new name for this folder",
+    "deleteFolder": "Delete Folder",
+    "deleteFolderMessage": "Projects in this folder will be moved to All Projects.",
+    "contextMenu": {
+      "rename": "Rename",
+      "duplicate": "Duplicate",
+      "moveToFolder": "Move to Folder",
+      "archive": "Archive",
+      "unarchive": "Unarchive",
+      "delete": "Delete"
+    }
   },
   "imageSelection": {
     "title": "Pilih Foto",
@@ -38,7 +59,22 @@
     "selectedCount": "{{count}} dipilih",
     "createSlideshow": "Cipta Tayangan Slaid ({{count}} foto)",
     "maximumReached": "Maksimum {{count}} foto dibenarkan",
-    "minimumRequired": "Pilih sekurang-kurangnya {{count}} foto"
+    "minimumRequired": "Pilih sekurang-kurangnya {{count}} foto",
+    "selectedCountOnly": "{{count}} selected",
+    "noPhotosSelected": "No photos selected yet",
+    "addPhotos": "Add Photos",
+    "continue": "Continue",
+    "permissionRequiredTitle": "Permission Required",
+    "permissionRequiredMessageIOS": "Please allow photo access in Settings to pick images for your slideshow.",
+    "permissionRequiredMessageAndroid": "Please allow photo access to pick images for your slideshow.",
+    "openSettings": "Open Settings",
+    "settingsError": "Unable to open settings. Please enable permissions manually.",
+    "photoLimitReached": "Photo Limit Reached",
+    "photoLimitMessage": "Remove a photo before adding new ones.",
+    "grantPhotoAccess": "Please grant photo library access in Settings to select images.",
+    "loadPhotosError": "Unable to load photos. Please try again.",
+    "notEnoughPhotos": "Not Enough Photos",
+    "notEnoughPhotosMessage": "Please select at least 2 photos to create a slideshow."
   },
   "editor": {
     "title": "Edit Tayangan Slaid",
@@ -50,7 +86,12 @@
     "export": "Eksport",
     "durationValue": "{{value}}s",
     "saveChanges": "Simpan Perubahan",
-    "discardChanges": "Buang Perubahan"
+    "discardChanges": "Buang Perubahan",
+    "durationLabel": "Duration: {{value}}s",
+    "remove": "Remove",
+    "selectSlidePlaceholder": "Tap a slide in the timeline to select it",
+    "selectTransitionPlaceholder": "Tap a transition or slide in the timeline",
+    "newSlideshow": "New Slideshow"
   },
   "transitions": {
     "fade": "Luntur",
@@ -84,7 +125,9 @@
     "position": "{{current}}/{{total}}",
     "speed": "Kelajuan",
     "loop": "Ulang",
-    "mute": "Bisukan"
+    "mute": "Bisukan",
+    "export": "Export",
+    "noProjectFound": "No project found"
   },
   "export": {
     "title": "Eksport Kenangan Anda",
@@ -104,21 +147,43 @@
     "done": "Selesai",
     "formats": {
       "video": "Video (MP4)",
-      "gif": "GIF (Animasi)"
+      "gif": "GIF (Animasi)",
+      "videoSubtitle": "High quality",
+      "gifSubtitle": "Animated"
     },
     "qualities": {
       "720p": "HD (720p)",
       "1080p": "Full HD (1080p)",
-      "4K": "4K Ultra HD"
+      "4K": "4K Ultra HD",
+      "720pSubtitle": "720p",
+      "1080pSubtitle": "1080p",
+      "4KSubtitle": "Ultra HD"
     },
     "resolutions": {
       "1:1": "Segi Empat Sama (1:1)",
       "9:16": "Potret (9:16)",
       "16:9": "Landskap (16:9)",
-      "21:9": "Pawagam (21:9)"
+      "21:9": "Pawagam (21:9)",
+      "1:1Subtitle": "1:1",
+      "9:16Subtitle": "9:16",
+      "16:9Subtitle": "16:9",
+      "21:9Subtitle": "21:9"
     },
     "fileSizeEstimate": "Anggaran saiz: {{size}}",
-    "tooLarge": "Saiz fail mungkin melebihi {{size}}MB"
+    "tooLarge": "Saiz fail mungkin melebihi {{size}}MB",
+    "exportYourMemory": "Export Your Memory",
+    "projectMeta": "{{count}} photos • {{duration}}s",
+    "aspectRatio": "Aspect Ratio",
+    "exportingProgress": "Exporting... {{percent}}%",
+    "exportNow": "Export Now",
+    "exportComplete": "Export Complete",
+    "videoSaved": "Your video has been saved to the gallery!",
+    "gifSaved": "GIF saved to gallery ({{size}})",
+    "showInGallery": "Show in Gallery",
+    "videoSaveError": "Video exported but could not be saved to gallery. Please check permissions.",
+    "gifSaveError": "GIF exported ({{size}}) but could not be saved to gallery. Please check permissions.",
+    "cancelExport": "Cancel Export?",
+    "cancelExportMessage": "Are you sure you want to cancel the export?"
   },
   "settings": {
     "title": "Tetapan",

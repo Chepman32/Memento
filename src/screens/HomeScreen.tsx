@@ -50,7 +50,7 @@ const initialModalState: ModalState = {
   title: '',
   message: '',
   initialValue: '',
-  confirmText: 'Save',
+  confirmText: '',
 };
 
 const HomeScreen: React.FC = () => {

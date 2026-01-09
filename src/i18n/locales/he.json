@@ -28,7 +28,28 @@
     "createNewProject": "צור פרויקט חדש",
     "lastEdited": "נערך לאחרונה {{time}}",
     "projectCount": "{{count}} תמונה",
-    "projectCount_plural": "{{count}} תמונות"
+    "projectCount_plural": "{{count}} תמונות",
+    "allProjects": "All Projects",
+    "photos": "photos",
+    "noPreview": "No Preview",
+    "deleteProject": "Delete Project",
+    "deleteProjectConfirm": "Are you sure you want to delete this project?",
+    "renameProject": "Rename Project",
+    "renameProjectMessage": "Enter a new name for this project",
+    "newFolder": "New Folder",
+    "newFolderMessage": "Enter a name for the new folder",
+    "renameFolder": "Rename Folder",
+    "renameFolderMessage": "Enter a new name for this folder",
+    "deleteFolder": "Delete Folder",
+    "deleteFolderMessage": "Projects in this folder will be moved to All Projects.",
+    "contextMenu": {
+      "rename": "Rename",
+      "duplicate": "Duplicate",
+      "moveToFolder": "Move to Folder",
+      "archive": "Archive",
+      "unarchive": "Unarchive",
+      "delete": "Delete"
+    }
   },
   "imageSelection": {
     "title": "בחר תמונות",
@@ -38,7 +59,22 @@
     "selectedCount": "{{count}} נבחרו",
     "createSlideshow": "צור מצגת ({{count}} תמונות)",
     "maximumReached": "מקסימום {{count}} תמונות מותר",
-    "minimumRequired": "בחר לפחות {{count}} תמונות"
+    "minimumRequired": "בחר לפחות {{count}} תמונות",
+    "selectedCountOnly": "{{count}} selected",
+    "noPhotosSelected": "No photos selected yet",
+    "addPhotos": "Add Photos",
+    "continue": "Continue",
+    "permissionRequiredTitle": "Permission Required",
+    "permissionRequiredMessageIOS": "Please allow photo access in Settings to pick images for your slideshow.",
+    "permissionRequiredMessageAndroid": "Please allow photo access to pick images for your slideshow.",
+    "openSettings": "Open Settings",
+    "settingsError": "Unable to open settings. Please enable permissions manually.",
+    "photoLimitReached": "Photo Limit Reached",
+    "photoLimitMessage": "Remove a photo before adding new ones.",
+    "grantPhotoAccess": "Please grant photo library access in Settings to select images.",
+    "loadPhotosError": "Unable to load photos. Please try again.",
+    "notEnoughPhotos": "Not Enough Photos",
+    "notEnoughPhotosMessage": "Please select at least 2 photos to create a slideshow."
   },
   "editor": {
     "title": "ערוך מצגת",
@@ -50,7 +86,12 @@
     "export": "ייצוא",
     "durationValue": "{{value}}s",
     "saveChanges": "שמור שינויים",
-    "discardChanges": "בטל שינויים"
+    "discardChanges": "בטל שינויים",
+    "durationLabel": "Duration: {{value}}s",
+    "remove": "Remove",
+    "selectSlidePlaceholder": "Tap a slide in the timeline to select it",
+    "selectTransitionPlaceholder": "Tap a transition or slide in the timeline",
+    "newSlideshow": "New Slideshow"
   },
   "transitions": {
     "fade": "דעיכה",
@@ -84,7 +125,9 @@
     "position": "{{current}}/{{total}}",
     "speed": "מהירות",
     "loop": "לולאה",
-    "mute": "השתק"
+    "mute": "השתק",
+    "export": "Export",
+    "noProjectFound": "No project found"
   },
   "export": {
     "title": "ייצא את הזיכרון שלך",
@@ -104,21 +147,43 @@
     "done": "סיום",
     "formats": {
       "video": "וידאו (MP4)",
-      "gif": "GIF (אנימציה)"
+      "gif": "GIF (אנימציה)",
+      "videoSubtitle": "High quality",
+      "gifSubtitle": "Animated"
     },
     "qualities": {
       "720p": "HD (720p)",
       "1080p": "Full HD (1080p)",
-      "4K": "4K Ultra HD"
+      "4K": "4K Ultra HD",
+      "720pSubtitle": "720p",
+      "1080pSubtitle": "1080p",
+      "4KSubtitle": "Ultra HD"
     },
     "resolutions": {
       "1:1": "מרובע (1:1)",
       "9:16": "אנכי (9:16)",
       "16:9": "אופקי (16:9)",
-      "21:9": "קולנוע (21:9)"
+      "21:9": "קולנוע (21:9)",
+      "1:1Subtitle": "1:1",
+      "9:16Subtitle": "9:16",
+      "16:9Subtitle": "16:9",
+      "21:9Subtitle": "21:9"
     },
     "fileSizeEstimate": "גודל משוער: {{size}}",
-    "tooLarge": "גודל הקובץ עלול לעלות על {{size}}MB"
+    "tooLarge": "גודל הקובץ עלול לעלות על {{size}}MB",
+    "exportYourMemory": "Export Your Memory",
+    "projectMeta": "{{count}} photos • {{duration}}s",
+    "aspectRatio": "Aspect Ratio",
+    "exportingProgress": "Exporting... {{percent}}%",
+    "exportNow": "Export Now",
+    "exportComplete": "Export Complete",
+    "videoSaved": "Your video has been saved to the gallery!",
+    "gifSaved": "GIF saved to gallery ({{size}})",
+    "showInGallery": "Show in Gallery",
+    "videoSaveError": "Video exported but could not be saved to gallery. Please check permissions.",
+    "gifSaveError": "GIF exported ({{size}}) but could not be saved to gallery. Please check permissions.",
+    "cancelExport": "Cancel Export?",
+    "cancelExportMessage": "Are you sure you want to cancel the export?"
   },
   "settings": {
     "title": "הגדרות",
