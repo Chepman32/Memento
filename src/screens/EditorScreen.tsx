@@ -12,6 +12,7 @@ import {
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useNavigation, useRoute, RouteProp } from '@react-navigation/native';
 import { StackNavigationProp } from '@react-navigation/stack';
+import { useTranslation } from 'react-i18next';
 import FeatherIcon from 'react-native-vector-icons/Feather';
 import { RootStackParamList } from '../navigation/navigationTypes';
 import useProjectStore from '../store/projectStore';
@@ -61,6 +62,7 @@ export const EditorScreen = () => {
   const route = useRoute<EditorScreenRouteProp>();
   const navigation = useNavigation<EditorScreenNavigationProp>();
   const { photos } = route.params;
+  const { t } = useTranslation();
 
   const { colors } = useThemeStore();
   const {
@@ -109,7 +111,7 @@ export const EditorScreen = () => {
     const initializeProject = async () => {
       // When photos are passed in (from image picker), always start a fresh project
       if (photos && photos.length > 0) {
-        await createProject('New Slideshow');
+        await createProject(t('editor.newSlideshow'));
 
         const photoAssets = photos.map((uri: string) => ({
           uri,
@@ -331,14 +333,14 @@ export const EditorScreen = () => {
                   { color: colors.textSecondary },
                 ]}
               >
-                Tap a slide in the timeline to select it
+                {t('editor.selectSlidePlaceholder')}
               </Text>
             ) : (
               <View style={styles.controlGroup}>
                 <Text
                   style={[styles.controlLabel, { color: colors.textSecondary }]}
                 >
-                  Duration: {activePhoto?.duration || 0}s
+                  {t('editor.durationLabel', { value: activePhoto?.duration || 0 })}
                 </Text>
                 <Slider
                   value={activePhoto?.duration || 3}
@@ -374,7 +376,7 @@ export const EditorScreen = () => {
                   { color: colors.textSecondary },
                 ]}
               >
-                Tap a transition or slide in the timeline
+                {t('editor.selectTransitionPlaceholder')}
               </Text>
             ) : (
               <View style={styles.controlGroup}>
@@ -455,7 +457,7 @@ export const EditorScreen = () => {
                   <Text
                     style={[styles.removePhotoText, { color: colors.error }]}
                   >
-                    Remove
+                    {t('editor.remove')}
                   </Text>
                 </TouchableOpacity>
               )}
@@ -473,7 +475,7 @@ export const EditorScreen = () => {
                   <Text
                     style={[styles.removePhotoText, { color: colors.error }]}
                   >
-                    Remove
+                    {t('editor.remove')}
                   </Text>
                 </TouchableOpacity>
               )}
@@ -560,7 +562,7 @@ export const EditorScreen = () => {
                     },
                   ]}
                 >
-                  Duration
+                  {t('editor.duration')}
                 </Text>
               </TouchableOpacity>
             )}
@@ -587,7 +589,7 @@ export const EditorScreen = () => {
                   },
                 ]}
               >
-                Transitions
+                {t('editor.transition')}
               </Text>
             </TouchableOpacity>
           </View>
@@ -619,7 +621,7 @@ export const EditorScreen = () => {
               onPress={handlePreview}
             >
               <Text style={[styles.buttonText, { color: '#FFFFFF' }]}>
-                Preview
+                {t('editor.preview')}
               </Text>
             </TouchableOpacity>
           </View>
@@ -881,6 +883,7 @@ const TransitionPicker: React.FC<TransitionPickerProps> = ({
   selectedTransition,
   onSelect,
 }) => {
+  const { t } = useTranslation();
   const { colors } = useThemeStore();
   const transitions = Object.values(TRANSITIONS);
 
@@ -918,7 +921,7 @@ const TransitionPicker: React.FC<TransitionPickerProps> = ({
                 isSelected && { color: colors.primary, fontWeight: '600' },
               ]}
             >
-              {transition.name}
+              {t(`transitions.${transition.id}`)}
             </Text>
           </TouchableOpacity>
         );
@@ -1028,6 +1031,7 @@ const PhotoTimelineItem: React.FC<PhotoTimelineItemProps> = ({
   setCurrentTargetIndex,
   photosLength,
 }) => {
+  const { t } = useTranslation();
   const { colors } = useThemeStore();
   const translateX = useSharedValue(0);
   const scale = useSharedValue(1);
@@ -1145,12 +1149,12 @@ const PhotoTimelineItem: React.FC<PhotoTimelineItemProps> = ({
             />
           )}
         </View>
-        <Text
-          style={[styles.thumbnailDuration, { color: colors.textSecondary }]}
-          numberOfLines={1}
-        >
-          {photo.duration}s
-        </Text>
+            <Text
+              style={[styles.thumbnailDuration, { color: colors.textSecondary }]}
+              numberOfLines={1}
+            >
+              {t('editor.durationValue', { value: photo.duration })}
+            </Text>
       </Animated.View>
     </GestureDetector>
   );

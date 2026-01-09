@@ -11,6 +11,7 @@ import {
 } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { StackNavigationProp } from '@react-navigation/stack';
+import { useTranslation } from 'react-i18next';
 import FeatherIcon from 'react-native-vector-icons/Feather';
 import ContextMenu from 'react-native-context-menu-view';
 import { RootStackParamList } from '../navigation/navigationTypes';
@@ -54,6 +55,7 @@ const initialModalState: ModalState = {
 
 const HomeScreen: React.FC = () => {
   const navigation = useNavigation<HomeScreenNavigationProp>();
+  const { t } = useTranslation();
   const { colors } = useThemeStore();
   const {
     projects,
@@ -106,12 +108,12 @@ const HomeScreen: React.FC = () => {
     (projectId: string) => {
       haptics.light();
       Alert.alert(
-        'Delete Project',
-        'Are you sure you want to delete this project?',
+        t('home.deleteProject'),
+        t('home.deleteProjectConfirm'),
         [
-          { text: 'Cancel', style: 'cancel' },
+          { text: t('common.cancel'), style: 'cancel' },
           {
-            text: 'Delete',
+            text: t('common.delete'),
             style: 'destructive',
             onPress: () => {
               haptics.medium();
@@ -121,7 +123,7 @@ const HomeScreen: React.FC = () => {
         ],
       );
     },
-    [deleteProject],
+    [deleteProject, t],
   );
 
   const handleRenameProject = useCallback((project: Project) => {
@@ -129,13 +131,13 @@ const HomeScreen: React.FC = () => {
     setModalState({
       visible: true,
       type: 'renameProject',
-      title: 'Rename Project',
-      message: 'Enter a new name for this project',
+      title: t('home.renameProject'),
+      message: t('home.renameProjectMessage'),
       initialValue: project.title,
-      confirmText: 'Save',
+      confirmText: t('common.save'),
       targetId: project.id,
     });
-  }, []);
+  }, [t]);
 
   const handleDuplicateProject = useCallback(
     (projectId: string) => {
@@ -150,12 +152,12 @@ const HomeScreen: React.FC = () => {
     setModalState({
       visible: true,
       type: 'createFolder',
-      title: 'New Folder',
-      message: 'Enter a name for the new folder',
+      title: t('home.newFolder'),
+      message: t('home.newFolderMessage'),
       initialValue: '',
-      confirmText: 'Create',
+      confirmText: t('common.continue'),
     });
-  }, []);
+  }, [t]);
 
   const handleRenameFolder = useCallback((folder: Folder) => {
     if (folder.id === 'root') return;
@@ -164,13 +166,13 @@ const HomeScreen: React.FC = () => {
     setModalState({
       visible: true,
       type: 'renameFolder',
-      title: 'Rename Folder',
-      message: 'Enter a new name for this folder',
+      title: t('home.renameFolder'),
+      message: t('home.renameFolderMessage'),
       initialValue: folder.name,
-      confirmText: 'Save',
+      confirmText: t('common.save'),
       targetId: folder.id,
     });
-  }, []);
+  }, [t]);
 
   const handleDeleteFolder = useCallback(
     (folderId: string) => {
@@ -178,12 +180,12 @@ const HomeScreen: React.FC = () => {
 
       haptics.light();
       Alert.alert(
-        'Delete Folder',
-        'Projects in this folder will be moved to All Projects.',
+        t('home.deleteFolder'),
+        t('home.deleteFolderMessage'),
         [
-          { text: 'Cancel', style: 'cancel' },
+          { text: t('common.cancel'), style: 'cancel' },
           {
-            text: 'Delete',
+            text: t('common.delete'),
             style: 'destructive',
             onPress: () => {
               haptics.medium();
@@ -193,7 +195,7 @@ const HomeScreen: React.FC = () => {
         ],
       );
     },
-    [deleteFolder],
+    [deleteFolder, t],
   );
 
   const handleModalConfirm = useCallback(
@@ -281,31 +283,31 @@ const HomeScreen: React.FC = () => {
 
       return [
         {
-          title: 'Rename',
+          title: t('home.contextMenu.rename'),
           systemIcon: 'pencil',
         },
         {
-          title: 'Duplicate',
+          title: t('home.contextMenu.duplicate'),
           systemIcon: 'doc.on.doc',
         },
         {
-          title: 'Move to Folder',
+          title: t('home.contextMenu.moveToFolder'),
           systemIcon: 'folder',
           inlineChildren: true,
           actions: moveToFolderActions,
         },
         {
-          title: isArchived ? 'Unarchive' : 'Archive',
+          title: isArchived ? t('home.contextMenu.unarchive') : t('home.contextMenu.archive'),
           systemIcon: isArchived ? 'tray.and.arrow.up' : 'archivebox',
         },
         {
-          title: 'Delete',
+          title: t('home.contextMenu.delete'),
           systemIcon: 'trash',
           destructive: true,
         },
       ];
     },
-    [folders],
+    [folders, t],
   );
 
   const renderProject = useCallback(
@@ -344,20 +346,20 @@ const HomeScreen: React.FC = () => {
         }
 
         switch (actionTitle) {
-          case 'Rename':
+          case t('home.contextMenu.rename'):
             handleRenameProject(item);
             break;
-          case 'Duplicate':
+          case t('home.contextMenu.duplicate'):
             handleDuplicateProject(item.id);
             break;
-          case 'Archive':
+          case t('home.contextMenu.archive'):
             handleArchiveProject(item.id);
             break;
-          case 'Unarchive':
+          case t('home.contextMenu.unarchive'):
             // Move back to root folder
             handleMoveToFolder(item.id, 'root');
             break;
-          case 'Delete':
+          case t('home.contextMenu.delete'):
             handleDeleteProject(item.id);
             break;
         }
@@ -405,7 +407,7 @@ const HomeScreen: React.FC = () => {
                       { color: colors.textSecondary },
                     ]}
                   >
-                    No Preview
+                    {t('home.noPreview')}
                   </Text>
                 </View>
               )}
@@ -434,7 +436,7 @@ const HomeScreen: React.FC = () => {
               <Text
                 style={[styles.projectMeta, { color: colors.textSecondary }]}
               >
-                {item.photos.length} photos • {formattedDate}
+                {t('home.projectCount', { count: item.photos.length })} • {formattedDate}
               </Text>
             </View>
           </TouchableOpacity>
@@ -462,17 +464,17 @@ const HomeScreen: React.FC = () => {
       const folderContextActions = isRoot
         ? []
         : [
-            { title: 'Rename', systemIcon: 'pencil' },
-            { title: 'Delete', systemIcon: 'trash', destructive: true },
+            { title: t('home.contextMenu.rename'), systemIcon: 'pencil' },
+            { title: t('home.contextMenu.delete'), systemIcon: 'trash', destructive: true },
           ];
 
       const handleFolderContextAction = (actionTitle: string) => {
         haptics.medium();
         switch (actionTitle) {
-          case 'Rename':
+          case t('home.contextMenu.rename'):
             handleRenameFolder(folder);
             break;
-          case 'Delete':
+          case t('home.contextMenu.delete'):
             handleDeleteFolder(folder.id);
             break;
         }
@@ -497,7 +499,7 @@ const HomeScreen: React.FC = () => {
               style={styles.folderIcon}
             />
             <Text style={[styles.folderName, { color: colors.text }]}>
-              {folder.name}
+              {isRoot ? t('home.allProjects') : folder.name}
             </Text>
             <Text style={[styles.folderCount, { color: colors.textSecondary }]}>
               ({projectCount})
@@ -563,13 +565,13 @@ const HomeScreen: React.FC = () => {
   const renderEmpty = () => (
     <View style={styles.emptyContainer}>
       <Text style={[styles.emptyTitle, { color: colors.text }]}>
-        No Projects Yet
+        {t('home.emptyStateTitle')}
       </Text>
       <Text style={[styles.emptySubtitle, { color: colors.textSecondary }]}>
-        Create your first memory slideshow
+        {t('home.emptyStateSubtitle')}
       </Text>
       <Button
-        title="Get Started"
+        title={t('home.getStartedButton')}
         onPress={handleCreateNew}
         variant="primary"
         style={styles.emptyButton}

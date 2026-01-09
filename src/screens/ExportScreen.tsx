@@ -8,6 +8,7 @@ import {
   SafeAreaView,
   Alert,
 } from 'react-native';
+import { useTranslation } from 'react-i18next';
 import { useNavigation, useRoute, RouteProp } from '@react-navigation/native';
 import { StackNavigationProp } from '@react-navigation/stack';
 import { RootStackParamList } from '../navigation/navigationTypes';
@@ -34,6 +35,7 @@ const ExportScreen: React.FC = () => {
   const navigation = useNavigation<ExportScreenNavigationProp>();
   const route = useRoute<ExportScreenRouteProp>();
   const { projectId } = route.params;
+  const { t } = useTranslation();
 
   const { colors } = useThemeStore();
   const { getProjectById } = useProjectStore();
@@ -99,15 +101,15 @@ const ExportScreen: React.FC = () => {
             haptics.success();
 
             Alert.alert(
-              'Export Complete',
-              'Your video has been saved to the gallery!',
+              t('export.exportComplete'),
+              t('export.videoSaved'),
               [
                 {
-                  text: 'OK',
+                  text: t('common.ok'),
                   onPress: () => navigation.goBack(),
                 },
                 {
-                  text: 'Show in Gallery',
+                  text: t('export.showInGallery'),
                   onPress: async () => {
                     try {
                       await photoLibrary.openPhotosApp();
@@ -123,9 +125,9 @@ const ExportScreen: React.FC = () => {
           } catch (saveError) {
             console.error('Failed to save to photo library:', saveError);
             Alert.alert(
-              'Export Complete',
-              'Video exported but could not be saved to gallery. Please check permissions.',
-              [{ text: 'OK', onPress: () => navigation.goBack() }],
+              t('export.exportComplete'),
+              t('export.videoSaveError'),
+              [{ text: t('common.ok'), onPress: () => navigation.goBack() }],
             );
           }
         } else {
@@ -153,17 +155,15 @@ const ExportScreen: React.FC = () => {
             haptics.success();
 
             Alert.alert(
-              'Export Complete',
-              `GIF saved to gallery (${gifGenerator.formatFileSize(
-                result.fileSize || 0,
-              )})`,
+              t('export.exportComplete'),
+              t('export.gifSaved', { size: gifGenerator.formatFileSize(result.fileSize || 0) }),
               [
                 {
-                  text: 'OK',
+                  text: t('common.ok'),
                   onPress: () => navigation.goBack(),
                 },
                 {
-                  text: 'Show in Gallery',
+                  text: t('export.showInGallery'),
                   onPress: async () => {
                     try {
                       await photoLibrary.openPhotosApp();
@@ -179,11 +179,9 @@ const ExportScreen: React.FC = () => {
           } catch (saveError) {
             console.error('Failed to save to photo library:', saveError);
             Alert.alert(
-              'Export Complete',
-              `GIF exported (${gifGenerator.formatFileSize(
-                result.fileSize || 0,
-              )}) but could not be saved to gallery. Please check permissions.`,
-              [{ text: 'OK', onPress: () => navigation.goBack() }],
+              t('export.exportComplete'),
+              t('export.gifSaveError', { size: gifGenerator.formatFileSize(result.fileSize || 0) }),
+              [{ text: t('common.ok'), onPress: () => navigation.goBack() }],
             );
           }
         } else {
@@ -193,8 +191,8 @@ const ExportScreen: React.FC = () => {
     } catch (error) {
       haptics.error();
       Alert.alert(
-        'Export Failed',
-        error instanceof Error ? error.message : 'Unknown error',
+        t('export.error'),
+        error instanceof Error ? error.message : t('errors.generic'),
       );
     } finally {
       setIsExporting(false);
@@ -205,12 +203,12 @@ const ExportScreen: React.FC = () => {
   const handleClose = () => {
     if (isExporting) {
       Alert.alert(
-        'Cancel Export?',
-        'Are you sure you want to cancel the export?',
+        t('export.cancelExport'),
+        t('export.cancelExportMessage'),
         [
-          { text: 'No', style: 'cancel' },
+          { text: t('common.no'), style: 'cancel' },
           {
-            text: 'Yes',
+            text: t('common.yes'),
             style: 'destructive',
             onPress: () => {
               videoEncoder.cancelEncoding();
@@ -239,7 +237,7 @@ const ExportScreen: React.FC = () => {
         <TouchableOpacity onPress={handleClose} disabled={isExporting}>
           <Text style={[styles.closeButton, { color: colors.text }]}>×</Text>
         </TouchableOpacity>
-        <Text style={[styles.headerTitle, { color: colors.text }]}>Export</Text>
+        <Text style={[styles.headerTitle, { color: colors.text }]}>{t('export.title')}</Text>
         <View style={{ width: 44 }} />
       </View>
 
@@ -250,25 +248,25 @@ const ExportScreen: React.FC = () => {
             {project.title}
           </Text>
           <Text style={[styles.projectMeta, { color: colors.textSecondary }]}>
-            {project.photos.length} photos • {duration}s
+            {t('export.projectMeta', { count: project.photos.length, duration })}
           </Text>
         </View>
 
         {/* Format selection */}
         <View style={styles.section}>
           <Text style={[styles.sectionTitle, { color: colors.text }]}>
-            Format
+            {t('export.format')}
           </Text>
           <View style={styles.optionRow}>
             <OptionCard
-              title="Video (MP4)"
-              subtitle="High quality"
+              title={t('export.formats.video')}
+              subtitle={t('export.formats.videoSubtitle')}
               selected={format === 'video'}
               onPress={() => handleFormatSelect('video')}
             />
             <OptionCard
-              title="GIF"
-              subtitle="Animated"
+              title={t('export.formats.gif')}
+              subtitle={t('export.formats.gifSubtitle')}
               selected={format === 'gif'}
               onPress={() => handleFormatSelect('gif')}
             />
@@ -279,24 +277,24 @@ const ExportScreen: React.FC = () => {
         {format === 'video' && (
           <View style={styles.section}>
             <Text style={[styles.sectionTitle, { color: colors.text }]}>
-              Quality
+              {t('export.quality')}
             </Text>
             <View style={styles.optionRow}>
               <OptionCard
-                title="HD"
-                subtitle="720p"
+                title={t('export.qualities.720p')}
+                subtitle={t('export.qualities.720pSubtitle')}
                 selected={quality === ExportQuality.LOW}
                 onPress={() => handleQualitySelect(ExportQuality.LOW)}
               />
               <OptionCard
-                title="Full HD"
-                subtitle="1080p"
+                title={t('export.qualities.1080p')}
+                subtitle={t('export.qualities.1080pSubtitle')}
                 selected={quality === ExportQuality.MEDIUM}
                 onPress={() => handleQualitySelect(ExportQuality.MEDIUM)}
               />
               <OptionCard
-                title="4K"
-                subtitle="Ultra HD"
+                title={t('export.qualities.4K')}
+                subtitle={t('export.qualities.4KSubtitle')}
                 selected={quality === ExportQuality.HIGH}
                 onPress={() => handleQualitySelect(ExportQuality.HIGH)}
               />
@@ -307,32 +305,32 @@ const ExportScreen: React.FC = () => {
         {/* Resolution selection */}
         <View style={styles.section}>
           <Text style={[styles.sectionTitle, { color: colors.text }]}>
-            Aspect Ratio
+            {t('export.aspectRatio')}
           </Text>
           <View style={styles.optionRow}>
             <OptionCard
-              title="Square"
-              subtitle="1:1"
+              title={t('export.resolutions.1:1')}
+              subtitle={t('export.resolutions.1:1Subtitle')}
               selected={resolution === ResolutionPreset.SQUARE}
               onPress={() => handleResolutionSelect(ResolutionPreset.SQUARE)}
             />
             <OptionCard
-              title="Portrait"
-              subtitle="9:16"
+              title={t('export.resolutions.9:16')}
+              subtitle={t('export.resolutions.9:16Subtitle')}
               selected={resolution === ResolutionPreset.PORTRAIT}
               onPress={() => handleResolutionSelect(ResolutionPreset.PORTRAIT)}
             />
           </View>
           <View style={styles.optionRow}>
             <OptionCard
-              title="Landscape"
-              subtitle="16:9"
+              title={t('export.resolutions.16:9')}
+              subtitle={t('export.resolutions.16:9Subtitle')}
               selected={resolution === ResolutionPreset.LANDSCAPE}
               onPress={() => handleResolutionSelect(ResolutionPreset.LANDSCAPE)}
             />
             <OptionCard
-              title="Cinema"
-              subtitle="21:9"
+              title={t('export.resolutions.21:9')}
+              subtitle={t('export.resolutions.21:9Subtitle')}
               selected={resolution === ResolutionPreset.CINEMA}
               onPress={() => handleResolutionSelect(ResolutionPreset.CINEMA)}
             />
@@ -351,12 +349,12 @@ const ExportScreen: React.FC = () => {
           <View style={styles.exportingContainer}>
             <LoadingSpinner size={40} />
             <Text style={[styles.exportingText, { color: colors.text }]}>
-              Exporting... {Math.round(exportProgress)}%
+              {t('export.exportingProgress', { percent: Math.round(exportProgress) })}
             </Text>
           </View>
         ) : (
           <Button
-            title="Export Now"
+            title={t('export.exportNow')}
             onPress={handleExport}
             variant="primary"
             fullWidth

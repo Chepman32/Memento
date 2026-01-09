@@ -10,6 +10,7 @@ import {
   Linking,
   Platform,
 } from 'react-native';
+import { useTranslation } from 'react-i18next';
 import {
   useNavigation,
   useRoute,
@@ -198,6 +199,7 @@ const DraggableImage: React.FC<DraggableImageProps> = ({
 const ImageSelectionScreen: React.FC = () => {
   const navigation = useNavigation<ImageSelectionNavigationProp>();
   const route = useRoute<RouteProp<RootStackParamList, 'ImageSelection'>>();
+  const { t } = useTranslation();
   const { colors } = useThemeStore();
   const { currentProjectId, getProjectById } = useProjectStore();
 
@@ -272,22 +274,22 @@ const ImageSelectionScreen: React.FC = () => {
 
       if (!allowed) {
         Alert.alert(
-          'Permission Required',
+          t('imageSelection.permissionRequiredTitle'),
           Platform.OS === 'ios'
-            ? 'Please allow photo access in Settings to pick images for your slideshow.'
-            : 'Please allow photo access to pick images for your slideshow.',
+            ? t('imageSelection.permissionRequiredMessageIOS')
+            : t('imageSelection.permissionRequiredMessageAndroid'),
           [
-            { text: 'Cancel', style: 'cancel' },
+            { text: t('common.cancel'), style: 'cancel' },
             {
-              text: 'Open Settings',
+              text: t('imageSelection.openSettings'),
               onPress: () => {
                 if (Platform.OS === 'ios') {
                   Linking.openURL('app-settings:');
                 } else {
                   openSettings().catch(() => {
                     Alert.alert(
-                      'Error',
-                      'Unable to open settings. Please enable permissions manually.',
+                      t('common.error'),
+                      t('imageSelection.settingsError'),
                     );
                   });
                 }
@@ -326,8 +328,8 @@ const ImageSelectionScreen: React.FC = () => {
     if (remainingSlots === 0) {
       haptics.light();
       Alert.alert(
-        'Photo Limit Reached',
-        'Remove a photo before adding new ones.',
+        t('imageSelection.photoLimitReached'),
+        t('imageSelection.photoLimitMessage'),
       );
       return;
     }
@@ -345,12 +347,12 @@ const ImageSelectionScreen: React.FC = () => {
       if (result.errorCode === 'permission') {
         await refreshPermissionStatus();
         Alert.alert(
-          'Permission Required',
-          'Please grant photo library access in Settings to select images.',
+          t('imageSelection.permissionRequiredTitle'),
+          t('imageSelection.grantPhotoAccess'),
           [
-            { text: 'Cancel', style: 'cancel' },
+            { text: t('common.cancel'), style: 'cancel' },
             {
-              text: 'Open Settings',
+              text: t('imageSelection.openSettings'),
               onPress: () => {
                 if (Platform.OS === 'ios') {
                   Linking.openURL('app-settings:');
@@ -368,7 +370,7 @@ const ImageSelectionScreen: React.FC = () => {
           result.errorCode,
           result.errorMessage,
         );
-        Alert.alert('Error', 'Unable to load photos. Please try again.');
+        Alert.alert(t('common.error'), t('imageSelection.loadPhotosError'));
         return;
       }
 
@@ -385,7 +387,7 @@ const ImageSelectionScreen: React.FC = () => {
       }
     } catch (error) {
       console.error('Error selecting images:', error);
-      Alert.alert('Error', 'Unable to load photos. Please try again.');
+      Alert.alert(t('common.error'), t('imageSelection.loadPhotosError'));
     }
   }, [
     ensurePermission,
@@ -411,8 +413,8 @@ const ImageSelectionScreen: React.FC = () => {
   const handleContinue = () => {
     if (selectedImages.length < 2) {
       Alert.alert(
-        'Not Enough Photos',
-        'Please select at least 2 photos to create a slideshow.',
+        t('imageSelection.notEnoughPhotos'),
+        t('imageSelection.notEnoughPhotosMessage'),
       );
       return;
     }
@@ -448,15 +450,15 @@ const ImageSelectionScreen: React.FC = () => {
       >
         <View style={styles.permissionContainer}>
           <Text style={[styles.permissionTitle, { color: colors.text }]}>
-            Photo Access Required
+            {t('imageSelection.permissionRequired')}
           </Text>
           <Text
             style={[styles.permissionText, { color: colors.textSecondary }]}
           >
-            We need access to your photo library to create slideshows
+            {t('imageSelection.permissionMessage')}
           </Text>
           <Button
-            title="Grant Access"
+            title={t('imageSelection.grantAccess')}
             onPress={ensurePermission}
             variant="primary"
           />
@@ -479,14 +481,14 @@ const ImageSelectionScreen: React.FC = () => {
             size={44}
           />
           <Text style={[styles.headerTitle, { color: colors.text }]}>
-            Select Photos
+            {t('imageSelection.title')}
           </Text>
           <View style={{ width: 44 }} />
         </View>
 
         <View style={styles.infoContainer}>
           <Text style={[styles.infoText, { color: colors.textSecondary }]}>
-            {selectedImages.length} of {maxPhotos} selected
+            {t('imageSelection.selectedCount', { count: selectedImages.length, max: maxPhotos })}
           </Text>
         </View>
 
@@ -499,7 +501,7 @@ const ImageSelectionScreen: React.FC = () => {
           {selectedImages.length === 0 ? (
             <View style={styles.emptyContainer}>
               <Text style={[styles.emptyText, { color: colors.textSecondary }]}>
-                No photos selected yet
+                {t('imageSelection.noPhotosSelected')}
               </Text>
             </View>
           ) : (
@@ -526,13 +528,13 @@ const ImageSelectionScreen: React.FC = () => {
           ]}
         >
           <Button
-            title="Add Photos"
+            title={t('imageSelection.addPhotos')}
             onPress={handleSelectImages}
             variant="outlined"
             style={styles.addButton}
           />
           <Button
-            title="Continue"
+            title={t('imageSelection.continue')}
             onPress={handleContinue}
             variant="primary"
             style={styles.continueButton}

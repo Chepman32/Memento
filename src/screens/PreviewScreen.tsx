@@ -13,6 +13,7 @@ import {
   SafeAreaView,
   Animated as RNAnimated,
 } from 'react-native';
+import { useTranslation } from 'react-i18next';
 import { useNavigation, useRoute, RouteProp } from '@react-navigation/native';
 import { StackNavigationProp } from '@react-navigation/stack';
 import {
@@ -76,6 +77,7 @@ const PreviewScreen: React.FC = () => {
   const navigation = useNavigation<PreviewScreenNavigationProp>();
   const route = useRoute<PreviewScreenRouteProp>();
   const { projectId } = route.params;
+  const { t } = useTranslation();
 
   const { colors } = useThemeStore();
   const { getProjectById } = useProjectStore();
@@ -363,7 +365,7 @@ const PreviewScreen: React.FC = () => {
       >
         <View style={styles.errorContainer}>
           <Text style={[styles.errorText, { color: colors.text }]}>
-            No project found
+            {t('preview.noProjectFound')}
           </Text>
         </View>
       </SafeAreaView>
@@ -796,7 +798,7 @@ const PreviewScreen: React.FC = () => {
           style={[styles.exportButton, { backgroundColor: colors.primary }]}
           onPress={handleExport}
         >
-          <Text style={styles.exportButtonText}>Export</Text>
+          <Text style={styles.exportButtonText}>{t('preview.export')}</Text>
         </TouchableOpacity>
       </View>
     </SafeAreaView>
