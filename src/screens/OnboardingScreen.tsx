@@ -12,6 +12,7 @@ import {
 import { useNavigation } from '@react-navigation/native';
 import { StackNavigationProp } from '@react-navigation/stack';
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
+import LottieView from 'lottie-react-native';
 import Svg, {
   Circle,
   Defs,
@@ -19,7 +20,6 @@ import Svg, {
   Path,
   Rect,
   Stop,
-  G,
 } from 'react-native-svg';
 import { useTranslation } from 'react-i18next';
 import { RootStackParamList } from '../navigation/navigationTypes';
@@ -31,6 +31,8 @@ import { haptics } from '../utils/hapticFeedback';
 
 const VIEWBOX_WIDTH = 300;
 const VIEWBOX_HEIGHT = 220;
+const hookAnimation = require('../assets/animations/Hook.json');
+const exportMomentAnimation = require('../assets/animations/Export for the moment.json');
 
 const withAlpha = (hex: string, alpha: number) => {
   const normalized = hex.replace('#', '');
@@ -59,139 +61,17 @@ interface IllustrationProps {
   };
 }
 
-const StoryIllustration: React.FC<IllustrationProps> = ({ width, height, colors }) => {
-  const float = useRef(new Animated.Value(0)).current;
-  const sparkle = useRef(new Animated.Value(0)).current;
-
-  useEffect(() => {
-    const floatLoop = Animated.loop(
-      Animated.sequence([
-        Animated.timing(float, {
-          toValue: 1,
-          duration: 2600,
-          easing: Easing.inOut(Easing.sin),
-          useNativeDriver: true,
-        }),
-        Animated.timing(float, {
-          toValue: 0,
-          duration: 2600,
-          easing: Easing.inOut(Easing.sin),
-          useNativeDriver: true,
-        }),
-      ]),
-    );
-
-    const sparkleLoop = Animated.loop(
-      Animated.sequence([
-        Animated.timing(sparkle, {
-          toValue: 1,
-          duration: 1200,
-          easing: Easing.out(Easing.quad),
-          useNativeDriver: true,
-        }),
-        Animated.timing(sparkle, {
-          toValue: 0,
-          duration: 1200,
-          easing: Easing.in(Easing.quad),
-          useNativeDriver: true,
-        }),
-      ]),
-    );
-
-    floatLoop.start();
-    sparkleLoop.start();
-
-    return () => {
-      floatLoop.stop();
-      sparkleLoop.stop();
-    };
-  }, [float, sparkle]);
-
-  const floatY = float.interpolate({
-    inputRange: [0, 1],
-    outputRange: [0, -10],
-  });
-  const floatRotate = float.interpolate({
-    inputRange: [0, 1],
-    outputRange: ['-1.5deg', '2deg'],
-  });
-
-  const sparkleScale = sparkle.interpolate({
-    inputRange: [0, 1],
-    outputRange: [0.85, 1.2],
-  });
-  const sparkleOpacity = sparkle.interpolate({
-    inputRange: [0, 1],
-    outputRange: [0.35, 1],
-  });
-
-  const accentSoft = withAlpha(colors.secondary, 0.18);
-  const cardFill = withAlpha(colors.surface, 0.96);
-  const cardStroke = withAlpha(colors.border, 0.9);
-  const highlight = withAlpha(colors.accent, 0.35);
-
-  const renderCard = (x: number, y: number, tint: string) => (
-    <G>
-      <Rect
-        x={x}
-        y={y}
-        width={180}
-        height={120}
-        rx={16}
-        fill={cardFill}
-        stroke={cardStroke}
-        strokeWidth={2}
-      />
-      <Rect x={x + 12} y={y + 14} width={156} height={66} rx={10} fill={accentSoft} />
-      <Circle cx={x + 34} cy={y + 38} r={10} fill={tint} />
-      <Path
-        d={`M${x + 18} ${y + 78} L${x + 66} ${y + 40} L${x + 118} ${y + 78} Z`}
-        fill={highlight}
-      />
-      <Rect x={x + 12} y={y + 92} width={96} height={10} rx={5} fill={withAlpha(colors.border, 0.6)} />
-    </G>
-  );
-
-  return (
-    <View style={[styles.illustrationCanvas, { width, height }]}>
-      <Svg width={width} height={height} viewBox={`0 0 ${VIEWBOX_WIDTH} ${VIEWBOX_HEIGHT}`}>
-        <Circle cx={70} cy={70} r={54} fill={withAlpha(colors.primary, 0.18)} />
-        {renderCard(48, 60, colors.primary)}
-        {renderCard(70, 46, colors.secondary)}
-      </Svg>
-      <Animated.View
-        style={[
-          styles.illustrationLayer,
-          {
-            width,
-            height,
-            transform: [{ translateY: floatY }, { rotate: floatRotate }],
-          },
-        ]}
-      >
-        <Svg width={width} height={height} viewBox={`0 0 ${VIEWBOX_WIDTH} ${VIEWBOX_HEIGHT}`}>
-          {renderCard(92, 32, colors.accent)}
-        </Svg>
-      </Animated.View>
-      <Animated.View
-        style={[
-          styles.sparkle,
-          {
-            opacity: sparkleOpacity,
-            transform: [{ scale: sparkleScale }],
-          },
-        ]}
-      >
-        <Svg width={32} height={32} viewBox="0 0 24 24">
-          <Path
-            d="M12 2.5l2.4 5.4 5.6.5-4.2 3.6 1.3 5.5-5.1-3-5.1 3 1.3-5.5-4.2-3.6 5.6-.5L12 2.5z"
-            fill={colors.accent}
-          />
-        </Svg>
-      </Animated.View>
-    </View>
-  );
-};
+const StoryIllustration: React.FC<IllustrationProps> = ({ width, height }) => (
+  <View style={[styles.illustrationCanvas, { width, height }]}>
+    <LottieView
+      source={hookAnimation}
+      autoPlay
+      loop
+      resizeMode="contain"
+      style={styles.lottie}
+    />
+  </View>
+);
 
 const RhythmIllustration: React.FC<IllustrationProps> = ({ width, height, colors }) => {
   const playhead = useRef(new Animated.Value(0)).current;
@@ -363,128 +243,17 @@ const TransitionIllustration: React.FC<IllustrationProps> = ({ width, height, co
   );
 };
 
-const ExportIllustration: React.FC<IllustrationProps> = ({ width, height, colors }) => {
-  const arrow = useRef(new Animated.Value(0)).current;
-  const shimmer = useRef(new Animated.Value(0)).current;
-
-  useEffect(() => {
-    const arrowLoop = Animated.loop(
-      Animated.sequence([
-        Animated.timing(arrow, {
-          toValue: 1,
-          duration: 1700,
-          easing: Easing.inOut(Easing.cubic),
-          useNativeDriver: true,
-        }),
-        Animated.timing(arrow, {
-          toValue: 0,
-          duration: 1700,
-          easing: Easing.inOut(Easing.cubic),
-          useNativeDriver: true,
-        }),
-      ]),
-    );
-
-    const shimmerLoop = Animated.loop(
-      Animated.sequence([
-        Animated.timing(shimmer, {
-          toValue: 1,
-          duration: 1200,
-          easing: Easing.out(Easing.quad),
-          useNativeDriver: true,
-        }),
-        Animated.timing(shimmer, {
-          toValue: 0,
-          duration: 1200,
-          easing: Easing.in(Easing.quad),
-          useNativeDriver: true,
-        }),
-      ]),
-    );
-
-    arrowLoop.start();
-    shimmerLoop.start();
-
-    return () => {
-      arrowLoop.stop();
-      shimmerLoop.stop();
-    };
-  }, [arrow, shimmer]);
-
-  const arrowY = arrow.interpolate({
-    inputRange: [0, 1],
-    outputRange: [0, -12],
-  });
-  const shimmerScale = shimmer.interpolate({
-    inputRange: [0, 1],
-    outputRange: [0.8, 1.3],
-  });
-  const shimmerOpacity = shimmer.interpolate({
-    inputRange: [0, 1],
-    outputRange: [0.25, 0.9],
-  });
-
-  return (
-    <View style={[styles.illustrationCanvas, { width, height }]}>
-      <Svg width={width} height={height} viewBox={`0 0 ${VIEWBOX_WIDTH} ${VIEWBOX_HEIGHT}`}>
-        <Circle cx={78} cy={166} r={44} fill={withAlpha(colors.secondary, 0.14)} />
-        <Rect
-          x={96}
-          y={26}
-          width={120}
-          height={170}
-          rx={24}
-          fill={withAlpha(colors.surface, 0.96)}
-          stroke={withAlpha(colors.border, 0.8)}
-          strokeWidth={2}
-        />
-        <Rect x={110} y={44} width={92} height={122} rx={16} fill={withAlpha(colors.primary, 0.14)} />
-        <Rect x={124} y={176} width={64} height={6} rx={3} fill={withAlpha(colors.border, 0.7)} />
-      </Svg>
-      <Animated.View
-        style={[
-          styles.arrowLayer,
-          {
-            transform: [{ translateY: arrowY }],
-          },
-        ]}
-      >
-        <Svg width={72} height={72} viewBox="0 0 72 72">
-          <Path
-            d="M36 54V18"
-            stroke={colors.accent}
-            strokeWidth={5}
-            strokeLinecap="round"
-          />
-          <Path
-            d="M24 30l12-12 12 12"
-            stroke={colors.accent}
-            strokeWidth={5}
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            fill="none"
-          />
-        </Svg>
-      </Animated.View>
-      <Animated.View
-        style={[
-          styles.shimmer,
-          {
-            opacity: shimmerOpacity,
-            transform: [{ scale: shimmerScale }],
-          },
-        ]}
-      >
-        <Svg width={28} height={28} viewBox="0 0 24 24">
-          <Path
-            d="M12 3l2.2 5 5 .4-3.8 3.3 1.2 5-4.6-2.8-4.6 2.8 1.2-5L4.8 8.4 9.8 8 12 3z"
-            fill={colors.accent}
-          />
-        </Svg>
-      </Animated.View>
-    </View>
-  );
-};
+const ExportIllustration: React.FC<IllustrationProps> = ({ width, height }) => (
+  <View style={[styles.illustrationCanvas, { width, height }]}>
+    <LottieView
+      source={exportMomentAnimation}
+      autoPlay
+      loop
+      resizeMode="contain"
+      style={styles.lottie}
+    />
+  </View>
+);
 
 interface Slide {
   key: string;
@@ -840,6 +609,10 @@ const styles = StyleSheet.create({
   illustrationCanvas: {
     justifyContent: 'center',
     alignItems: 'center',
+  },
+  lottie: {
+    width: '100%',
+    height: '100%',
   },
   illustrationLayer: {
     position: 'absolute',
