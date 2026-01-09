@@ -214,6 +214,29 @@
       "termsApply": "A feltételek és kikötések érvényesek"
     }
   },
+  "onboarding": {
+    "skip": "Kihagyás",
+    "getStarted": "Kezdés",
+    "tipLabel": "Tipp {{index}} / {{total}}",
+    "slides": {
+      "hook": {
+        "title": "Kezdd egy horoggal",
+        "body": "Nyiss a legerősebb fotóddal. Menj a széles képektől a részletekig, hogy tiszta történetet mesélj."
+      },
+      "rhythm": {
+        "title": "Tartsd a ritmust",
+        "body": "A legtöbb fotó 2-3 másodpercnél nagyszerűen érzem. Maradj tovább a számító pillanatok alatt."
+      },
+      "transitions": {
+        "title": "Átmenetek szándékkal",
+        "body": "Válassz egy jellegzetes átmenetet és használd takarékosan. A finom megveri a zsúfoltat."
+      },
+      "export": {
+        "title": "Exportálás a pillanathoz",
+        "body": "Válaszd a 9:16-ot történetekhez vagy a 16:9-et TV-hez. Mentsd el egyszer a kiváló minőségű mestert."
+      }
+    }
+  },
   "errors": {
     "generic": "Valami hiba történt",
     "networkError": "Hálózati hiba. Kérjük, próbáld újra.",

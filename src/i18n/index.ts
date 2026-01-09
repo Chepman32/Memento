@@ -189,7 +189,8 @@ const initializeI18n = async () => {
   });
 };
 
-// Initialize synchronously for immediate use, then update if saved language differs
+// Initialize synchronously with device language for immediate use
+// Language will be updated by App.tsx after settings hydration
 const initialLang = getDeviceLanguage();
 i18n.use(initReactI18next).init({
   resources,
@@ -204,16 +205,6 @@ i18n.use(initReactI18next).init({
   },
 });
 
-// Update language if saved language differs (async)
-getSavedLanguage().then(savedLang => {
-  if (savedLang) {
-    const resolved = resolveLanguage(savedLang);
-    if (resolved && resolved !== initialLang) {
-      i18n.changeLanguage(resolved);
-    }
-  }
-});
-
 // Function to change language
 export const changeLanguage = (languageCode: string): Promise<void> => {
   const resolved = resolveLanguage(languageCode);
@@ -223,4 +214,5 @@ export const changeLanguage = (languageCode: string): Promise<void> => {
   return Promise.resolve();
 };
 
+export { getDeviceLanguage };
 export default i18n;

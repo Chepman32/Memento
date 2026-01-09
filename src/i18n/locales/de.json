@@ -214,6 +214,29 @@
       "termsApply": "Es gelten die Allgemeinen Geschäftsbedingungen"
     }
   },
+  "onboarding": {
+    "skip": "Überspringen",
+    "getStarted": "Loslegen",
+    "tipLabel": "Tipp {{index}} von {{total}}",
+    "slides": {
+      "hook": {
+        "title": "Mit einem Aufhänger beginnen",
+        "body": "Öffnen Sie mit Ihrem stärksten Foto. Gehen Sie von Weitaufnahmen zu Details über, um eine klare Geschichte zu erzählen."
+      },
+      "rhythm": {
+        "title": "Den Rhythmus beibehalten",
+        "body": "Die meisten Fotos wirken bei 2-3 Sekunden großartig. Halten Sie länger bei den Momenten, die zählen."
+      },
+      "transitions": {
+        "title": "Übergänge mit Absicht",
+        "body": "Wählen Sie einen charakteristischen Übergang und verwenden Sie ihn sparsam. Subtil schlägt überladen."
+      },
+      "export": {
+        "title": "Für den Moment exportieren",
+        "body": "Wählen Sie 9:16 für Stories oder 16:9 für TV. Speichern Sie einmal einen hochwertigen Master."
+      }
+    }
+  },
   "errors": {
     "generic": "Etwas ist schief gelaufen",
     "networkError": "Netzwerkfehler. Bitte versuchen Sie es erneut.",

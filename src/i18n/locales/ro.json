@@ -214,6 +214,29 @@
       "termsApply": "Se aplică termenii și condițiile"
     }
   },
+  "onboarding": {
+    "skip": "Omite",
+    "getStarted": "Începe",
+    "tipLabel": "Sfat {{index}} din {{total}}",
+    "slides": {
+      "hook": {
+        "title": "Începe cu un cârlig",
+        "body": "Deschide cu cea mai puternică fotografie. Treci de la cadre largi la detalii pentru a spune o poveste clară."
+      },
+      "rhythm": {
+        "title": "Păstrează ritmul",
+        "body": "Majoritatea fotografiilor sunt excelente la 2-3 secunde. Ține mai mult pe momentele care contează."
+      },
+      "transitions": {
+        "title": "Tranziții cu intenție",
+        "body": "Alege o tranziție semnătură și folosește-o cu moderație. Subtilul învinge aglomerat."
+      },
+      "export": {
+        "title": "Exportă pentru moment",
+        "body": "Alege 9:16 pentru stories sau 16:9 pentru TV. Salvează un master de înaltă calitate o dată."
+      }
+    }
+  },
   "errors": {
     "generic": "Ceva a mers greșit",
     "networkError": "Eroare de rețea. Te rugăm să încerci din nou.",

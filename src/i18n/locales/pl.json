@@ -214,6 +214,29 @@
       "termsApply": "Terms and conditions apply"
     }
   },
+  "onboarding": {
+    "skip": "Pomiń",
+    "getStarted": "Rozpocznij",
+    "tipLabel": "Wskazówka {{index}} z {{total}}",
+    "slides": {
+      "hook": {
+        "title": "Zacznij od haka",
+        "body": "Otwórz najsilniejszym zdjęciem. Przechodź od ujęć szerokokątnych do detali, aby opowiedzieć jasną historię."
+      },
+      "rhythm": {
+        "title": "Zachowaj rytm",
+        "body": "Większość zdjęć wygląda świetnie przez 2-3 sekundy. Zatrzymaj się dłużej na momentach, które się liczą."
+      },
+      "transitions": {
+        "title": "Przejścia z zamiarem",
+        "body": "Wybierz jedno charakterystyczne przejście i używaj go oszczędnie. Subtelność wygrywa z intensywnością."
+      },
+      "export": {
+        "title": "Eksportuj na moment",
+        "body": "Wybierz 9:16 dla relacji lub 16:9 dla TV. Zapisz raz wysokiej jakości master."
+      }
+    }
+  },
   "errors": {
     "generic": "Something went wrong",
     "networkError": "Network error. Please try again.",

@@ -214,6 +214,29 @@
       "termsApply": "Se aplican términos y condiciones"
     }
   },
+  "onboarding": {
+    "skip": "Saltar",
+    "getStarted": "Comenzar",
+    "tipLabel": "Consejo {{index}} de {{total}}",
+    "slides": {
+      "hook": {
+        "title": "Comienza con un gancho",
+        "body": "Abre con tu foto más fuerte. Pasa de tomas amplias a detalles para contar una historia clara."
+      },
+      "rhythm": {
+        "title": "Mantén el ritmo",
+        "body": "La mayoría de las fotos se ven geniales a 2-3 segundos. Mantén más tiempo en los momentos que importan."
+      },
+      "transitions": {
+        "title": "Transiciones con intención",
+        "body": "Elige una transición característica y úsala con moderación. Lo sutil vence a lo ocupado."
+      },
+      "export": {
+        "title": "Exporta para el momento",
+        "body": "Elige 9:16 para historias o 16:9 para TV. Guarda un máster de alta calidad una vez."
+      }
+    }
+  },
   "errors": {
     "generic": "Algo salió mal",
     "networkError": "Error de red. Por favor, inténtalo de nuevo.",

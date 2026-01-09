@@ -214,6 +214,29 @@
       "termsApply": "Voorwaarden zijn van toepassing"
     }
   },
+  "onboarding": {
+    "skip": "Overslaan",
+    "getStarted": "Aan de slag",
+    "tipLabel": "Tip {{index}} van {{total}}",
+    "slides": {
+      "hook": {
+        "title": "Begin met een haak",
+        "body": "Open met je sterkste foto. Ga van brede opnames naar details om een duidelijk verhaal te vertellen."
+      },
+      "rhythm": {
+        "title": "Houd het ritme aan",
+        "body": "De meeste foto's voelen geweldig aan bij 2-3 seconden. Houd langer vast bij momenten die ertoe doen."
+      },
+      "transitions": {
+        "title": "Overgangen met intentie",
+        "body": "Kies één kenmerkende overgang en gebruik deze spaarzaam. Subtiel verslaat druk."
+      },
+      "export": {
+        "title": "Exporteer voor het moment",
+        "body": "Kies 9:16 voor verhalen of 16:9 voor tv. Sla eenmaal een hoge kwaliteit master op."
+      }
+    }
+  },
   "errors": {
     "generic": "Er is iets misgegaan",
     "networkError": "Netwerkfout. Probeer het opnieuw.",

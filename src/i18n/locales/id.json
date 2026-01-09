@@ -214,6 +214,29 @@
       "termsApply": "Syarat dan ketentuan berlaku"
     }
   },
+  "onboarding": {
+    "skip": "Lewati",
+    "getStarted": "Mulai",
+    "tipLabel": "Tips {{index}} dari {{total}}",
+    "slides": {
+      "hook": {
+        "title": "Mulai dengan hook",
+        "body": "Buka dengan foto terkuat Anda. Bergerak dari bidikan lebar ke detail untuk menceritakan kisah yang jelas."
+      },
+      "rhythm": {
+        "title": "Jaga ritme",
+        "body": "Sebagian besar foto terasa bagus pada 2-3 detik. Tahan lebih lama pada momen yang penting."
+      },
+      "transitions": {
+        "title": "Transisi dengan niat",
+        "body": "Pilih satu transisi khas dan gunakan dengan hemat. Halus mengalahkan sibuk."
+      },
+      "export": {
+        "title": "Ekspor untuk momen",
+        "body": "Pilih 9:16 untuk story atau 16:9 untuk TV. Simpan master berkualitas tinggi sekali."
+      }
+    }
+  },
   "errors": {
     "generic": "Terjadi kesalahan",
     "networkError": "Kesalahan jaringan. Silakan coba lagi.",

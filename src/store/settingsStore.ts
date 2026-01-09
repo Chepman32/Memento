@@ -21,6 +21,7 @@ const DEFAULT_SETTINGS: AppSettings = {
 
 interface SettingsState {
   settings: AppSettings;
+  _hasHydrated: boolean;
   updateSettings: (updates: Partial<AppSettings>) => void;
   resetSettings: () => void;
   updateCacheSize: (size: number) => void;
@@ -31,6 +32,7 @@ export const useSettingsStore = create<SettingsState>()(
   persist(
     (set, get) => ({
       settings: DEFAULT_SETTINGS,
+      _hasHydrated: false,
 
       updateSettings: (updates: Partial<AppSettings>) => {
         set((state) => ({
@@ -68,6 +70,9 @@ export const useSettingsStore = create<SettingsState>()(
     {
       name: 'slidemint-settings',
       storage: createJSONStorage(() => AsyncStorage),
+      onRehydrateStorage: () => () => {
+        useSettingsStore.setState({ _hasHydrated: true });
+      },
     }
   )
 );

@@ -214,6 +214,29 @@
       "termsApply": "Terms and conditions apply"
     }
   },
+  "onboarding": {
+    "skip": "Salta",
+    "getStarted": "Inizia",
+    "tipLabel": "Suggerimento {{index}} di {{total}}",
+    "slides": {
+      "hook": {
+        "title": "Inizia con un gancio",
+        "body": "Apri con la tua foto più forte. Passa da inquadrature ampie ai dettagli per raccontare una storia chiara."
+      },
+      "rhythm": {
+        "title": "Mantieni il ritmo",
+        "body": "La maggior parte delle foto funziona bene a 2-3 secondi. Fermati più a lungo sui momenti che contano."
+      },
+      "transitions": {
+        "title": "Transizioni con intenzione",
+        "body": "Scegli una transizione distintiva e usala con parsimonia. Il sottile batte l'intenso."
+      },
+      "export": {
+        "title": "Esporta per il momento",
+        "body": "Scegli 9:16 per le storie o 16:9 per la TV. Salva un master di alta qualità una volta."
+      }
+    }
+  },
   "errors": {
     "generic": "Something went wrong",
     "networkError": "Network error. Please try again.",

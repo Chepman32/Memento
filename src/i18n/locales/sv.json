@@ -214,6 +214,29 @@
       "termsApply": "Villkor och bestämmelser gäller"
     }
   },
+  "onboarding": {
+    "skip": "Hoppa över",
+    "getStarted": "Kom igång",
+    "tipLabel": "Tips {{index}} av {{total}}",
+    "slides": {
+      "hook": {
+        "title": "Börja med en krok",
+        "body": "Öppna med ditt starkaste foto. Gå från vida bilder till detaljer för att berätta en tydlig historia."
+      },
+      "rhythm": {
+        "title": "Håll rytmen",
+        "body": "De flesta foton känns bra vid 2-3 sekunder. Håll längre på stunderna som betyder något."
+      },
+      "transitions": {
+        "title": "Övergångar med avsikt",
+        "body": "Välj en signaturövergång och använd den sparsamt. Subtilt slår upptaget."
+      },
+      "export": {
+        "title": "Exportera för stunden",
+        "body": "Välj 9:16 för stories eller 16:9 för TV. Spara en högkvalitativ master en gång."
+      }
+    }
+  },
   "errors": {
     "generic": "Något gick fel",
     "networkError": "Nätverksfel. Försök igen.",

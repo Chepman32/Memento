@@ -214,6 +214,29 @@
       "termsApply": "Ehdot ja säännöt pätevät"
     }
   },
+  "onboarding": {
+    "skip": "Ohita",
+    "getStarted": "Aloita",
+    "tipLabel": "Vinkki {{index}} / {{total}}",
+    "slides": {
+      "hook": {
+        "title": "Aloita koukulla",
+        "body": "Avaa vahvimmalla kuvallasi. Siirry laajoista otoksista yksityiskohtiin kertoaksesi selkeän tarinan."
+      },
+      "rhythm": {
+        "title": "Pidä rytmi",
+        "body": "Useimmat kuvat tuntuvat hyviltä 2-3 sekunnissa. Pidä pidempään hetkissä, jotka merkitsevät."
+      },
+      "transitions": {
+        "title": "Siirtymät tarkoituksella",
+        "body": "Valitse yksi tunnusomainen siirtymä ja käytä sitä säästeliäästi. Hienovarainen voittaa kiireen."
+      },
+      "export": {
+        "title": "Vie hetkelle",
+        "body": "Valitse 9:16 storieille tai 16:9 TV:lle. Tallenna korkealaatuinen master kerran."
+      }
+    }
+  },
   "errors": {
     "generic": "Jotain meni pieleen",
     "networkError": "Verkkovirhe. Yritä uudelleen.",

@@ -214,6 +214,29 @@
       "termsApply": "Platí podmínky a ujednání"
     }
   },
+  "onboarding": {
+    "skip": "Přeskočit",
+    "getStarted": "Začít",
+    "tipLabel": "Tip {{index}} z {{total}}",
+    "slides": {
+      "hook": {
+        "title": "Začněte háčkem",
+        "body": "Otevřete nejsilnější fotkou. Přejděte od širokých záběrů k detailům, abyste vyprávěli jasný příběh."
+      },
+      "rhythm": {
+        "title": "Udržujte rytmus",
+        "body": "Většina fotek vypadá skvěle při 2-3 sekundách. Podržte déle u okamžiků, na kterých záleží."
+      },
+      "transitions": {
+        "title": "Přechody se záměrem",
+        "body": "Vyberte jeden charakteristický přechod a používejte ho střídmě. Jemné poráží rušné."
+      },
+      "export": {
+        "title": "Exportujte pro okamžik",
+        "body": "Vyberte 9:16 pro příběhy nebo 16:9 pro TV. Uložte jednou vysoce kvalitní master."
+      }
+    }
+  },
   "errors": {
     "generic": "Něco se pokazilo",
     "networkError": "Chyba sítě. Zkuste to znovu.",

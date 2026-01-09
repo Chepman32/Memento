@@ -214,6 +214,29 @@
       "termsApply": "Vilkår og betingelser gjelder"
     }
   },
+  "onboarding": {
+    "skip": "Hopp over",
+    "getStarted": "Kom i gang",
+    "tipLabel": "Tips {{index}} av {{total}}",
+    "slides": {
+      "hook": {
+        "title": "Begynn med en krok",
+        "body": "Åpne med ditt sterkeste bilde. Gå fra vide bilder til detaljer for å fortelle en klar historie."
+      },
+      "rhythm": {
+        "title": "Hold rytmen",
+        "body": "De fleste bilder føles flott ved 2-3 sekunder. Hold lengre på øyeblikkene som betyr noe."
+      },
+      "transitions": {
+        "title": "Overganger med hensikt",
+        "body": "Velg én signaturovergang og bruk den sparsomt. Subtilt slår opptatt."
+      },
+      "export": {
+        "title": "Eksporter for øyeblikket",
+        "body": "Velg 9:16 for stories eller 16:9 for TV. Lagre en høykvalitets master én gang."
+      }
+    }
+  },
   "errors": {
     "generic": "Noe gikk galt",
     "networkError": "Nettverksfeil. Prøv igjen.",

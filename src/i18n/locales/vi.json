@@ -214,6 +214,29 @@
       "termsApply": "Điều khoản và điều kiện áp dụng"
     }
   },
+  "onboarding": {
+    "skip": "Bỏ qua",
+    "getStarted": "Bắt đầu",
+    "tipLabel": "Mẹo {{index}} trên {{total}}",
+    "slides": {
+      "hook": {
+        "title": "Bắt đầu với một móc câu",
+        "body": "Mở đầu với bức ảnh mạnh nhất của bạn. Di chuyển từ các cảnh rộng đến chi tiết để kể một câu chuyện rõ ràng."
+      },
+      "rhythm": {
+        "title": "Giữ nhịp điệu",
+        "body": "Hầu hết các bức ảnh đều tuyệt vời ở 2-3 giây. Giữ lâu hơn ở những khoảnh khắc quan trọng."
+      },
+      "transitions": {
+        "title": "Chuyển cảnh có chủ đích",
+        "body": "Chọn một chuyển cảnh đặc trưng và sử dụng một cách tiết chế. Tinh tế thắng bận rộn."
+      },
+      "export": {
+        "title": "Xuất cho khoảnh khắc",
+        "body": "Chọn 9:16 cho story hoặc 16:9 cho TV. Lưu một bản master chất lượng cao một lần."
+      }
+    }
+  },
   "errors": {
     "generic": "Đã xảy ra lỗi",
     "networkError": "Lỗi mạng. Vui lòng thử lại.",

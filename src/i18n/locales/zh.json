@@ -214,6 +214,52 @@
       "termsApply": "适用条款和条件"
     }
   },
+  "onboarding": {
+    "skip": "跳过",
+    "getStarted": "开始使用",
+    "tipLabel": "提示 {{index}}/{{total}}",
+    "slides": {
+      "hook": {
+        "title": "以吸睛开场",
+        "body": "用您最好的照片开场。从广角镜头到细节特写，讲述清晰的故事。"
+      },
+      "rhythm": {
+        "title": "保持节奏",
+        "body": "大多数照片在2-3秒时效果最佳。在重要时刻停留更长时间。"
+      },
+      "transitions": {
+        "title": "有意识地使用转场",
+        "body": "选择一种标志性的转场效果并谨慎使用。简约胜过繁复。"
+      },
+      "export": {
+        "title": "为场景导出",
+        "body": "故事选择9:16，电视选择16:9。保存一份高质量母版。"
+      }
+    }
+  },
+  "onboarding": {
+    "skip": "跳过",
+    "getStarted": "开始",
+    "tipLabel": "提示 {{index}} / {{total}}",
+    "slides": {
+      "hook": {
+        "title": "以钩子开始",
+        "body": "用您最强的照片开场。从广角镜头移动到细节，讲述一个清晰的故事。"
+      },
+      "rhythm": {
+        "title": "保持节奏",
+        "body": "大多数照片在 2-3 秒时效果很好。在重要的时刻停留更长时间。"
+      },
+      "transitions": {
+        "title": "有意图的过渡",
+        "body": "选择一个标志性过渡并谨慎使用。微妙胜过繁忙。"
+      },
+      "export": {
+        "title": "为时刻导出",
+        "body": "为故事选择 9:16 或为电视选择 16:9。保存一次高质量母版。"
+      }
+    }
+  },
   "errors": {
     "generic": "出了点问题",
     "networkError": "网络错误。请重试。",

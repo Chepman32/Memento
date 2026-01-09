@@ -214,6 +214,29 @@
       "termsApply": "Şartlar ve koşullar geçerlidir"
     }
   },
+  "onboarding": {
+    "skip": "Atla",
+    "getStarted": "Başla",
+    "tipLabel": "İpucu {{index}} / {{total}}",
+    "slides": {
+      "hook": {
+        "title": "Bir çengelle başla",
+        "body": "En güçlü fotoğrafınla aç. Net bir hikaye anlatmak için geniş çekimlerden detaylara geç."
+      },
+      "rhythm": {
+        "title": "Ritmi koru",
+        "body": "Çoğu fotoğraf 2-3 saniyede harika görünür. Önemli anlarda daha uzun dur."
+      },
+      "transitions": {
+        "title": "Kasıtlı geçişler",
+        "body": "Bir imza geçişi seç ve az kullan. İnce, yoğundan daha iyidir."
+      },
+      "export": {
+        "title": "Anı için dışa aktar",
+        "body": "Hikayeler için 9:16 veya TV için 16:9 seç. Bir kez yüksek kaliteli master kaydet."
+      }
+    }
+  },
   "errors": {
     "generic": "Bir şeyler yanlış gitti",
     "networkError": "Ağ hatası. Lütfen tekrar deneyin.",

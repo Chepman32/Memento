@@ -214,6 +214,29 @@
       "termsApply": "Conditions générales applicables"
     }
   },
+  "onboarding": {
+    "skip": "Passer",
+    "getStarted": "Commencer",
+    "tipLabel": "Astuce {{index}} sur {{total}}",
+    "slides": {
+      "hook": {
+        "title": "Commencez par un accroche",
+        "body": "Ouvrez avec votre photo la plus forte. Passez des plans larges aux détails pour raconter une histoire claire."
+      },
+      "rhythm": {
+        "title": "Gardez le rythme",
+        "body": "La plupart des photos sont parfaites à 2-3 secondes. Restez plus longtemps sur les moments qui comptent."
+      },
+      "transitions": {
+        "title": "Transitions avec intention",
+        "body": "Choisissez une transition signature et utilisez-la avec parcimonie. Le subtil bat le chargé."
+      },
+      "export": {
+        "title": "Exportez pour le moment",
+        "body": "Choisissez 9:16 pour les stories ou 16:9 pour la TV. Enregistrez un master haute qualité une fois."
+      }
+    }
+  },
   "errors": {
     "generic": "Une erreur s'est produite",
     "networkError": "Erreur réseau. Veuillez réessayer.",

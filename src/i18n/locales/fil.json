@@ -214,6 +214,29 @@
       "termsApply": "Naaangkop ang mga terms at conditions"
     }
   },
+  "onboarding": {
+    "skip": "Laktawan",
+    "getStarted": "Magsimula",
+    "tipLabel": "Tip {{index}} ng {{total}}",
+    "slides": {
+      "hook": {
+        "title": "Magsimula sa isang hook",
+        "body": "Buksan ang iyong pinakamalakas na larawan. Galing sa malawak na shots tungo sa detalye para magkuwento ng malinaw."
+      },
+      "rhythm": {
+        "title": "Panatilihin ang ritmo",
+        "body": "Karamihan ng mga larawan ay magandang tingnan sa 2-3 segundo. Manatili nang mas matagal sa mga sandaling mahalaga."
+      },
+      "transitions": {
+        "title": "Mga transition na may layunin",
+        "body": "Pumili ng isang signature transition at gamitin ito nang maingat. Ang banayad ay nananatiling mabuti kaysa sa masikip."
+      },
+      "export": {
+        "title": "I-export para sa sandali",
+        "body": "Pumili ng 9:16 para sa stories o 16:9 para sa TV. Mag-save ng isang high quality master nang minsan."
+      }
+    }
+  },
   "errors": {
     "generic": "May naging problema",
     "networkError": "Network error. Pakisubukan ulit.",

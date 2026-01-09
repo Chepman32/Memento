@@ -214,6 +214,29 @@
       "termsApply": "Terma dan syarat terpakai"
     }
   },
+  "onboarding": {
+    "skip": "Langkau",
+    "getStarted": "Mulakan",
+    "tipLabel": "Petua {{index}} daripada {{total}}",
+    "slides": {
+      "hook": {
+        "title": "Mulakan dengan cangkuk",
+        "body": "Buka dengan foto terkuat anda. Bergerak dari tangkapan luas ke butiran untuk menceritakan kisah yang jelas."
+      },
+      "rhythm": {
+        "title": "Kekalkan irama",
+        "body": "Kebanyakan foto terasa hebat pada 2-3 saat. Tahan lebih lama pada saat-saat yang penting."
+      },
+      "transitions": {
+        "title": "Peralihan dengan niat",
+        "body": "Pilih satu peralihan tandatangan dan gunakannya dengan jimat. Halus mengalahkan sibuk."
+      },
+      "export": {
+        "title": "Eksport untuk detik",
+        "body": "Pilih 9:16 untuk cerita atau 16:9 untuk TV. Simpan master berkualiti tinggi sekali."
+      }
+    }
+  },
   "errors": {
     "generic": "Sesuatu telah berlaku",
     "networkError": "Ralat rangkaian. Sila cuba lagi.",
