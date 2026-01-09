@@ -109,7 +109,7 @@
     "push": "Толчок"
   },
   "effects": {
-    "kenBurns": "Ken Burns",
+    "kenBurns": "Кен Бернс",
     "vignette": "Виньетка",
     "sepia": "Сепия",
     "blackWhite": "Черно-белое",
@@ -153,11 +153,11 @@
     },
     "qualities": {
       "720p": "HD (720p)",
-      "1080p": "Full HD (1080p)",
-      "4K": "4K Ultra HD",
+      "1080p": "Полное HD (1080p)",
+      "4K": "4К Ультра HD",
       "720pSubtitle": "720p",
       "1080pSubtitle": "1080p",
-      "4KSubtitle": "Ultra HD"
+      "4KSubtitle": "Ультра HD"
     },
     "resolutions": {
       "1:1": "Квадрат (1:1)",

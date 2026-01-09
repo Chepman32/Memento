@@ -57,6 +57,7 @@ const PREVIEW_WIDTH = SCREEN_WIDTH - SPACING.sm * 2;
 const PREVIEW_HEIGHT = SCREEN_HEIGHT * 0.55; // Expand preview area to occupy more vertical space
 const TIMELINE_HEIGHT = 80;
 const THUMBNAIL_SIZE = 60;
+const REMOVE_ICON = require('../assets/icons/remove.png');
 
 export const EditorScreen = () => {
   const route = useRoute<EditorScreenRouteProp>();
@@ -454,11 +455,11 @@ export const EditorScreen = () => {
                   ]}
                   onPress={handleRemovePhoto}
                 >
-                  <Text
-                    style={[styles.removePhotoText, { color: colors.error }]}
-                  >
-                    {t('editor.remove')}
-                  </Text>
+                  <RNImage
+                    source={REMOVE_ICON}
+                    style={[styles.removePhotoIcon, { tintColor: colors.error }]}
+                    resizeMode="contain"
+                  />
                 </TouchableOpacity>
               )}
               {selectedTransitionIndex !== null && (
@@ -472,11 +473,11 @@ export const EditorScreen = () => {
                   ]}
                   onPress={handleTransitionRemove}
                 >
-                  <Text
-                    style={[styles.removePhotoText, { color: colors.error }]}
-                  >
-                    {t('editor.remove')}
-                  </Text>
+                  <RNImage
+                    source={REMOVE_ICON}
+                    style={[styles.removePhotoIcon, { tintColor: colors.error }]}
+                    resizeMode="contain"
+                  />
                 </TouchableOpacity>
               )}
             </View>
@@ -1309,10 +1310,9 @@ const styles = StyleSheet.create({
     marginLeft: SPACING.sm,
     borderWidth: 1,
   },
-  removePhotoText: {
-    fontSize: 14,
-    fontWeight: '600',
-    letterSpacing: 0.2,
+  removePhotoIcon: {
+    width: 16,
+    height: 16,
   },
   headerTitle: {
     ...TYPOGRAPHY.h3,

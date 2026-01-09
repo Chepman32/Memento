@@ -94,29 +94,29 @@
     "newSlideshow": "Nowy pokaz slajdów"
   },
   "transitions": {
-    "fade": "Fade",
-    "slideLeft": "Slide Left",
-    "slideRight": "Slide Right",
-    "slideUp": "Slide Up",
-    "slideDown": "Slide Down",
-    "zoom": "Zoom",
-    "rotate": "Rotate",
-    "cube": "Cube",
-    "flip": "Flip",
-    "dissolve": "Dissolve",
-    "blur": "Blur",
-    "wipeCircle": "Circle Wipe",
-    "push": "Push"
+    "fade": "Zanikanie",
+    "slideLeft": "Przesuń w lewo",
+    "slideRight": "Przesuń w prawo",
+    "slideUp": "Przesuń w górę",
+    "slideDown": "Przesuń W dół",
+    "zoom": "Powiększ",
+    "rotate": "Obróć",
+    "cube": "Kostka",
+    "flip": "Odwróć",
+    "dissolve": "Rozpuść",
+    "blur": "Rozmycie",
+    "wipeCircle": "Wytarcie okręgu",
+    "push": "Naciśnij"
   },
   "effects": {
-    "kenBurns": "Ken Burns",
-    "vignette": "Vignette",
+    "kenBurns": "Ken Przypalenia",
+    "vignette": "Winieta",
     "sepia": "Sepia",
-    "blackWhite": "Black & White",
+    "blackWhite": "Czarno-biały",
     "vintage": "Vintage",
-    "filmGrain": "Film Grain",
-    "colorPop": "Color Pop",
-    "lightLeak": "Light Leak"
+    "filmGrain": "Ziarno filmu",
+    "colorPop": "Wyostrzenie kolorów",
+    "lightLeak": "Jasny Wyciek"
   },
   "preview": {
     "title": "Podgląd",
