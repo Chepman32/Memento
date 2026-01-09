@@ -62,8 +62,8 @@ export const Button: React.FC<ButtonProps> = ({
       },
       large: {
         paddingHorizontal: SPACING.xl,
-        paddingVertical: SPACING.lg,
-        height: 56,
+        paddingVertical: SPACING.md,
+        height: 64,
       },
     };
 
