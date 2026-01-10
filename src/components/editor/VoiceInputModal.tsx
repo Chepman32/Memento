@@ -50,12 +50,26 @@ export const VoiceInputModal: React.FC<VoiceInputModalProps> = ({
   const fadeAnim = useRef(new Animated.Value(0)).current;
   const scaleAnim = useRef(new Animated.Value(0.9)).current;
   const pulseAnim = useRef(new Animated.Value(1)).current;
+  const autoStartRef = useRef(false);
 
   useEffect(() => {
+    let isActive = true;
+
     if (visible) {
       setText(initialText);
       setError(null);
-      checkPermissions();
+      autoStartRef.current = false;
+
+      const autoStartRecording = async () => {
+        const hasPermission = await checkPermissions();
+        if (!isActive || autoStartRef.current) return;
+        if (hasPermission) {
+          autoStartRef.current = true;
+          handleStartRecording(true);
+        }
+      };
+
+      autoStartRecording();
 
       Animated.parallel([
         Animated.timing(fadeAnim, {
@@ -71,6 +85,7 @@ export const VoiceInputModal: React.FC<VoiceInputModalProps> = ({
         }),
       ]).start();
     } else {
+      autoStartRef.current = false;
       Animated.parallel([
         Animated.timing(fadeAnim, {
           toValue: 0,
@@ -84,6 +99,10 @@ export const VoiceInputModal: React.FC<VoiceInputModalProps> = ({
         }),
       ]).start();
     }
+
+    return () => {
+      isActive = false;
+    };
   }, [visible, initialText]);
 
   // Pulse animation for recording indicator
@@ -108,22 +127,29 @@ export const VoiceInputModal: React.FC<VoiceInputModalProps> = ({
     }
   }, [isRecording]);
 
-  const checkPermissions = async () => {
+  const checkPermissions = async (): Promise<boolean> => {
     try {
       const available = await speechRecognition.isAvailable();
       if (!available) {
+        setPermissionGranted(false);
         setError(t('editor.voiceInput.notAvailable'));
-        return;
+        return false;
       }
 
       const permissions = await speechRecognition.requestPermissions();
-      setPermissionGranted(permissions.speech && permissions.microphone);
+      const granted = permissions.speech && permissions.microphone;
+      setPermissionGranted(granted);
 
-      if (!permissions.speech || !permissions.microphone) {
+      if (!granted) {
         setError(t('editor.voiceInput.permissionDenied'));
+        return false;
       }
+
+      return true;
     } catch (err) {
+      setPermissionGranted(false);
       setError(t('editor.voiceInput.permissionError'));
+      return false;
     }
   };
 
@@ -147,11 +173,13 @@ export const VoiceInputModal: React.FC<VoiceInputModalProps> = ({
     );
   };
 
-  const handleStartRecording = async () => {
-    if (!permissionGranted) {
+  const handleStartRecording = async (permissionOverride?: boolean) => {
+    const hasPermission = permissionOverride ?? permissionGranted;
+    if (!hasPermission) {
       handlePermissionError();
       return;
     }
+    if (isRecording || isInitializing) return;
 
     setIsInitializing(true);
     setError(null);
@@ -205,6 +233,9 @@ export const VoiceInputModal: React.FC<VoiceInputModalProps> = ({
     if (text.trim()) {
       haptics.success();
       sounds.success();
+      if (isRecording) {
+        handleStopRecording();
+      }
       onConfirm(text.trim());
       speechRecognition.cleanup();
     }

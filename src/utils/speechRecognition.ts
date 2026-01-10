@@ -92,11 +92,6 @@ class SpeechRecognition {
   }
 
   cleanup() {
-    if (eventEmitter) {
-      eventEmitter.removeAllListeners('onSpeechResults');
-      eventEmitter.removeAllListeners('onSpeechError');
-      eventEmitter.removeAllListeners('onSpeechEnd');
-    }
     this.onResultsCallback = null;
     this.onErrorCallback = null;
     this.onEndCallback = null;

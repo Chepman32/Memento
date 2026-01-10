@@ -63,6 +63,7 @@ const PREVIEW_HEIGHT = SCREEN_HEIGHT * 0.55; // Expand preview area to occupy mo
 const TIMELINE_HEIGHT = 80;
 const THUMBNAIL_SIZE = 60;
 const REMOVE_ICON = require('../assets/icons/remove.png');
+const PREVIEW_ICON = require('../assets/icons/preview.png');
 
 // Caption color palettes
 const FONT_COLORS = [
@@ -644,6 +645,19 @@ export const EditorScreen = () => {
           </View>
           <View style={styles.headerRight}>
             <IconButton
+              icon={
+                <RNImage
+                  source={PREVIEW_ICON}
+                  style={[styles.previewIcon, { tintColor: colors.text }]}
+                  resizeMode="contain"
+                />
+              }
+              onPress={handlePreview}
+              variant="default"
+              size={44}
+              disabled={!currentProject}
+            />
+            <IconButton
               icon={<FeatherIcon name="mic" size={22} color={colors.text} />}
               onPress={() => {
                 if (activePhotoIndex !== null) {
@@ -808,30 +822,6 @@ export const EditorScreen = () => {
           >
             {renderTabContent()}
           </ScrollView>
-
-          {/* Footer Button */}
-          <View
-            style={[
-              styles.footer,
-              {
-                backgroundColor: colors.surface,
-                borderTopColor: colors.border,
-              },
-            ]}
-          >
-            <TouchableOpacity
-              style={[
-                styles.button,
-                styles.primaryButton,
-                { backgroundColor: colors.primary },
-              ]}
-              onPress={handlePreview}
-            >
-              <Text style={[styles.buttonText, { color: '#FFFFFF' }]}>
-                {t('editor.preview')}
-              </Text>
-            </TouchableOpacity>
-          </View>
         </View>
 
         {/* Voice Input Modal */}
@@ -2013,28 +2003,9 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: 'bold',
   },
-  footer: {
-    flexDirection: 'row',
-    paddingHorizontal: SPACING.sm,
-    paddingVertical: SPACING.xs,
-    borderTopWidth: 1,
-  },
-  button: {
-    height: 50,
-    borderRadius: RADII.md,
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginHorizontal: SPACING.sm,
-  },
-  primaryButton: {
-    flex: 1,
-  },
-  secondaryButton: {
-    borderWidth: 1,
-  },
-  buttonText: {
-    fontSize: 16,
-    fontWeight: '600',
+  previewIcon: {
+    width: 22,
+    height: 22,
   },
 });
 
