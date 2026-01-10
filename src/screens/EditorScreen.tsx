@@ -894,6 +894,7 @@ const PhotoPreview: React.FC<PhotoPreviewProps> = ({
   const [size, setSize] = useState({ width, height });
   const image = useImage(photo.uri);
   const { colors } = useThemeStore();
+  const captionStyle = photo.caption?.style ?? DEFAULT_CAPTION_STYLE;
 
   // Draggable caption state
   const translateX = useSharedValue(0);
@@ -901,6 +902,7 @@ const PhotoPreview: React.FC<PhotoPreviewProps> = ({
   const isDragging = useSharedValue(false);
   const startX = useSharedValue(0);
   const startY = useSharedValue(0);
+  const captionHeight = useSharedValue(0);
 
   // Initialize offsets from photo caption style
   useEffect(() => {
@@ -928,10 +930,24 @@ const PhotoPreview: React.FC<PhotoPreviewProps> = ({
       isDragging.value = false;
       // Convert pixel offset to percentage
       const offsetXPercent = (translateX.value / width) * 100;
-      const offsetYPercent = (translateY.value / height) * 100;
-      // Clamp to reasonable bounds
+      // Clamp to keep caption within frame bounds
       const clampedX = Math.max(-50, Math.min(50, offsetXPercent));
-      const clampedY = Math.max(-50, Math.min(50, offsetYPercent));
+      const measuredHeight =
+        captionHeight.value || captionStyle.fontSize + captionStyle.padding;
+      const baseTop =
+        captionStyle.position === 'top'
+          ? captionStyle.padding
+          : captionStyle.position === 'center'
+            ? (height - measuredHeight) / 2
+            : height - captionStyle.padding - measuredHeight;
+      const topLimit = -baseTop;
+      const bottomLimit = height - measuredHeight - baseTop;
+      const minY = Math.min(topLimit, bottomLimit);
+      const maxY = Math.max(topLimit, bottomLimit);
+      const clampedYPx = Math.max(minY, Math.min(maxY, translateY.value));
+      const clampedY = (clampedYPx / height) * 100;
+      translateX.value = (clampedX / 100) * width;
+      translateY.value = clampedYPx;
       if (onCaptionDrag) {
         runOnJS(onCaptionDrag)(clampedX, clampedY);
       }
@@ -1028,6 +1044,9 @@ const PhotoPreview: React.FC<PhotoPreviewProps> = ({
 
     const captionContent = (
       <Animated.View
+        onLayout={(event) => {
+          captionHeight.value = event.nativeEvent.layout.height;
+        }}
         style={[
           {
             backgroundColor: style.backgroundColor,

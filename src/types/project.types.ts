@@ -65,7 +65,7 @@ export interface CaptionStyle {
   padding: number;
   maxWidth: number;
   offsetX: number; // percentage offset from center (-50 to 50)
-  offsetY: number; // percentage offset from base position (-50 to 50)
+  offsetY: number; // percentage offset from base position
 }
 
 export enum CaptionPosition {
