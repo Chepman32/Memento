@@ -84,7 +84,7 @@ export const DEFAULT_CAPTION_STYLE: CaptionStyle = {
   padding: 12,
   maxWidth: 90,
   offsetX: 0,
-  offsetY: 0,
+  offsetY: -16,
 };
 
 export interface Transition {
