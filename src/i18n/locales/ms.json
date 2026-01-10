@@ -91,7 +91,36 @@
     "remove": "Alih keluar",
     "selectSlidePlaceholder": "Ketik slaid dalam garis masa untuk memilihnya",
     "selectTransitionPlaceholder": "Ketik peralihan atau slaid dalam garis masa",
-    "newSlideshow": "Tayangan Slaid Baharu"
+    "newSlideshow": "Tayangan Slaid Baharu",
+    "voiceInput": {
+      "title": "Suara ke Teks",
+      "slideNumber": "Menambah kapsyen pada slaid {{number}}",
+      "placeholder": "Ketik mikrofon untuk mula merakam atau taip kapsyen anda di sini...",
+      "recording": "Merakam...",
+      "recordingHint": "Bercakap dengan jelas. Ketik mikrofon untuk berhenti.",
+      "tapToRecord": "Ketik mikrofon untuk mula merakam",
+      "notAvailable": "Pengecaman pertuturan tidak tersedia pada peranti ini",
+      "permissionDenied": "Kebenaran mikrofon dan pengecaman pertuturan diperlukan",
+      "permissionError": "Gagal menyemak kebenaran",
+      "permissionRequired": "Kebenaran Diperlukan",
+      "permissionInstructions": "Sila benarkan kebenaran mikrofon dan pengecaman pertuturan dalam Tetapan untuk menggunakan input suara",
+      "startError": "Gagal memulakan rakaman",
+      "stopError": "Gagal menghentikan rakaman",
+      "noSpeechDetected": "Tiada pertuturan dikesan. Sila cuba lagi.",
+      "networkError": "Ralat rangkaian berlaku semasa transkripsi",
+      "unknownError": "Ralat berlaku semasa transkripsi"
+    },
+    "captions": {
+      "tab": "Kapsyen",
+      "fontSize": "Saiz Fon",
+      "fontWeight": "Berat",
+      "fontColor": "Warna Teks",
+      "backgroundColor": "Latar Belakang",
+      "normal": "Normal",
+      "bold": "Tebal",
+      "dragToMove": "Seret kapsyen untuk ubah kedudukan",
+      "noCaptionPlaceholder": "Tiada kapsyen pada slaid ini"
+    }
   },
   "transitions": {
     "fade": "Luntur",

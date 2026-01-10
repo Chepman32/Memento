@@ -91,7 +91,36 @@
     "remove": "Ta bort",
     "selectSlidePlaceholder": "Tryck på en bild på tidslinjen för att välja den",
     "selectTransitionPlaceholder": "Tryck på en övergång eller bild på tidslinjen",
-    "newSlideshow": "Nytt bildspel"
+    "newSlideshow": "Nytt bildspel",
+    "voiceInput": {
+      "title": "Tal till text",
+      "slideNumber": "Lägger till bildtext på bild {{number}}",
+      "placeholder": "Tryck på mikrofonen för att börja spela in eller skriv din bildtext här...",
+      "recording": "Spelar in...",
+      "recordingHint": "Prata tydligt. Tryck på mikrofonen för att stoppa.",
+      "tapToRecord": "Tryck på mikrofonen för att börja spela in",
+      "notAvailable": "Taligenkänning är inte tillgänglig på den här enheten",
+      "permissionDenied": "Behörigheter för mikrofon och taligenkänning krävs",
+      "permissionError": "Det gick inte att kontrollera behörigheter",
+      "permissionRequired": "Behörighet krävs",
+      "permissionInstructions": "Aktivera behörigheter för mikrofon och taligenkänning i Inställningar för att använda röstinmatning",
+      "startError": "Det gick inte att starta inspelningen",
+      "stopError": "Det gick inte att stoppa inspelningen",
+      "noSpeechDetected": "Ingen tal upptäcktes. Försök igen.",
+      "networkError": "Ett nätverksfel uppstod under transkriberingen",
+      "unknownError": "Ett fel uppstod under transkriberingen"
+    },
+    "captions": {
+      "tab": "Bildtexter",
+      "fontSize": "Teckenstorlek",
+      "fontWeight": "Vikt",
+      "fontColor": "Textfärg",
+      "backgroundColor": "Bakgrund",
+      "normal": "Normal",
+      "bold": "Fet",
+      "dragToMove": "Dra bildtexten för att ändra position",
+      "noCaptionPlaceholder": "Ingen bildtext på den här bilden"
+    }
   },
   "transitions": {
     "fade": "Tona bort",

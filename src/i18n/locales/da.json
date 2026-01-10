@@ -91,7 +91,36 @@
     "remove": "Fjerne",
     "selectSlidePlaceholder": "Tryk på et dias på tidslinjen for at vælge det",
     "selectTransitionPlaceholder": "Tryk på en overgang eller et dias på tidslinjen",
-    "newSlideshow": "Nyt diasshow"
+    "newSlideshow": "Nyt diasshow",
+    "voiceInput": {
+      "title": "Tale til tekst",
+      "slideNumber": "Tilføjer billedtekst til dias {{number}}",
+      "placeholder": "Tryk på mikrofonen for at starte optagelse eller skriv din billedtekst her...",
+      "recording": "Optager...",
+      "recordingHint": "Tal tydeligt. Tryk på mikrofonen for at stoppe.",
+      "tapToRecord": "Tryk på mikrofonen for at starte optagelse",
+      "notAvailable": "Talegenkendelse er ikke tilgængelig på denne enhed",
+      "permissionDenied": "Der kræves tilladelse til mikrofon og talegenkendelse",
+      "permissionError": "Kunne ikke tjekke tilladelser",
+      "permissionRequired": "Tilladelse kræves",
+      "permissionInstructions": "Aktivér tilladelser til mikrofon og talegenkendelse i Indstillinger for at bruge taleinput",
+      "startError": "Kunne ikke starte optagelse",
+      "stopError": "Kunne ikke stoppe optagelse",
+      "noSpeechDetected": "Ingen tale registreret. Prøv igen.",
+      "networkError": "Der opstod en netværksfejl under transskription",
+      "unknownError": "Der opstod en fejl under transskription"
+    },
+    "captions": {
+      "tab": "Billedtekster",
+      "fontSize": "Skriftstørrelse",
+      "fontWeight": "Vægt",
+      "fontColor": "Tekstfarve",
+      "backgroundColor": "Baggrund",
+      "normal": "Normal",
+      "bold": "Fed",
+      "dragToMove": "Træk billedteksten for at flytte den",
+      "noCaptionPlaceholder": "Ingen billedtekst på dette dias"
+    }
   },
   "transitions": {
     "fade": "Falme",

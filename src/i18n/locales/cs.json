@@ -91,7 +91,36 @@
     "remove": "Odstranit",
     "selectSlidePlaceholder": "Klepnutím na snímek na časové ose jej vyberte",
     "selectTransitionPlaceholder": "Klepněte na přechod nebo snímek na časové ose",
-    "newSlideshow": "Nová prezentace"
+    "newSlideshow": "Nová prezentace",
+    "voiceInput": {
+      "title": "Převod hlasu na text",
+      "slideNumber": "Přidávání popisku ke snímku {{number}}",
+      "placeholder": "Klepněte na mikrofon pro zahájení nahrávání nebo sem napište popisek...",
+      "recording": "Nahrávání...",
+      "recordingHint": "Mluvte zřetelně. Klepněte na mikrofon pro zastavení.",
+      "tapToRecord": "Klepněte na mikrofon pro zahájení nahrávání",
+      "notAvailable": "Rozpoznávání řeči není na tomto zařízení dostupné",
+      "permissionDenied": "Je vyžadováno oprávnění k mikrofonu a rozpoznávání řeči",
+      "permissionError": "Nepodařilo se zkontrolovat oprávnění",
+      "permissionRequired": "Vyžadováno oprávnění",
+      "permissionInstructions": "Chcete-li použít hlasový vstup, povolte v nastavení oprávnění pro mikrofon a rozpoznávání řeči",
+      "startError": "Nepodařilo se spustit nahrávání",
+      "stopError": "Nepodařilo se zastavit nahrávání",
+      "noSpeechDetected": "Nebyla rozpoznána žádná řeč. Zkuste to znovu.",
+      "networkError": "Při přepisu došlo k chybě sítě",
+      "unknownError": "Při přepisu došlo k chybě"
+    },
+    "captions": {
+      "tab": "Popisky",
+      "fontSize": "Velikost písma",
+      "fontWeight": "Tloušťka",
+      "fontColor": "Barva textu",
+      "backgroundColor": "Pozadí",
+      "normal": "Normální",
+      "bold": "Tučné",
+      "dragToMove": "Přetáhněte popisek pro změnu polohy",
+      "noCaptionPlaceholder": "Na tomto snímku není žádný popisek"
+    }
   },
   "transitions": {
     "fade": "Zeslabení",

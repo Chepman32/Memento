@@ -91,7 +91,36 @@
     "remove": "Supprimer",
     "selectSlidePlaceholder": "Appuyez sur une diapositive dans la timeline pour la sélectionner",
     "selectTransitionPlaceholder": "Appuyez sur une transition ou une diapositive dans la timeline",
-    "newSlideshow": "Nouveau diaporama"
+    "newSlideshow": "Nouveau diaporama",
+    "voiceInput": {
+      "title": "Voix en texte",
+      "slideNumber": "Ajout d'une légende à la diapositive {{number}}",
+      "placeholder": "Appuyez sur le micro pour commencer l'enregistrement ou saisissez votre légende ici...",
+      "recording": "Enregistrement...",
+      "recordingHint": "Parlez clairement. Appuyez sur le micro pour arrêter.",
+      "tapToRecord": "Appuyez sur le micro pour commencer l'enregistrement",
+      "notAvailable": "La reconnaissance vocale n'est pas disponible sur cet appareil",
+      "permissionDenied": "Les autorisations du micro et de la reconnaissance vocale sont requises",
+      "permissionError": "Impossible de vérifier les autorisations",
+      "permissionRequired": "Autorisation requise",
+      "permissionInstructions": "Activez les autorisations du micro et de la reconnaissance vocale dans les réglages pour utiliser la saisie vocale",
+      "startError": "Impossible de démarrer l'enregistrement",
+      "stopError": "Impossible d'arrêter l'enregistrement",
+      "noSpeechDetected": "Aucune parole détectée. Veuillez réessayer.",
+      "networkError": "Une erreur réseau est survenue pendant la transcription",
+      "unknownError": "Une erreur est survenue pendant la transcription"
+    },
+    "captions": {
+      "tab": "Légendes",
+      "fontSize": "Taille de police",
+      "fontWeight": "Épaisseur",
+      "fontColor": "Couleur du texte",
+      "backgroundColor": "Fond",
+      "normal": "Normal",
+      "bold": "Gras",
+      "dragToMove": "Faites glisser la légende pour la repositionner",
+      "noCaptionPlaceholder": "Aucune légende sur cette diapositive"
+    }
   },
   "transitions": {
     "fade": "Fondu",

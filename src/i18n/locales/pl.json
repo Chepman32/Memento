@@ -91,7 +91,36 @@
     "remove": "Usuń",
     "selectSlidePlaceholder": "Dotknij slajdu na osi czasu, aby go wybrać",
     "selectTransitionPlaceholder": "Dotknij przejścia lub slajdu na osi czasu",
-    "newSlideshow": "Nowy pokaz slajdów"
+    "newSlideshow": "Nowy pokaz slajdów",
+    "voiceInput": {
+      "title": "Mowa na tekst",
+      "slideNumber": "Dodawanie podpisu do slajdu {{number}}",
+      "placeholder": "Stuknij mikrofon, aby rozpocząć nagrywanie, lub wpisz tutaj podpis...",
+      "recording": "Nagrywanie...",
+      "recordingHint": "Mów wyraźnie. Stuknij mikrofon, aby zatrzymać.",
+      "tapToRecord": "Stuknij mikrofon, aby rozpocząć nagrywanie",
+      "notAvailable": "Rozpoznawanie mowy nie jest dostępne na tym urządzeniu",
+      "permissionDenied": "Wymagane są uprawnienia do mikrofonu i rozpoznawania mowy",
+      "permissionError": "Nie udało się sprawdzić uprawnień",
+      "permissionRequired": "Wymagane uprawnienia",
+      "permissionInstructions": "Aby używać wprowadzania głosowego, włącz w Ustawieniach uprawnienia mikrofonu i rozpoznawania mowy",
+      "startError": "Nie udało się rozpocząć nagrywania",
+      "stopError": "Nie udało się zatrzymać nagrywania",
+      "noSpeechDetected": "Nie wykryto mowy. Spróbuj ponownie.",
+      "networkError": "Wystąpił błąd sieci podczas transkrypcji",
+      "unknownError": "Wystąpił błąd podczas transkrypcji"
+    },
+    "captions": {
+      "tab": "Podpisy",
+      "fontSize": "Rozmiar czcionki",
+      "fontWeight": "Grubość",
+      "fontColor": "Kolor tekstu",
+      "backgroundColor": "Tło",
+      "normal": "Normalny",
+      "bold": "Pogrubiony",
+      "dragToMove": "Przeciągnij podpis, aby zmienić położenie",
+      "noCaptionPlaceholder": "Brak podpisu na tym slajdzie"
+    }
   },
   "transitions": {
     "fade": "Zanikanie",

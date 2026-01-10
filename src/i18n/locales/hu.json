@@ -91,7 +91,36 @@
     "remove": "Távolítsa el",
     "selectSlidePlaceholder": "Koppintson egy diára az idővonalon a kiválasztásához",
     "selectTransitionPlaceholder": "Koppintson egy átmenetre vagy diára az idővonalon",
-    "newSlideshow": "Új diavetítés"
+    "newSlideshow": "Új diavetítés",
+    "voiceInput": {
+      "title": "Beszédből szöveg",
+      "slideNumber": "Felirat hozzáadása a(z) {{number}}. diára",
+      "placeholder": "Koppints a mikrofonra a felvétel indításához, vagy írd be ide a feliratot...",
+      "recording": "Felvétel...",
+      "recordingHint": "Beszélj tisztán. Koppints a mikrofonra a leállításhoz.",
+      "tapToRecord": "Koppints a mikrofonra a felvétel indításához",
+      "notAvailable": "A beszédfelismerés nem érhető el ezen az eszközön",
+      "permissionDenied": "Mikrofon- és beszédfelismerési engedélyek szükségesek",
+      "permissionError": "Nem sikerült ellenőrizni az engedélyeket",
+      "permissionRequired": "Engedély szükséges",
+      "permissionInstructions": "A hangbeviteli funkció használatához engedélyezd a mikrofon- és beszédfelismerési engedélyeket a Beállításokban",
+      "startError": "Nem sikerült elindítani a felvételt",
+      "stopError": "Nem sikerült leállítani a felvételt",
+      "noSpeechDetected": "Nem érzékeltünk beszédet. Kérjük, próbáld újra.",
+      "networkError": "Hálózati hiba történt az átírás során",
+      "unknownError": "Hiba történt az átírás során"
+    },
+    "captions": {
+      "tab": "Feliratok",
+      "fontSize": "Betűméret",
+      "fontWeight": "Vastagság",
+      "fontColor": "Szöveg színe",
+      "backgroundColor": "Háttér",
+      "normal": "Normál",
+      "bold": "Félkövér",
+      "dragToMove": "Húzd a feliratot az áthelyezéshez",
+      "noCaptionPlaceholder": "Nincs felirat ezen a dián"
+    }
   },
   "transitions": {
     "fade": "Elhalványulás",

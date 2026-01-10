@@ -91,7 +91,36 @@
     "remove": "לְהַסִיר",
     "selectSlidePlaceholder": "הקש על שקופית בציר הזמן כדי לבחור בה",
     "selectTransitionPlaceholder": "הקש על מעבר או שקף בציר הזמן",
-    "newSlideshow": "מצגת חדשה"
+    "newSlideshow": "מצגת חדשה",
+    "voiceInput": {
+      "title": "דיבור לטקסט",
+      "slideNumber": "הוספת כיתוב לשקופית {{number}}",
+      "placeholder": "הקש/י על המיקרופון כדי להתחיל בהקלטה או כתוב/י כאן את הכיתוב...",
+      "recording": "מקליט...",
+      "recordingHint": "דבר/י בבירור. הקש/י על המיקרופון כדי לעצור.",
+      "tapToRecord": "הקש/י על המיקרופון כדי להתחיל בהקלטה",
+      "notAvailable": "זיהוי דיבור אינו זמין במכשיר זה",
+      "permissionDenied": "נדרשות הרשאות למיקרופון ולזיהוי דיבור",
+      "permissionError": "בדיקת ההרשאות נכשלה",
+      "permissionRequired": "נדרשת הרשאה",
+      "permissionInstructions": "נא להפעיל בהגדרות הרשאות למיקרופון ולזיהוי דיבור כדי להשתמש בקלט קולי",
+      "startError": "התחלת ההקלטה נכשלה",
+      "stopError": "עצירת ההקלטה נכשלה",
+      "noSpeechDetected": "לא זוהה דיבור. נסו שוב.",
+      "networkError": "אירעה שגיאת רשת במהלך התמלול",
+      "unknownError": "אירעה שגיאה במהלך התמלול"
+    },
+    "captions": {
+      "tab": "כיתובים",
+      "fontSize": "גודל גופן",
+      "fontWeight": "משקל",
+      "fontColor": "צבע טקסט",
+      "backgroundColor": "רקע",
+      "normal": "רגיל",
+      "bold": "מודגש",
+      "dragToMove": "גררו את הכיתוב כדי לשנות מיקום",
+      "noCaptionPlaceholder": "אין כיתוב בשקופית זו"
+    }
   },
   "transitions": {
     "fade": "דעיכה",

@@ -91,7 +91,36 @@
     "remove": "Fjerne",
     "selectSlidePlaceholder": "Trykk på et lysbilde på tidslinjen for å velge det",
     "selectTransitionPlaceholder": "Trykk på en overgang eller lysbilde på tidslinjen",
-    "newSlideshow": "Ny lysbildefremvisning"
+    "newSlideshow": "Ny lysbildefremvisning",
+    "voiceInput": {
+      "title": "Tale til tekst",
+      "slideNumber": "Legger til bildetekst på lysbilde {{number}}",
+      "placeholder": "Trykk på mikrofonen for å starte opptak eller skriv bildeteksten her...",
+      "recording": "Tar opp...",
+      "recordingHint": "Snakk tydelig. Trykk på mikrofonen for å stoppe.",
+      "tapToRecord": "Trykk på mikrofonen for å starte opptak",
+      "notAvailable": "Talegjenkjenning er ikke tilgjengelig på denne enheten",
+      "permissionDenied": "Tillatelser for mikrofon og talegjenkjenning kreves",
+      "permissionError": "Kunne ikke sjekke tillatelser",
+      "permissionRequired": "Tillatelse kreves",
+      "permissionInstructions": "Aktiver tillatelser for mikrofon og talegjenkjenning i Innstillinger for å bruke taleinntasting",
+      "startError": "Kunne ikke starte opptak",
+      "stopError": "Kunne ikke stoppe opptak",
+      "noSpeechDetected": "Ingen tale oppdaget. Prøv igjen.",
+      "networkError": "Det oppstod en nettverksfeil under transkripsjon",
+      "unknownError": "Det oppstod en feil under transkripsjon"
+    },
+    "captions": {
+      "tab": "Bildetekster",
+      "fontSize": "Skriftstørrelse",
+      "fontWeight": "Tykkelse",
+      "fontColor": "Tekstfarge",
+      "backgroundColor": "Bakgrunn",
+      "normal": "Normal",
+      "bold": "Fet",
+      "dragToMove": "Dra bildeteksten for å flytte den",
+      "noCaptionPlaceholder": "Ingen bildetekst på dette lysbildet"
+    }
   },
   "transitions": {
     "fade": "Falme",

@@ -91,7 +91,36 @@
     "remove": "Rimuovi",
     "selectSlidePlaceholder": "Tocca una diapositiva nella timeline per selezionarla",
     "selectTransitionPlaceholder": "Tocca una transizione o una diapositiva nella sequenza temporale",
-    "newSlideshow": "Nuova presentazione"
+    "newSlideshow": "Nuova presentazione",
+    "voiceInput": {
+      "title": "Voce in testo",
+      "slideNumber": "Aggiunta didascalia alla diapositiva {{number}}",
+      "placeholder": "Tocca il microfono per iniziare la registrazione o digita qui la didascalia...",
+      "recording": "Registrazione...",
+      "recordingHint": "Parla chiaramente. Tocca il microfono per interrompere.",
+      "tapToRecord": "Tocca il microfono per avviare la registrazione",
+      "notAvailable": "Il riconoscimento vocale non è disponibile su questo dispositivo",
+      "permissionDenied": "Sono necessari i permessi per microfono e riconoscimento vocale",
+      "permissionError": "Impossibile verificare i permessi",
+      "permissionRequired": "Permesso richiesto",
+      "permissionInstructions": "Abilita i permessi per microfono e riconoscimento vocale nelle Impostazioni per usare l'input vocale",
+      "startError": "Impossibile avviare la registrazione",
+      "stopError": "Impossibile interrompere la registrazione",
+      "noSpeechDetected": "Nessun parlato rilevato. Riprova.",
+      "networkError": "Si è verificato un errore di rete durante la trascrizione",
+      "unknownError": "Si è verificato un errore durante la trascrizione"
+    },
+    "captions": {
+      "tab": "Didascalie",
+      "fontSize": "Dimensione carattere",
+      "fontWeight": "Peso",
+      "fontColor": "Colore testo",
+      "backgroundColor": "Sfondo",
+      "normal": "Normale",
+      "bold": "Grassetto",
+      "dragToMove": "Trascina la didascalia per spostarla",
+      "noCaptionPlaceholder": "Nessuna didascalia in questa diapositiva"
+    }
   },
   "transitions": {
     "fade": "Dissolvenza",

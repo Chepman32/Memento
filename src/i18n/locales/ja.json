@@ -91,7 +91,36 @@
     "remove": "取り除く",
     "selectSlidePlaceholder": "タイムライン内のスライドをタップして選択します",
     "selectTransitionPlaceholder": "タイムライン内のトランジションまたはスライドをタップします",
-    "newSlideshow": "新しいスライドショー"
+    "newSlideshow": "新しいスライドショー",
+    "voiceInput": {
+      "title": "音声入力",
+      "slideNumber": "スライド{{number}}にキャプションを追加",
+      "placeholder": "マイクをタップして録音を開始するか、ここにキャプションを入力してください...",
+      "recording": "録音中...",
+      "recordingHint": "はっきり話してください。停止するにはマイクをタップ。",
+      "tapToRecord": "マイクをタップして録音を開始",
+      "notAvailable": "このデバイスでは音声認識を利用できません",
+      "permissionDenied": "マイクと音声認識の権限が必要です",
+      "permissionError": "権限の確認に失敗しました",
+      "permissionRequired": "権限が必要です",
+      "permissionInstructions": "音声入力を使用するには、設定でマイクと音声認識の権限を有効にしてください",
+      "startError": "録音の開始に失敗しました",
+      "stopError": "録音の停止に失敗しました",
+      "noSpeechDetected": "音声が検出されませんでした。もう一度お試しください。",
+      "networkError": "文字起こし中にネットワークエラーが発生しました",
+      "unknownError": "文字起こし中にエラーが発生しました"
+    },
+    "captions": {
+      "tab": "キャプション",
+      "fontSize": "文字サイズ",
+      "fontWeight": "太さ",
+      "fontColor": "文字色",
+      "backgroundColor": "背景",
+      "normal": "標準",
+      "bold": "太字",
+      "dragToMove": "キャプションをドラッグして位置を変更",
+      "noCaptionPlaceholder": "このスライドにキャプションはありません"
+    }
   },
   "transitions": {
     "fade": "フェード",

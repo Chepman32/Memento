@@ -91,7 +91,36 @@
     "remove": "Eliminar",
     "selectSlidePlaceholder": "Toque una diapositiva en la línea de tiempo para seleccionarla",
     "selectTransitionPlaceholder": "Toque una transición o diapositiva en la línea de tiempo",
-    "newSlideshow": "Nueva presentación de diapositivas"
+    "newSlideshow": "Nueva presentación de diapositivas",
+    "voiceInput": {
+      "title": "Voz a texto",
+      "slideNumber": "Añadiendo subtítulo a la diapositiva {{number}}",
+      "placeholder": "Toca el micrófono para iniciar la grabación o escribe tu subtítulo aquí...",
+      "recording": "Grabando...",
+      "recordingHint": "Habla con claridad. Toca el micrófono para detener.",
+      "tapToRecord": "Toca el micrófono para iniciar la grabación",
+      "notAvailable": "El reconocimiento de voz no está disponible en este dispositivo",
+      "permissionDenied": "Se requieren permisos de micrófono y reconocimiento de voz",
+      "permissionError": "No se pudieron comprobar los permisos",
+      "permissionRequired": "Permiso requerido",
+      "permissionInstructions": "Habilita los permisos de micrófono y reconocimiento de voz en Configuración para usar la entrada de voz",
+      "startError": "No se pudo iniciar la grabación",
+      "stopError": "No se pudo detener la grabación",
+      "noSpeechDetected": "No se detectó voz. Inténtalo de nuevo.",
+      "networkError": "Ocurrió un error de red durante la transcripción",
+      "unknownError": "Ocurrió un error durante la transcripción"
+    },
+    "captions": {
+      "tab": "Subtítulos",
+      "fontSize": "Tamaño de fuente",
+      "fontWeight": "Grosor",
+      "fontColor": "Color del texto",
+      "backgroundColor": "Fondo",
+      "normal": "Normal",
+      "bold": "Negrita",
+      "dragToMove": "Arrastra el subtítulo para cambiar su posición",
+      "noCaptionPlaceholder": "No hay subtítulo en esta diapositiva"
+    }
   },
   "transitions": {
     "fade": "Desvanecer",

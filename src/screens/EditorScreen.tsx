@@ -2004,8 +2004,8 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
   previewIcon: {
-    width: 22,
-    height: 22,
+    width: 36,
+    height: 36,
   },
 });
 

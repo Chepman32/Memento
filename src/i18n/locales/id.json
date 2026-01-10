@@ -91,7 +91,36 @@
     "remove": "Hapus",
     "selectSlidePlaceholder": "Ketuk slide di garis waktu untuk memilih itu",
     "selectTransitionPlaceholder": "Ketuk transisi atau slide di timeline",
-    "newSlideshow": "Slideshow Baru"
+    "newSlideshow": "Slideshow Baru",
+    "voiceInput": {
+      "title": "Suara ke Teks",
+      "slideNumber": "Menambahkan caption ke slide {{number}}",
+      "placeholder": "Ketuk mikrofon untuk mulai merekam atau ketik caption Anda di sini...",
+      "recording": "Merekam...",
+      "recordingHint": "Bicara dengan jelas. Ketuk mikrofon untuk berhenti.",
+      "tapToRecord": "Ketuk mikrofon untuk mulai merekam",
+      "notAvailable": "Pengenalan suara tidak tersedia di perangkat ini",
+      "permissionDenied": "Izin mikrofon dan pengenalan suara diperlukan",
+      "permissionError": "Gagal memeriksa izin",
+      "permissionRequired": "Izin Diperlukan",
+      "permissionInstructions": "Aktifkan izin mikrofon dan pengenalan suara di Pengaturan untuk menggunakan input suara",
+      "startError": "Gagal memulai perekaman",
+      "stopError": "Gagal menghentikan perekaman",
+      "noSpeechDetected": "Tidak ada suara terdeteksi. Silakan coba lagi.",
+      "networkError": "Terjadi kesalahan jaringan saat transkripsi",
+      "unknownError": "Terjadi kesalahan saat transkripsi"
+    },
+    "captions": {
+      "tab": "Caption",
+      "fontSize": "Ukuran Font",
+      "fontWeight": "Ketebalan",
+      "fontColor": "Warna Teks",
+      "backgroundColor": "Latar Belakang",
+      "normal": "Normal",
+      "bold": "Tebal",
+      "dragToMove": "Seret caption untuk memindahkan posisi",
+      "noCaptionPlaceholder": "Tidak ada caption pada slide ini"
+    }
   },
   "transitions": {
     "fade": "Pudar",

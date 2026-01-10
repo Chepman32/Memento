@@ -91,7 +91,36 @@
     "remove": "Verwijderen",
     "selectSlidePlaceholder": "Tik op een dia in de tijdlijn om deze te selecteren",
     "selectTransitionPlaceholder": "Tik op een overgang of schuif in de tijdlijn",
-    "newSlideshow": "Nieuwe diavoorstelling"
+    "newSlideshow": "Nieuwe diavoorstelling",
+    "voiceInput": {
+      "title": "Spraak naar tekst",
+      "slideNumber": "Bijschrift toevoegen aan dia {{number}}",
+      "placeholder": "Tik op de microfoon om de opname te starten of typ hier je bijschrift...",
+      "recording": "Opnemen...",
+      "recordingHint": "Spreek duidelijk. Tik op de microfoon om te stoppen.",
+      "tapToRecord": "Tik op de microfoon om de opname te starten",
+      "notAvailable": "Spraakherkenning is niet beschikbaar op dit apparaat",
+      "permissionDenied": "Microfoon- en spraakherkenningsmachtigingen zijn vereist",
+      "permissionError": "Kan machtigingen niet controleren",
+      "permissionRequired": "Machtiging vereist",
+      "permissionInstructions": "Schakel microfoon- en spraakherkenningsmachtigingen in via Instellingen om spraakinvoer te gebruiken",
+      "startError": "Kan opname niet starten",
+      "stopError": "Kan opname niet stoppen",
+      "noSpeechDetected": "Geen spraak gedetecteerd. Probeer het opnieuw.",
+      "networkError": "Er is een netwerkfout opgetreden tijdens de transcriptie",
+      "unknownError": "Er is een fout opgetreden tijdens de transcriptie"
+    },
+    "captions": {
+      "tab": "Bijschriften",
+      "fontSize": "Tekstgrootte",
+      "fontWeight": "Dikte",
+      "fontColor": "Tekstkleur",
+      "backgroundColor": "Achtergrond",
+      "normal": "Normaal",
+      "bold": "Vet",
+      "dragToMove": "Sleep het bijschrift om de positie te wijzigen",
+      "noCaptionPlaceholder": "Geen bijschrift op deze dia"
+    }
   },
   "transitions": {
     "fade": "Vervagen",

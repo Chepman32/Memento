@@ -91,7 +91,36 @@
     "remove": "Entfernen",
     "selectSlidePlaceholder": "Tippen Sie auf eine Folie in der Timeline, um sie auszuwählen.",
     "selectTransitionPlaceholder": "Tippen Sie auf einen Übergang oder eine Folie in der Zeitleiste",
-    "newSlideshow": "Neue Diashow"
+    "newSlideshow": "Neue Diashow",
+    "voiceInput": {
+      "title": "Sprache zu Text",
+      "slideNumber": "Beschriftung zu Folie {{number}} hinzufügen",
+      "placeholder": "Tippe auf das Mikrofon, um die Aufnahme zu starten, oder gib hier deine Beschriftung ein...",
+      "recording": "Aufnahme...",
+      "recordingHint": "Sprich deutlich. Tippe auf das Mikrofon zum Beenden.",
+      "tapToRecord": "Tippe auf das Mikrofon, um die Aufnahme zu starten",
+      "notAvailable": "Spracherkennung ist auf diesem Gerät nicht verfügbar",
+      "permissionDenied": "Mikrofon- und Spracherkennungsberechtigungen sind erforderlich",
+      "permissionError": "Berechtigungen konnten nicht geprüft werden",
+      "permissionRequired": "Berechtigung erforderlich",
+      "permissionInstructions": "Bitte aktiviere Mikrofon- und Spracherkennungsberechtigungen in den Einstellungen, um die Spracheingabe zu nutzen",
+      "startError": "Aufnahme konnte nicht gestartet werden",
+      "stopError": "Aufnahme konnte nicht beendet werden",
+      "noSpeechDetected": "Keine Sprache erkannt. Bitte erneut versuchen.",
+      "networkError": "Beim Transkribieren ist ein Netzwerkfehler aufgetreten",
+      "unknownError": "Beim Transkribieren ist ein Fehler aufgetreten"
+    },
+    "captions": {
+      "tab": "Beschriftungen",
+      "fontSize": "Schriftgröße",
+      "fontWeight": "Schriftstärke",
+      "fontColor": "Textfarbe",
+      "backgroundColor": "Hintergrund",
+      "normal": "Normal",
+      "bold": "Fett",
+      "dragToMove": "Ziehe die Beschriftung, um sie zu verschieben",
+      "noCaptionPlaceholder": "Keine Beschriftung auf dieser Folie"
+    }
   },
   "transitions": {
     "fade": "Überblenden",

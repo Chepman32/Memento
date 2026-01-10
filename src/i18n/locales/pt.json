@@ -91,7 +91,36 @@
     "remove": "Remover",
     "selectSlidePlaceholder": "Toque em um slide na linha do tempo para selecioná-lo",
     "selectTransitionPlaceholder": "Toque em uma transição ou deslize na linha do tempo",
-    "newSlideshow": "Nova apresentação de slides"
+    "newSlideshow": "Nova apresentação de slides",
+    "voiceInput": {
+      "title": "Voz para texto",
+      "slideNumber": "Adicionando legenda ao slide {{number}}",
+      "placeholder": "Toque no microfone para iniciar a gravação ou digite sua legenda aqui...",
+      "recording": "Gravando...",
+      "recordingHint": "Fale claramente. Toque no microfone para parar.",
+      "tapToRecord": "Toque no microfone para iniciar a gravação",
+      "notAvailable": "O reconhecimento de voz não está disponível neste dispositivo",
+      "permissionDenied": "As permissões de microfone e reconhecimento de voz são necessárias",
+      "permissionError": "Falha ao verificar permissões",
+      "permissionRequired": "Permissão necessária",
+      "permissionInstructions": "Ative as permissões de microfone e reconhecimento de voz nas Configurações para usar a entrada de voz",
+      "startError": "Falha ao iniciar a gravação",
+      "stopError": "Falha ao parar a gravação",
+      "noSpeechDetected": "Nenhuma fala detectada. Tente novamente.",
+      "networkError": "Ocorreu um erro de rede durante a transcrição",
+      "unknownError": "Ocorreu um erro durante a transcrição"
+    },
+    "captions": {
+      "tab": "Legendas",
+      "fontSize": "Tamanho da fonte",
+      "fontWeight": "Peso",
+      "fontColor": "Cor do texto",
+      "backgroundColor": "Fundo",
+      "normal": "Normal",
+      "bold": "Negrito",
+      "dragToMove": "Arraste a legenda para reposicionar",
+      "noCaptionPlaceholder": "Nenhuma legenda neste slide"
+    }
   },
   "transitions": {
     "fade": "Desvanecer",

@@ -91,7 +91,36 @@
     "remove": "Elimina",
     "selectSlidePlaceholder": "Atingeți un diapozitiv în cronologia pentru al selecta",
     "selectTransitionPlaceholder": "Atingeți o tranziție sau un diapozitiv în cronologia",
-    "newSlideshow": "Prezentare nouă"
+    "newSlideshow": "Prezentare nouă",
+    "voiceInput": {
+      "title": "Voce în text",
+      "slideNumber": "Adăugare legendă la diapozitivul {{number}}",
+      "placeholder": "Atinge microfonul pentru a începe înregistrarea sau scrie legenda aici...",
+      "recording": "Se înregistrează...",
+      "recordingHint": "Vorbește clar. Atinge microfonul pentru a opri.",
+      "tapToRecord": "Atinge microfonul pentru a începe înregistrarea",
+      "notAvailable": "Recunoașterea vocală nu este disponibilă pe acest dispozitiv",
+      "permissionDenied": "Sunt necesare permisiuni pentru microfon și recunoașterea vocală",
+      "permissionError": "Nu s-au putut verifica permisiunile",
+      "permissionRequired": "Permisiune necesară",
+      "permissionInstructions": "Activează permisiunile pentru microfon și recunoaștere vocală în Setări pentru a utiliza introducerea vocală",
+      "startError": "Nu s-a putut începe înregistrarea",
+      "stopError": "Nu s-a putut opri înregistrarea",
+      "noSpeechDetected": "Nu s-a detectat vorbire. Te rugăm să încerci din nou.",
+      "networkError": "A apărut o eroare de rețea în timpul transcrierii",
+      "unknownError": "A apărut o eroare în timpul transcrierii"
+    },
+    "captions": {
+      "tab": "Legende",
+      "fontSize": "Dimensiune font",
+      "fontWeight": "Grosime",
+      "fontColor": "Culoare text",
+      "backgroundColor": "Fundal",
+      "normal": "Normal",
+      "bold": "Aldin",
+      "dragToMove": "Trage legenda pentru a o repoziționa",
+      "noCaptionPlaceholder": "Nu există legendă pe acest diapozitiv"
+    }
   },
   "transitions": {
     "fade": "Estompare",

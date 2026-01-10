@@ -91,7 +91,36 @@
     "remove": "Xóa",
     "selectSlidePlaceholder": "Nhấn vào một trang trình bày trong dòng thời gian để chọn nó",
     "selectTransitionPlaceholder": "Nhấn vào một chuyển tiếp hoặc trang trình bày trong dòng thời gian",
-    "newSlideshow": "Trình chiếu mới"
+    "newSlideshow": "Trình chiếu mới",
+    "voiceInput": {
+      "title": "Giọng nói thành văn bản",
+      "slideNumber": "Đang thêm chú thích cho slide {{number}}",
+      "placeholder": "Nhấn micro để bắt đầu ghi âm hoặc nhập chú thích tại đây...",
+      "recording": "Đang ghi âm...",
+      "recordingHint": "Nói rõ ràng. Nhấn micro để dừng.",
+      "tapToRecord": "Nhấn micro để bắt đầu ghi âm",
+      "notAvailable": "Nhận dạng giọng nói không khả dụng trên thiết bị này",
+      "permissionDenied": "Cần quyền micro và nhận dạng giọng nói",
+      "permissionError": "Không thể kiểm tra quyền",
+      "permissionRequired": "Yêu cầu quyền",
+      "permissionInstructions": "Vui lòng bật quyền micro và nhận dạng giọng nói trong Cài đặt để sử dụng nhập bằng giọng nói",
+      "startError": "Không thể bắt đầu ghi âm",
+      "stopError": "Không thể dừng ghi âm",
+      "noSpeechDetected": "Không phát hiện giọng nói. Vui lòng thử lại.",
+      "networkError": "Đã xảy ra lỗi mạng khi chuyển giọng nói thành văn bản",
+      "unknownError": "Đã xảy ra lỗi khi chuyển giọng nói thành văn bản"
+    },
+    "captions": {
+      "tab": "Chú thích",
+      "fontSize": "Cỡ chữ",
+      "fontWeight": "Độ đậm",
+      "fontColor": "Màu chữ",
+      "backgroundColor": "Nền",
+      "normal": "Bình thường",
+      "bold": "Đậm",
+      "dragToMove": "Kéo chú thích để thay đổi vị trí",
+      "noCaptionPlaceholder": "Không có chú thích trên slide này"
+    }
   },
   "transitions": {
     "fade": "Mờ dần",

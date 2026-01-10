@@ -91,7 +91,36 @@
     "remove": "Kaldır",
     "selectSlidePlaceholder": "Seçmek için zaman çizelgesindeki bir slayda dokunun",
     "selectTransitionPlaceholder": "Bir geçişe dokunun veya zaman çizelgesinde kaydırın",
-    "newSlideshow": "Yeni Slayt Gösterisi"
+    "newSlideshow": "Yeni Slayt Gösterisi",
+    "voiceInput": {
+      "title": "Sesten Metne",
+      "slideNumber": "Slayt {{number}} için altyazı ekleniyor",
+      "placeholder": "Kayıt başlatmak için mikrofona dokunun veya altyazınızı buraya yazın...",
+      "recording": "Kaydediliyor...",
+      "recordingHint": "Net konuşun. Durmak için mikrofona dokunun.",
+      "tapToRecord": "Kayıt başlatmak için mikrofona dokunun",
+      "notAvailable": "Bu cihazda konuşma tanıma kullanılamıyor",
+      "permissionDenied": "Mikrofon ve konuşma tanıma izinleri gereklidir",
+      "permissionError": "İzinler kontrol edilemedi",
+      "permissionRequired": "İzin Gerekli",
+      "permissionInstructions": "Sesli giriş için Ayarlar'da mikrofon ve konuşma tanıma izinlerini etkinleştirin",
+      "startError": "Kayıt başlatılamadı",
+      "stopError": "Kayıt durdurulamadı",
+      "noSpeechDetected": "Konuşma algılanmadı. Lütfen tekrar deneyin.",
+      "networkError": "Metne dönüştürme sırasında ağ hatası oluştu",
+      "unknownError": "Metne dönüştürme sırasında bir hata oluştu"
+    },
+    "captions": {
+      "tab": "Altyazılar",
+      "fontSize": "Yazı Boyutu",
+      "fontWeight": "Kalınlık",
+      "fontColor": "Metin Rengi",
+      "backgroundColor": "Arka Plan",
+      "normal": "Normal",
+      "bold": "Kalın",
+      "dragToMove": "Altyazıyı konumlandırmak için sürükleyin",
+      "noCaptionPlaceholder": "Bu slaytta altyazı yok"
+    }
   },
   "transitions": {
     "fade": "Soldurma",

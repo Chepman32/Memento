@@ -91,7 +91,36 @@
     "remove": "Poistaa",
     "selectSlidePlaceholder": "Valitse dia napauttamalla sitä aikajanalla",
     "selectTransitionPlaceholder": "Napauta siirtymää tai diaa aikajanalla",
-    "newSlideshow": "Uusi diaesitys"
+    "newSlideshow": "Uusi diaesitys",
+    "voiceInput": {
+      "title": "Puhe tekstiksi",
+      "slideNumber": "Lisätään kuvateksti diaan {{number}}",
+      "placeholder": "Napauta mikrofonia aloittaaksesi tallennuksen tai kirjoita kuvateksti tähän...",
+      "recording": "Tallennetaan...",
+      "recordingHint": "Puhu selkeästi. Napauta mikrofonia lopettaaksesi.",
+      "tapToRecord": "Napauta mikrofonia aloittaaksesi tallennuksen",
+      "notAvailable": "Puheentunnistus ei ole saatavilla tällä laitteella",
+      "permissionDenied": "Mikrofonin ja puheentunnistuksen käyttöoikeudet vaaditaan",
+      "permissionError": "Käyttöoikeuksien tarkistus epäonnistui",
+      "permissionRequired": "Käyttöoikeus vaaditaan",
+      "permissionInstructions": "Ota mikrofonin ja puheentunnistuksen käyttöoikeudet käyttöön asetuksissa käyttääksesi äänisyöttöä",
+      "startError": "Tallennuksen aloitus epäonnistui",
+      "stopError": "Tallennuksen lopetus epäonnistui",
+      "noSpeechDetected": "Puhetta ei havaittu. Yritä uudelleen.",
+      "networkError": "Verkkovirhe tapahtui litteroinnin aikana",
+      "unknownError": "Virhe litteroinnin aikana"
+    },
+    "captions": {
+      "tab": "Kuvatekstit",
+      "fontSize": "Fonttikoko",
+      "fontWeight": "Paino",
+      "fontColor": "Tekstin väri",
+      "backgroundColor": "Tausta",
+      "normal": "Normaali",
+      "bold": "Lihavoitu",
+      "dragToMove": "Vedä kuvatekstiä siirtääksesi sitä",
+      "noCaptionPlaceholder": "Tässä diassa ei ole kuvatekstiä"
+    }
   },
   "transitions": {
     "fade": "Häivytys",

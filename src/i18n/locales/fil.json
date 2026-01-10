@@ -91,7 +91,36 @@
     "remove": "Alisin",
     "selectSlidePlaceholder": "Mag-tap ng slide sa timeline para piliin ito",
     "selectTransitionPlaceholder": "I-tap ang isang transition o slide sa timeline",
-    "newSlideshow": "Bagong Slideshow"
+    "newSlideshow": "Bagong Slideshow",
+    "voiceInput": {
+      "title": "Boses sa Teksto",
+      "slideNumber": "Nagdaragdag ng caption sa slide {{number}}",
+      "placeholder": "I-tap ang mikropono para magsimulang mag-record o i-type ang caption dito...",
+      "recording": "Nagre-record...",
+      "recordingHint": "Magsalita nang malinaw. I-tap ang mikropono para tumigil.",
+      "tapToRecord": "I-tap ang mikropono para magsimulang mag-record",
+      "notAvailable": "Hindi available ang speech recognition sa device na ito",
+      "permissionDenied": "Kailangan ang pahintulot sa mikropono at speech recognition",
+      "permissionError": "Hindi ma-check ang mga pahintulot",
+      "permissionRequired": "Kailangan ang Pahintulot",
+      "permissionInstructions": "Pakiactivate ang pahintulot sa mikropono at speech recognition sa Settings para magamit ang voice input",
+      "startError": "Hindi masimulan ang pag-record",
+      "stopError": "Hindi mahinto ang pag-record",
+      "noSpeechDetected": "Walang na-detect na boses. Pakisubukan muli.",
+      "networkError": "Nagkaroon ng error sa network habang nagta-transcribe",
+      "unknownError": "Nagkaroon ng error habang nagta-transcribe"
+    },
+    "captions": {
+      "tab": "Mga Caption",
+      "fontSize": "Laki ng Font",
+      "fontWeight": "Bigat",
+      "fontColor": "Kulay ng Teksto",
+      "backgroundColor": "Background",
+      "normal": "Normal",
+      "bold": "Bold",
+      "dragToMove": "I-drag ang caption para ilipat",
+      "noCaptionPlaceholder": "Walang caption sa slide na ito"
+    }
   },
   "transitions": {
     "fade": "Fade",
