@@ -867,25 +867,98 @@ const PhotoCanvas: React.FC<PhotoCanvasProps> = React.memo(
     const x = (width - size.width) / 2;
     const y = (height - size.height) / 2;
 
+    const renderCaption = () => {
+      if (!photo.caption?.text) return null;
+
+      const { text, style } = photo.caption;
+      const maxTextWidth = (width * style.maxWidth) / 100;
+
+      let textAlign: 'left' | 'center' | 'right' = 'center';
+      if (style.textAlign === 'left') textAlign = 'left';
+      if (style.textAlign === 'right') textAlign = 'right';
+
+      return (
+        <View
+          style={{
+            position: 'absolute',
+            top:
+              style.position === 'top'
+                ? style.padding
+                : style.position === 'center'
+                  ? 0
+                  : undefined,
+            bottom:
+              style.position === 'bottom'
+                ? style.padding
+                : style.position === 'center'
+                  ? 0
+                  : undefined,
+            left: style.textAlign === 'left' ? style.padding : 0,
+            right: style.textAlign === 'right' ? style.padding : 0,
+            width: style.textAlign === 'center' ? '100%' : maxTextWidth,
+            alignItems:
+              style.textAlign === 'left'
+                ? 'flex-start'
+                : style.textAlign === 'right'
+                  ? 'flex-end'
+                  : 'center',
+            justifyContent:
+              style.position === 'center' ? 'center' : 'flex-start',
+            transform: [
+              { translateX: ((style.offsetX ?? 0) / 100) * width },
+              { translateY: ((style.offsetY ?? 0) / 100) * height },
+            ],
+          }}
+        >
+          <View
+            style={{
+              backgroundColor: style.backgroundColor,
+              paddingHorizontal: style.padding,
+              paddingVertical: style.padding / 2,
+              borderRadius: 4,
+              maxWidth: maxTextWidth,
+            }}
+          >
+            <Text
+              style={{
+                color: style.fontColor,
+                fontSize: style.fontSize,
+                fontWeight: style.fontWeight,
+                textAlign: textAlign,
+              }}
+            >
+              {text}
+            </Text>
+          </View>
+        </View>
+      );
+    };
+
     return (
-      <Canvas style={{ width, height, backgroundColor: '#000' }}>
-        <SkiaImage
-          image={displayImage}
-          x={x}
-          y={y}
-          width={size.width}
-          height={size.height}
-          fit="contain"
-        />
-      </Canvas>
+      <View style={{ width, height }}>
+        <Canvas style={{ width, height, backgroundColor: '#000' }}>
+          <SkiaImage
+            image={displayImage}
+            x={x}
+            y={y}
+            width={size.width}
+            height={size.height}
+            fit="contain"
+          />
+        </Canvas>
+        {renderCaption()}
+      </View>
     );
   },
   (prevProps, nextProps) => {
-    // Only re-render if the photo URI changes
+    // Re-render if photo URI or caption changes
     return (
       prevProps.photo.uri === nextProps.photo.uri &&
       prevProps.width === nextProps.width &&
-      prevProps.height === nextProps.height
+      prevProps.height === nextProps.height &&
+      prevProps.photo.caption?.text === nextProps.photo.caption?.text &&
+      JSON.stringify(prevProps.photo.caption?.style) ===
+        JSON.stringify(nextProps.photo.caption?.style)
     );
   },
 );

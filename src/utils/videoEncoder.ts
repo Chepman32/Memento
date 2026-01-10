@@ -1,6 +1,6 @@
 import { TRANSITIONS } from '../constants/transitions';
 import { executeFfmpeg, cancelActiveFfmpeg } from './ffmpegBridge';
-import { prepareWatermarkResources, WatermarkResources } from './watermark';
+import { prepareWatermarkResources, WatermarkResources, findPreferredFont } from './watermark';
 import {
   ExportQuality,
   Project,
@@ -20,6 +20,7 @@ export interface VideoEncoderConfig {
   watermarkResources?: WatermarkResources | null;
   onProgress?: (progress: number) => void;
   fps?: number;
+  fontPath?: string;
 }
 
 export interface EncodingResult {
@@ -205,13 +206,39 @@ const escapeFfmpegPath = (value: string): string => {
 };
 
 const escapeDrawtextValue = (value: string): string => {
-  return value.replace(/\\/g, '\\\\').replace(/:/g, '\\:').replace(/'/g, "\\'");
+  return value
+    .replace(/\\/g, '\\\\')
+    .replace(/\r\n|\r|\n/g, '\\n')
+    .replace(/%/g, '\\%')
+    .replace(/:/g, '\\:')
+    .replace(/'/g, "\\'")
+    .replace(/"/g, '\\"');
+};
+
+const formatSignedOffset = (offset: number): string => {
+  if (offset === 0) {
+    return '';
+  }
+  return offset > 0 ? `+${offset}` : `${offset}`;
+};
+
+// Convert hex color (#FFFFFF or #RRGGBBAA) to FFmpeg format (0xFFFFFF or 0xRRGGBB@opacity)
+const hexToFFmpegColor = (hex: string): string => {
+  const color = hex.replace('#', '');
+  if (color.length === 8) {
+    // Has alpha: RRGGBBAA -> 0xRRGGBB@opacity
+    const rgb = color.slice(0, 6);
+    const alpha = parseInt(color.slice(6, 8), 16) / 255;
+    return `0x${rgb}@${alpha.toFixed(2)}`;
+  }
+  return `0x${color}`;
 };
 
 // Generate drawtext filter for a photo caption
 const generateCaptionFilter = (
   photo: Photo,
-  dimensions: { width: number; height: number }
+  dimensions: { width: number; height: number },
+  fontPath?: string
 ): string | null => {
   if (!photo.caption?.text) return null;
 
@@ -225,32 +252,41 @@ const generateCaptionFilter = (
   // Calculate base position
   let xPosition: string;
   if (style.textAlign === 'left') {
-    xPosition = `${style.padding + offsetXPx}`;
+    xPosition = `${style.padding}${formatSignedOffset(offsetXPx)}`;
   } else if (style.textAlign === 'right') {
-    xPosition = `w-tw-${style.padding - offsetXPx}`;
+    const base = `w-tw-${style.padding}`;
+    xPosition = `${base}${formatSignedOffset(offsetXPx)}`;
   } else {
-    xPosition = offsetXPx === 0 ? `(w-tw)/2` : `(w-tw)/2+${offsetXPx}`;
+    const base = `(w-tw)/2`;
+    xPosition = `${base}${formatSignedOffset(offsetXPx)}`;
   }
 
   let yPosition: string;
   if (style.position === CaptionPosition.TOP) {
-    yPosition = `${style.padding + offsetYPx}`;
+    yPosition = `${style.padding}${formatSignedOffset(offsetYPx)}`;
   } else if (style.position === CaptionPosition.CENTER) {
-    yPosition = offsetYPx === 0 ? `(h-th)/2` : `(h-th)/2+${offsetYPx}`;
+    const base = `(h-th)/2`;
+    yPosition = `${base}${formatSignedOffset(offsetYPx)}`;
   } else {
-    yPosition = `h-th-${style.padding * 2 - offsetYPx}`;
+    const base = `h-th-${style.padding * 2}`;
+    yPosition = `${base}${formatSignedOffset(offsetYPx)}`;
   }
+
+  const fontDirective = fontPath
+    ? `fontfile='${escapeDrawtextValue(fontPath)}'`
+    : `font='Sans'`;
 
   const drawtextParts = [
     `text='${escapedText}'`,
+    fontDirective,
     `fontsize=${style.fontSize}`,
-    `fontcolor=${style.fontColor}`,
+    `fontcolor=${hexToFFmpegColor(style.fontColor)}`,
     `x=${xPosition}`,
     `y=${yPosition}`,
     `borderw=2`,
     `bordercolor=black@0.5`,
     `box=1`,
-    `boxcolor=${style.backgroundColor}`,
+    `boxcolor=${hexToFFmpegColor(style.backgroundColor)}`,
     `boxborderw=${style.padding}`,
   ];
 
@@ -473,7 +509,7 @@ export const videoEncoder = {
 
       // Add caption if exists
       if (photo?.caption?.text) {
-        const captionFilter = generateCaptionFilter(photo, dimensions);
+        const captionFilter = generateCaptionFilter(photo, dimensions, config.fontPath);
         if (captionFilter) {
           filterChain += `,${captionFilter}`;
         }
@@ -617,10 +653,19 @@ export const videoEncoder = {
       }
     }
 
+    // Load font for captions
+    let fontPath: string | undefined;
+    try {
+      fontPath = await findPreferredFont();
+    } catch (error) {
+      console.warn('[FFmpeg-Video] Failed to find preferred font for captions');
+    }
+
     try {
       command = videoEncoder.buildFFmpegCommand({
         ...config,
         watermarkResources: watermarkResources ?? undefined,
+        fontPath,
       });
     } catch (error) {
       return {

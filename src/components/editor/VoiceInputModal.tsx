@@ -15,12 +15,21 @@ import {
   Linking,
 } from 'react-native';
 import { useTranslation } from 'react-i18next';
+import { getLocales } from 'react-native-localize';
 import FeatherIcon from 'react-native-vector-icons/Feather';
 import { useThemeStore } from '../../store/themeStore';
 import { SPACING, TYPOGRAPHY, RADII } from '../../constants/theme';
 import { haptics } from '../../utils/hapticFeedback';
 import { sounds } from '../../utils/soundEffects';
 import { speechRecognition } from '../../utils/speechRecognition';
+
+const getSpeechLocale = (): string => {
+  const locales = getLocales();
+  if (locales.length > 0) {
+    return locales[0].languageTag;
+  }
+  return 'en-US';
+};
 
 interface VoiceInputModalProps {
   visible: boolean;
@@ -206,8 +215,8 @@ export const VoiceInputModal: React.FC<VoiceInputModalProps> = ({
         setIsInitializing(false);
       });
 
-      // Start recording
-      await speechRecognition.startRecording('en-US'); // TODO: Use user's locale
+      // Start recording with device's current locale
+      await speechRecognition.startRecording(getSpeechLocale());
       setIsRecording(true);
       sounds.tap();
     } catch (err) {

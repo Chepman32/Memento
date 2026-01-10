@@ -6,7 +6,7 @@ import {
   ExportQuality,
   ResolutionPreset,
 } from '../types/project.types';
-import { prepareWatermarkResources, WatermarkResources } from './watermark';
+import { prepareWatermarkResources, WatermarkResources, findPreferredFont } from './watermark';
 
 export interface GifConfig {
   project: Project;
@@ -175,6 +175,14 @@ export const gifGenerator = {
       }
     }
 
+    // Load font for captions
+    let fontPath: string | undefined;
+    try {
+      fontPath = await findPreferredFont();
+    } catch (error) {
+      console.warn('[FFmpeg-GIF] Failed to find preferred font for captions');
+    }
+
     try {
       const videoCommand = videoEncoder.buildFFmpegCommand({
         project: config.project,
@@ -184,6 +192,7 @@ export const gifGenerator = {
         includeWatermark,
         watermarkResources: watermarkResources ?? undefined,
         fps: config.fps,
+        fontPath,
       });
 
       const videoResult = await executeFfmpeg({

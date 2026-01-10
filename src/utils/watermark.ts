@@ -133,7 +133,7 @@ const ensureWatermarkImage = async (): Promise<{
   };
 };
 
-const findPreferredFont = async (): Promise<string | undefined> => {
+export const findPreferredFont = async (): Promise<string | undefined> => {
   const candidates =
     Platform.select<string[]>({
       ios: [
