@@ -224,11 +224,17 @@ const formatSignedOffset = (offset: number): string => {
 
 // Convert hex color (#FFFFFF or #RRGGBBAA) to FFmpeg format (0xFFFFFF or 0xRRGGBB@opacity)
 const hexToFFmpegColor = (hex: string): string => {
+  if (!hex || typeof hex !== 'string') {
+    return '0xFFFFFF';
+  }
   const color = hex.replace('#', '');
   if (color.length === 8) {
     // Has alpha: RRGGBBAA -> 0xRRGGBB@opacity
     const rgb = color.slice(0, 6);
     const alpha = parseInt(color.slice(6, 8), 16) / 255;
+    if (isNaN(alpha)) {
+      return `0x${rgb}`;
+    }
     return `0x${rgb}@${alpha.toFixed(2)}`;
   }
   return `0x${color}`;
@@ -240,54 +246,58 @@ const generateCaptionFilter = (
   dimensions: { width: number; height: number },
   fontPath?: string
 ): string | null => {
-  if (!photo.caption?.text) return null;
+  // Skip if no caption text OR no font available (prevents FFmpeg crash on iOS)
+  if (!photo.caption?.text || !fontPath) return null;
 
   const { text, style } = photo.caption;
   const escapedText = escapeDrawtextValue(text);
 
+  // Provide defaults for all style properties
+  const padding = style?.padding ?? 12;
+  const fontSize = style?.fontSize ?? 24;
+  const fontColor = style?.fontColor ?? '#FFFFFF';
+  const backgroundColor = style?.backgroundColor ?? '#00000080';
+  const textAlign = style?.textAlign ?? 'center';
+  const position = style?.position ?? CaptionPosition.BOTTOM;
+
   // Calculate offset in pixels (percentage of dimensions)
-  const offsetXPx = Math.round(((style.offsetX ?? 0) / 100) * dimensions.width);
-  const offsetYPx = Math.round(((style.offsetY ?? 0) / 100) * dimensions.height);
+  const offsetXPx = Math.round(((style?.offsetX ?? 0) / 100) * dimensions.width);
+  const offsetYPx = Math.round(((style?.offsetY ?? 0) / 100) * dimensions.height);
 
   // Calculate base position
   let xPosition: string;
-  if (style.textAlign === 'left') {
-    xPosition = `${style.padding}${formatSignedOffset(offsetXPx)}`;
-  } else if (style.textAlign === 'right') {
-    const base = `w-tw-${style.padding}`;
-    xPosition = `${base}${formatSignedOffset(offsetXPx)}`;
+  if (textAlign === 'left') {
+    xPosition = `${padding}${formatSignedOffset(offsetXPx)}`;
+  } else if (textAlign === 'right') {
+    xPosition = `w-tw-${padding}${formatSignedOffset(offsetXPx)}`;
   } else {
-    const base = `(w-tw)/2`;
-    xPosition = `${base}${formatSignedOffset(offsetXPx)}`;
+    xPosition = `(w-tw)/2${formatSignedOffset(offsetXPx)}`;
   }
 
   let yPosition: string;
-  if (style.position === CaptionPosition.TOP) {
-    yPosition = `${style.padding}${formatSignedOffset(offsetYPx)}`;
-  } else if (style.position === CaptionPosition.CENTER) {
-    const base = `(h-th)/2`;
-    yPosition = `${base}${formatSignedOffset(offsetYPx)}`;
+  if (position === CaptionPosition.TOP) {
+    yPosition = `${padding}${formatSignedOffset(offsetYPx)}`;
+  } else if (position === CaptionPosition.CENTER) {
+    yPosition = `(h-th)/2${formatSignedOffset(offsetYPx)}`;
   } else {
-    const base = `h-th-${style.padding * 2}`;
-    yPosition = `${base}${formatSignedOffset(offsetYPx)}`;
+    yPosition = `h-th-${padding * 2}${formatSignedOffset(offsetYPx)}`;
   }
 
-  const fontDirective = fontPath
-    ? `fontfile='${escapeDrawtextValue(fontPath)}'`
-    : `font='Sans'`;
+  // fontPath is guaranteed to exist at this point
+  const fontDirective = `fontfile='${escapeFfmpegPath(fontPath)}'`;
 
   const drawtextParts = [
     `text='${escapedText}'`,
     fontDirective,
-    `fontsize=${style.fontSize}`,
-    `fontcolor=${hexToFFmpegColor(style.fontColor)}`,
+    `fontsize=${fontSize}`,
+    `fontcolor=${hexToFFmpegColor(fontColor)}`,
     `x=${xPosition}`,
     `y=${yPosition}`,
     `borderw=2`,
     `bordercolor=black@0.5`,
     `box=1`,
-    `boxcolor=${hexToFFmpegColor(style.backgroundColor)}`,
-    `boxborderw=${style.padding}`,
+    `boxcolor=${hexToFFmpegColor(backgroundColor)}`,
+    `boxborderw=${padding}`,
   ];
 
   return `drawtext=${drawtextParts.join(':')}`;
