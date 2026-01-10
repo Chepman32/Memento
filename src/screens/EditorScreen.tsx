@@ -64,6 +64,29 @@ const TIMELINE_HEIGHT = 80;
 const THUMBNAIL_SIZE = 60;
 const REMOVE_ICON = require('../assets/icons/remove.png');
 
+// Caption color palettes
+const FONT_COLORS = [
+  '#FFFFFF', // White
+  '#000000', // Black
+  '#FF3B30', // Red
+  '#FF9500', // Orange
+  '#FFCC00', // Yellow
+  '#34C759', // Green
+  '#007AFF', // Blue
+  '#AF52DE', // Purple
+];
+
+const BACKGROUND_COLORS = [
+  '#00000080', // Semi-transparent black
+  '#00000000', // Transparent
+  '#000000CC', // Dark black
+  '#FFFFFF80', // Semi-transparent white
+  '#FF3B3080', // Semi-transparent red
+  '#007AFF80', // Semi-transparent blue
+  '#34C75980', // Semi-transparent green
+  '#AF52DE80', // Semi-transparent purple
+];
+
 export const EditorScreen = () => {
   const route = useRoute<EditorScreenRouteProp>();
   const navigation = useNavigation<EditorScreenNavigationProp>();
@@ -95,7 +118,7 @@ export const EditorScreen = () => {
     number | null
   >(null);
   const [isPlaying, setIsPlaying] = useState(false);
-  const [activeTab, setActiveTab] = useState<'duration' | 'transitions'>(
+  const [activeTab, setActiveTab] = useState<'duration' | 'transitions' | 'captions'>(
     'duration',
   );
   const [voiceModalVisible, setVoiceModalVisible] = useState(false);
@@ -305,8 +328,24 @@ export const EditorScreen = () => {
     setActivePhotoIndex(nextIndex);
   };
 
-  const handleTabChange = (tab: 'duration' | 'transitions') => {
+  const handleTabChange = (tab: 'duration' | 'transitions' | 'captions') => {
     setActiveTab(tab);
+    haptics.light();
+  };
+
+  // Handle caption style updates
+  const handleCaptionStyleChange = (styleUpdates: Partial<typeof DEFAULT_CAPTION_STYLE>) => {
+    if (!currentProject || !activePhoto?.caption) return;
+
+    updatePhoto(currentProject.id, activePhoto.id, {
+      caption: {
+        text: activePhoto.caption.text,
+        style: {
+          ...activePhoto.caption.style,
+          ...styleUpdates,
+        },
+      },
+    });
     haptics.light();
   };
 
@@ -391,6 +430,120 @@ export const EditorScreen = () => {
                   selectedTransition={currentTransition?.type || null}
                   onSelect={handleTransitionChange}
                 />
+              </View>
+            )}
+          </View>
+        );
+      case 'captions':
+        return (
+          <View style={styles.tabContent}>
+            {!activePhoto?.caption?.text ? (
+              <Text
+                style={[
+                  styles.placeholderText,
+                  { color: colors.textSecondary },
+                ]}
+              >
+                {t('editor.captions.noCaptionPlaceholder')}
+              </Text>
+            ) : (
+              <View style={styles.captionControls}>
+                {/* Font Size */}
+                <View style={styles.controlGroup}>
+                  <Text
+                    style={[styles.controlLabel, { color: colors.textSecondary }]}
+                  >
+                    {t('editor.captions.fontSize')}: {activePhoto.caption.style.fontSize}px
+                  </Text>
+                  <Slider
+                    value={activePhoto.caption.style.fontSize}
+                    min={12}
+                    max={48}
+                    step={2}
+                    onValueChange={(value) => handleCaptionStyleChange({ fontSize: value })}
+                    color={colors.primary}
+                  />
+                </View>
+
+                {/* Font Weight */}
+                <View style={styles.controlGroup}>
+                  <Text
+                    style={[styles.controlLabel, { color: colors.textSecondary }]}
+                  >
+                    {t('editor.captions.fontWeight')}
+                  </Text>
+                  <View style={styles.weightToggleContainer}>
+                    <TouchableOpacity
+                      style={[
+                        styles.weightToggleButton,
+                        { borderColor: colors.border },
+                        activePhoto.caption.style.fontWeight === 'normal' && {
+                          backgroundColor: colors.primary,
+                          borderColor: colors.primary,
+                        },
+                      ]}
+                      onPress={() => handleCaptionStyleChange({ fontWeight: 'normal' })}
+                    >
+                      <Text
+                        style={[
+                          styles.weightToggleText,
+                          { color: activePhoto.caption.style.fontWeight === 'normal' ? '#FFFFFF' : colors.text },
+                        ]}
+                      >
+                        {t('editor.captions.normal')}
+                      </Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity
+                      style={[
+                        styles.weightToggleButton,
+                        { borderColor: colors.border },
+                        activePhoto.caption.style.fontWeight === 'bold' && {
+                          backgroundColor: colors.primary,
+                          borderColor: colors.primary,
+                        },
+                      ]}
+                      onPress={() => handleCaptionStyleChange({ fontWeight: 'bold' })}
+                    >
+                      <Text
+                        style={[
+                          styles.weightToggleText,
+                          { color: activePhoto.caption.style.fontWeight === 'bold' ? '#FFFFFF' : colors.text },
+                          { fontWeight: 'bold' },
+                        ]}
+                      >
+                        {t('editor.captions.bold')}
+                      </Text>
+                    </TouchableOpacity>
+                  </View>
+                </View>
+
+                {/* Font Color */}
+                <View style={styles.controlGroup}>
+                  <Text
+                    style={[styles.controlLabel, { color: colors.textSecondary }]}
+                  >
+                    {t('editor.captions.fontColor')}
+                  </Text>
+                  <ColorPalette
+                    selectedColor={activePhoto.caption.style.fontColor}
+                    onSelect={(color) => handleCaptionStyleChange({ fontColor: color })}
+                    colors={FONT_COLORS}
+                  />
+                </View>
+
+                {/* Background Color */}
+                <View style={styles.controlGroup}>
+                  <Text
+                    style={[styles.controlLabel, { color: colors.textSecondary }]}
+                  >
+                    {t('editor.captions.backgroundColor')}
+                  </Text>
+                  <ColorPalette
+                    selectedColor={activePhoto.caption.style.backgroundColor}
+                    onSelect={(color) => handleCaptionStyleChange({ backgroundColor: color })}
+                    colors={BACKGROUND_COLORS}
+                  />
+                </View>
               </View>
             )}
           </View>
@@ -526,6 +679,13 @@ export const EditorScreen = () => {
                   photo={previewPhoto}
                   width={PREVIEW_WIDTH}
                   height={PREVIEW_HEIGHT}
+                  onCaptionDrag={
+                    activePhoto?.caption && currentProject
+                      ? (offsetX, offsetY) => {
+                          handleCaptionStyleChange({ offsetX, offsetY });
+                        }
+                      : undefined
+                  }
                 />
               ) : (
                 <View
@@ -613,6 +773,32 @@ export const EditorScreen = () => {
                 {t('editor.transition')}
               </Text>
             </TouchableOpacity>
+            {selectedTransitionIndex === null && activePhoto?.caption?.text && (
+              <TouchableOpacity
+                style={[
+                  styles.tab,
+                  activeTab === 'captions' && {
+                    borderBottomColor: colors.primary,
+                    borderBottomWidth: 2,
+                  },
+                ]}
+                onPress={() => handleTabChange('captions')}
+              >
+                <Text
+                  style={[
+                    styles.tabText,
+                    {
+                      color:
+                        activeTab === 'captions'
+                          ? colors.primary
+                          : colors.textSecondary,
+                    },
+                  ]}
+                >
+                  {t('editor.captions.tab')}
+                </Text>
+              </TouchableOpacity>
+            )}
           </View>
 
           {/* Tab Content */}
@@ -689,20 +875,76 @@ interface PhotoPreviewProps {
         textAlign: 'left' | 'center' | 'right';
         padding: number;
         maxWidth: number;
+        offsetX?: number;
+        offsetY?: number;
       };
     };
   };
   width: number;
   height: number;
+  onCaptionDrag?: (offsetX: number, offsetY: number) => void;
 }
 
 const PhotoPreview: React.FC<PhotoPreviewProps> = ({
   photo,
   width,
   height,
+  onCaptionDrag,
 }) => {
   const [size, setSize] = useState({ width, height });
   const image = useImage(photo.uri);
+  const { colors } = useThemeStore();
+
+  // Draggable caption state
+  const translateX = useSharedValue(0);
+  const translateY = useSharedValue(0);
+  const isDragging = useSharedValue(false);
+  const startX = useSharedValue(0);
+  const startY = useSharedValue(0);
+
+  // Initialize offsets from photo caption style
+  useEffect(() => {
+    if (photo.caption?.style) {
+      const offsetXPx = ((photo.caption.style.offsetX ?? 0) / 100) * width;
+      const offsetYPx = ((photo.caption.style.offsetY ?? 0) / 100) * height;
+      translateX.value = offsetXPx;
+      translateY.value = offsetYPx;
+    }
+  }, [photo.caption?.style.offsetX, photo.caption?.style.offsetY, width, height]);
+
+  // Caption pan gesture
+  const captionPanGesture = Gesture.Pan()
+    .onBegin(() => {
+      isDragging.value = true;
+      startX.value = translateX.value;
+      startY.value = translateY.value;
+      runOnJS(haptics.medium)();
+    })
+    .onUpdate((event) => {
+      translateX.value = startX.value + event.translationX;
+      translateY.value = startY.value + event.translationY;
+    })
+    .onEnd(() => {
+      isDragging.value = false;
+      // Convert pixel offset to percentage
+      const offsetXPercent = (translateX.value / width) * 100;
+      const offsetYPercent = (translateY.value / height) * 100;
+      // Clamp to reasonable bounds
+      const clampedX = Math.max(-50, Math.min(50, offsetXPercent));
+      const clampedY = Math.max(-50, Math.min(50, offsetYPercent));
+      if (onCaptionDrag) {
+        runOnJS(onCaptionDrag)(clampedX, clampedY);
+      }
+      runOnJS(haptics.light)();
+    });
+
+  const captionAnimatedStyle = useAnimatedStyle(() => ({
+    transform: [
+      { translateX: translateX.value },
+      { translateY: translateY.value },
+      { scale: withSpring(isDragging.value ? 1.05 : 1) },
+    ],
+  }));
 
   // Calculate aspect ratio and dimensions
   useEffect(() => {
@@ -780,25 +1022,52 @@ const PhotoPreview: React.FC<PhotoPreviewProps> = ({
     const { text, style } = photo.caption;
     const maxTextWidth = (width * style.maxWidth) / 100;
 
-    let captionY: number;
-    if (style.position === 'top') {
-      captionY = style.padding;
-    } else if (style.position === 'center') {
-      captionY = height / 2;
-    } else {
-      captionY = height - style.padding - 40; // Approximate text height
-    }
-
     let textAlign: 'left' | 'center' | 'right' = 'center';
     if (style.textAlign === 'left') textAlign = 'left';
     if (style.textAlign === 'right') textAlign = 'right';
+
+    const captionContent = (
+      <Animated.View
+        style={[
+          {
+            backgroundColor: style.backgroundColor,
+            paddingHorizontal: style.padding,
+            paddingVertical: style.padding / 2,
+            borderRadius: 4,
+            maxWidth: maxTextWidth,
+          },
+          onCaptionDrag && captionAnimatedStyle,
+        ]}
+      >
+        <Text
+          style={{
+            color: style.fontColor,
+            fontSize: style.fontSize,
+            fontWeight: style.fontWeight,
+            textAlign: textAlign,
+          }}
+        >
+          {text}
+        </Text>
+      </Animated.View>
+    );
 
     return (
       <View
         style={{
           position: 'absolute',
-          top: style.position === 'center' ? undefined : captionY,
-          bottom: style.position === 'bottom' ? style.padding : undefined,
+          top:
+            style.position === 'top'
+              ? style.padding
+              : style.position === 'center'
+                ? 0
+                : undefined,
+          bottom:
+            style.position === 'bottom'
+              ? style.padding
+              : style.position === 'center'
+                ? 0
+                : undefined,
           left: style.textAlign === 'left' ? style.padding : 0,
           right: style.textAlign === 'right' ? style.padding : 0,
           width: style.textAlign === 'center' ? '100%' : maxTextWidth,
@@ -806,26 +1075,13 @@ const PhotoPreview: React.FC<PhotoPreviewProps> = ({
           justifyContent: style.position === 'center' ? 'center' : 'flex-start',
         }}
       >
-        <View
-          style={{
-            backgroundColor: style.backgroundColor,
-            paddingHorizontal: style.padding,
-            paddingVertical: style.padding / 2,
-            borderRadius: 4,
-            maxWidth: maxTextWidth,
-          }}
-        >
-          <Text
-            style={{
-              color: style.fontColor,
-              fontSize: style.fontSize,
-              fontWeight: style.fontWeight,
-              textAlign: textAlign,
-            }}
-          >
-            {text}
-          </Text>
-        </View>
+        {onCaptionDrag ? (
+          <GestureDetector gesture={captionPanGesture}>
+            {captionContent}
+          </GestureDetector>
+        ) : (
+          captionContent
+        )}
       </View>
     );
   };
@@ -948,6 +1204,47 @@ const Slider: React.FC<SliderProps> = ({
       <Text style={[styles.sliderValue, { color: colors.textSecondary }]}>
         {value}s
       </Text>
+    </View>
+  );
+};
+
+// Color Palette Component
+interface ColorPaletteProps {
+  selectedColor: string;
+  onSelect: (color: string) => void;
+  colors: string[];
+}
+
+const ColorPalette: React.FC<ColorPaletteProps> = ({
+  selectedColor,
+  onSelect,
+  colors: paletteColors,
+}) => {
+  const { colors } = useThemeStore();
+
+  return (
+    <View style={styles.colorPaletteContainer}>
+      {paletteColors.map((color, index) => {
+        const isSelected = selectedColor.toLowerCase() === color.toLowerCase();
+        const isTransparent = color === '#00000000';
+
+        return (
+          <TouchableOpacity
+            key={`${color}-${index}`}
+            style={[
+              styles.colorSwatch,
+              { backgroundColor: color, borderColor: colors.border },
+              isSelected && { borderColor: colors.primary, borderWidth: 3 },
+              isTransparent && styles.transparentSwatch,
+            ]}
+            onPress={() => onSelect(color)}
+          >
+            {isTransparent && (
+              <View style={styles.transparentLine} />
+            )}
+          </TouchableOpacity>
+        );
+      })}
     </View>
   );
 };
@@ -1556,6 +1853,51 @@ const styles = StyleSheet.create({
     ...TYPOGRAPHY.caption,
     minWidth: 30,
     textAlign: 'right',
+  },
+  // Caption controls styles
+  captionControls: {
+    gap: SPACING.xs,
+  },
+  weightToggleContainer: {
+    flexDirection: 'row',
+    gap: SPACING.sm,
+  },
+  weightToggleButton: {
+    flex: 1,
+    paddingVertical: SPACING.sm,
+    paddingHorizontal: SPACING.md,
+    borderRadius: RADII.sm,
+    borderWidth: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  weightToggleText: {
+    ...TYPOGRAPHY.body2,
+  },
+  colorPaletteContainer: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: SPACING.sm,
+    marginTop: SPACING.xs,
+  },
+  colorSwatch: {
+    width: 36,
+    height: 36,
+    borderRadius: 18,
+    borderWidth: 1,
+  },
+  transparentSwatch: {
+    backgroundColor: '#FFFFFF',
+    overflow: 'hidden',
+  },
+  transparentLine: {
+    position: 'absolute',
+    top: '50%',
+    left: -4,
+    right: -4,
+    height: 2,
+    backgroundColor: '#FF3B30',
+    transform: [{ rotate: '45deg' }],
   },
   transitionContainer: {
     paddingTop: SPACING.xs,

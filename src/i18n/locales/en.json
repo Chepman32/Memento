@@ -110,6 +110,17 @@
       "noSpeechDetected": "No speech detected. Please try again.",
       "networkError": "Network error occurred during transcription",
       "unknownError": "An error occurred during transcription"
+    },
+    "captions": {
+      "tab": "Captions",
+      "fontSize": "Font Size",
+      "fontWeight": "Weight",
+      "fontColor": "Text Color",
+      "backgroundColor": "Background",
+      "normal": "Normal",
+      "bold": "Bold",
+      "dragToMove": "Drag caption to reposition",
+      "noCaptionPlaceholder": "No caption on this slide"
     }
   },
   "transitions": {

@@ -218,23 +218,27 @@ const generateCaptionFilter = (
   const { text, style } = photo.caption;
   const escapedText = escapeDrawtextValue(text);
 
-  // Calculate position
+  // Calculate offset in pixels (percentage of dimensions)
+  const offsetXPx = Math.round(((style.offsetX ?? 0) / 100) * dimensions.width);
+  const offsetYPx = Math.round(((style.offsetY ?? 0) / 100) * dimensions.height);
+
+  // Calculate base position
   let xPosition: string;
   if (style.textAlign === 'left') {
-    xPosition = `${style.padding}`;
+    xPosition = `${style.padding + offsetXPx}`;
   } else if (style.textAlign === 'right') {
-    xPosition = `w-tw-${style.padding}`;
+    xPosition = `w-tw-${style.padding - offsetXPx}`;
   } else {
-    xPosition = `(w-tw)/2`;
+    xPosition = offsetXPx === 0 ? `(w-tw)/2` : `(w-tw)/2+${offsetXPx}`;
   }
 
   let yPosition: string;
   if (style.position === CaptionPosition.TOP) {
-    yPosition = `${style.padding}`;
+    yPosition = `${style.padding + offsetYPx}`;
   } else if (style.position === CaptionPosition.CENTER) {
-    yPosition = `(h-th)/2`;
+    yPosition = offsetYPx === 0 ? `(h-th)/2` : `(h-th)/2+${offsetYPx}`;
   } else {
-    yPosition = `h-th-${style.padding * 2}`;
+    yPosition = `h-th-${style.padding * 2 - offsetYPx}`;
   }
 
   const drawtextParts = [

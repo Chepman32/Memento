@@ -64,6 +64,8 @@ export interface CaptionStyle {
   textAlign: 'left' | 'center' | 'right';
   padding: number;
   maxWidth: number;
+  offsetX: number; // percentage offset from center (-50 to 50)
+  offsetY: number; // percentage offset from base position (-50 to 50)
 }
 
 export enum CaptionPosition {
@@ -81,6 +83,8 @@ export const DEFAULT_CAPTION_STYLE: CaptionStyle = {
   textAlign: 'center',
   padding: 12,
   maxWidth: 90,
+  offsetX: 0,
+  offsetY: 0,
 };
 
 export interface Transition {
