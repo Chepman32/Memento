@@ -183,6 +183,7 @@ const initializeI18n = async () => {
       escapeValue: false,
     },
     compatibilityJSON: 'v3',
+    nsSeparator: false,
     react: {
       useSuspense: false,
     },
@@ -200,6 +201,7 @@ i18n.use(initReactI18next).init({
     escapeValue: false,
   },
   compatibilityJSON: 'v3',
+  nsSeparator: false,
   react: {
     useSuspense: false,
   },
