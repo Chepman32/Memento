@@ -41,6 +41,10 @@
 	<string>We need permission to save your created videos to the photo library.</string>
 	<key>NSPhotoLibraryUsageDescription</key>
 	<string>We need access to your photo library to create slideshows from your photos.</string>
+	<key>NSMicrophoneUsageDescription</key>
+	<string>Memento needs microphone access to transcribe your voice into slide captions.</string>
+	<key>NSSpeechRecognitionUsageDescription</key>
+	<string>Memento uses on-device speech recognition to convert your voice to text for slide captions.</string>
 	<key>RCTNewArchEnabled</key>
 	<true/>
 	<key>UIAppFonts</key>

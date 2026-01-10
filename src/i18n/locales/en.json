@@ -17,7 +17,8 @@
     "loading": "Loading...",
     "retry": "Retry",
     "error": "Error",
-    "success": "Success"
+    "success": "Success",
+    "openSettings": "Open Settings"
   },
   "home": {
     "title": "SlideMint",
@@ -91,7 +92,25 @@
     "discardChanges": "Discard Changes",
     "selectSlidePlaceholder": "Tap a slide in the timeline to select it",
     "selectTransitionPlaceholder": "Tap a transition or slide in the timeline",
-    "newSlideshow": "New Slideshow"
+    "newSlideshow": "New Slideshow",
+    "voiceInput": {
+      "title": "Voice to Text",
+      "slideNumber": "Adding caption to slide {{number}}",
+      "placeholder": "Tap the microphone to start recording or type your caption here...",
+      "recording": "Recording...",
+      "recordingHint": "Speak clearly. Tap mic to stop.",
+      "tapToRecord": "Tap microphone to start recording",
+      "notAvailable": "Speech recognition is not available on this device",
+      "permissionDenied": "Microphone and speech recognition permissions are required",
+      "permissionError": "Failed to check permissions",
+      "permissionRequired": "Permission Required",
+      "permissionInstructions": "Please enable microphone and speech recognition permissions in Settings to use voice input",
+      "startError": "Failed to start recording",
+      "stopError": "Failed to stop recording",
+      "noSpeechDetected": "No speech detected. Please try again.",
+      "networkError": "Network error occurred during transcription",
+      "unknownError": "An error occurred during transcription"
+    }
   },
   "transitions": {
     "fade": "Fade",

@@ -11,6 +11,8 @@
 		13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB51A68108700A75B9A /* Images.xcassets */; };
 		16110A292EB206B3004E61E4 /* PhotoLibraryModule.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16110A282EB206B2004E61E4 /* PhotoLibraryModule.swift */; };
 		16110A2A2EB206B3004E61E4 /* PhotoLibraryModule.m in Sources */ = {isa = PBXBuildFile; fileRef = 16110A272EB206B2004E61E4 /* PhotoLibraryModule.m */; };
+		16110A2D2EB206B5004E61E4 /* SpeechRecognitionModule.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16110A2C2EB206B4004E61E4 /* SpeechRecognitionModule.swift */; };
+		16110A2E2EB206B5004E61E4 /* SpeechRecognitionModule.m in Sources */ = {isa = PBXBuildFile; fileRef = 16110A2B2EB206B4004E61E4 /* SpeechRecognitionModule.m */; };
 		761780ED2CA45674006654EE /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 761780EC2CA45674006654EE /* AppDelegate.swift */; };
 		81AB9BB82411601600AC10FF /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */; };
 		FC12A479A9864A87956128FE /* success_fanfare_trumpets.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = F44B25B46E2C4100BF7F3E28 /* success_fanfare_trumpets.mp3 */; };
@@ -24,6 +26,8 @@
 		13B07FB81A68108700A75B9A /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = PrivacyInfo.xcprivacy; path = SlideMint/PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
 		16110A272EB206B2004E61E4 /* PhotoLibraryModule.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = PhotoLibraryModule.m; sourceTree = "<group>"; };
 		16110A282EB206B2004E61E4 /* PhotoLibraryModule.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhotoLibraryModule.swift; sourceTree = "<group>"; };
+		16110A2B2EB206B4004E61E4 /* SpeechRecognitionModule.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = SpeechRecognitionModule.m; path = SlideMint/SpeechRecognitionModule.m; sourceTree = "<group>"; };
+		16110A2C2EB206B4004E61E4 /* SpeechRecognitionModule.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = SpeechRecognitionModule.swift; path = SlideMint/SpeechRecognitionModule.swift; sourceTree = "<group>"; };
 		52721D1CE4C76DB7C7079884 /* libPods-SlideMint.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-SlideMint.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		693384739892AF3C2986CEDF /* Pods-SlideMint.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SlideMint.debug.xcconfig"; path = "Target Support Files/Pods-SlideMint/Pods-SlideMint.debug.xcconfig"; sourceTree = "<group>"; };
 		761780EC2CA45674006654EE /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = AppDelegate.swift; path = SlideMint/AppDelegate.swift; sourceTree = "<group>"; };
@@ -86,6 +90,8 @@
 			children = (
 				16110A272EB206B2004E61E4 /* PhotoLibraryModule.m */,
 				16110A282EB206B2004E61E4 /* PhotoLibraryModule.swift */,
+				16110A2B2EB206B4004E61E4 /* SpeechRecognitionModule.m */,
+				16110A2C2EB206B4004E61E4 /* SpeechRecognitionModule.swift */,
 				13B07FAE1A68108700A75B9A /* SlideMint */,
 				832341AE1AAA6A7D00B99B32 /* Libraries */,
 				83CBBA001A601CBA00E9B192 /* Products */,
@@ -274,6 +280,8 @@
 			files = (
 				16110A292EB206B3004E61E4 /* PhotoLibraryModule.swift in Sources */,
 				16110A2A2EB206B3004E61E4 /* PhotoLibraryModule.m in Sources */,
+				16110A2D2EB206B5004E61E4 /* SpeechRecognitionModule.swift in Sources */,
+				16110A2E2EB206B5004E61E4 /* SpeechRecognitionModule.m in Sources */,
 				761780ED2CA45674006654EE /* AppDelegate.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -290,7 +298,7 @@
 				CLANG_ENABLE_MODULES = YES;
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution";
 				CODE_SIGN_STYLE = Manual;
-				CURRENT_PROJECT_VERSION = 9;
+				CURRENT_PROJECT_VERSION = 11;
 				DEVELOPMENT_TEAM = "";
 				"DEVELOPMENT_TEAM[sdk=iphoneos*]" = 8A6D95WMNG;
 				ENABLE_BITCODE = NO;
@@ -327,7 +335,7 @@
 				CLANG_ENABLE_MODULES = YES;
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution";
 				CODE_SIGN_STYLE = Manual;
-				CURRENT_PROJECT_VERSION = 9;
+				CURRENT_PROJECT_VERSION = 11;
 				DEVELOPMENT_TEAM = "";
 				"DEVELOPMENT_TEAM[sdk=iphoneos*]" = 8A6D95WMNG;
 				INFOPLIST_FILE = SlideMint/Info.plist;

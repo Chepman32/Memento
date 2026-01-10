@@ -7,6 +7,8 @@ import {
   ResolutionPreset,
   Transition,
   TransitionType,
+  Photo,
+  CaptionPosition,
 } from '../types/project.types';
 
 export interface VideoEncoderConfig {
@@ -204,6 +206,51 @@ const escapeFfmpegPath = (value: string): string => {
 
 const escapeDrawtextValue = (value: string): string => {
   return value.replace(/\\/g, '\\\\').replace(/:/g, '\\:').replace(/'/g, "\\'");
+};
+
+// Generate drawtext filter for a photo caption
+const generateCaptionFilter = (
+  photo: Photo,
+  dimensions: { width: number; height: number }
+): string | null => {
+  if (!photo.caption?.text) return null;
+
+  const { text, style } = photo.caption;
+  const escapedText = escapeDrawtextValue(text);
+
+  // Calculate position
+  let xPosition: string;
+  if (style.textAlign === 'left') {
+    xPosition = `${style.padding}`;
+  } else if (style.textAlign === 'right') {
+    xPosition = `w-tw-${style.padding}`;
+  } else {
+    xPosition = `(w-tw)/2`;
+  }
+
+  let yPosition: string;
+  if (style.position === CaptionPosition.TOP) {
+    yPosition = `${style.padding}`;
+  } else if (style.position === CaptionPosition.CENTER) {
+    yPosition = `(h-th)/2`;
+  } else {
+    yPosition = `h-th-${style.padding * 2}`;
+  }
+
+  const drawtextParts = [
+    `text='${escapedText}'`,
+    `fontsize=${style.fontSize}`,
+    `fontcolor=${style.fontColor}`,
+    `x=${xPosition}`,
+    `y=${yPosition}`,
+    `borderw=2`,
+    `bordercolor=black@0.5`,
+    `box=1`,
+    `boxcolor=${style.backgroundColor}`,
+    `boxborderw=${style.padding}`,
+  ];
+
+  return `drawtext=${drawtextParts.join(':')}`;
 };
 
 export const buildTimeline = (project: Project): TimelineDescription => {
@@ -416,9 +463,20 @@ export const videoEncoder = {
 
     timeline.photoSegments.forEach((segment, index) => {
       const inputIndex = index + inputOffset;
-      filters.push(
-        `[${inputIndex}:v]scale=${dimensions.width}:${dimensions.height}:force_original_aspect_ratio=decrease,pad=${dimensions.width}:${dimensions.height}:(ow-iw)/2:(oh-ih)/2,setsar=1[v${index}]`
-      );
+      const photo = project.photos.find(p => p.id === segment.id);
+
+      let filterChain = `[${inputIndex}:v]scale=${dimensions.width}:${dimensions.height}:force_original_aspect_ratio=decrease,pad=${dimensions.width}:${dimensions.height}:(ow-iw)/2:(oh-ih)/2,setsar=1`;
+
+      // Add caption if exists
+      if (photo?.caption?.text) {
+        const captionFilter = generateCaptionFilter(photo, dimensions);
+        if (captionFilter) {
+          filterChain += `,${captionFilter}`;
+        }
+      }
+
+      filterChain += `[v${index}]`;
+      filters.push(filterChain);
     });
 
     let finalLabel = 'v0';

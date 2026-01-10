@@ -25,6 +25,10 @@ import {
   Image,
   useImage,
   ColorMatrix,
+  Text as SkiaText,
+  useFont,
+  Skia,
+  RoundedRect,
 } from '@shopify/react-native-skia';
 import {
   Gesture,
@@ -38,12 +42,13 @@ import Animated, {
   withSpring,
   SharedValue,
 } from 'react-native-reanimated';
-import { TransitionType, PhotoEffect } from '../types/project.types';
+import { TransitionType, PhotoEffect, DEFAULT_CAPTION_STYLE } from '../types/project.types';
 import { haptics } from '../utils/hapticFeedback';
 import { sounds } from '../utils/soundEffects';
 import { IconButton } from '../components/common';
 import { useAutosave } from '../hooks/useAutosave';
 import { SaveIndicator } from '../components/editor/SaveIndicator';
+import { VoiceInputModal } from '../components/editor/VoiceInputModal';
 
 // Types
 type EditorScreenRouteProp = RouteProp<RootStackParamList, 'Editor'>;
@@ -93,6 +98,7 @@ export const EditorScreen = () => {
   const [activeTab, setActiveTab] = useState<'duration' | 'transitions'>(
     'duration',
   );
+  const [voiceModalVisible, setVoiceModalVisible] = useState(false);
 
   // Get current project
   const currentProject = projects.find(p => p.id === currentProjectId);
@@ -483,12 +489,26 @@ export const EditorScreen = () => {
             </View>
             <SaveIndicator status={saveStatus} lastSaved={lastSaved} />
           </View>
-          <IconButton
-            icon={<FeatherIcon name="folder" size={22} color={colors.text} />}
-            onPress={handleOpenProjectImages}
-            variant="default"
-            size={44}
-          />
+          <View style={styles.headerRight}>
+            <IconButton
+              icon={<FeatherIcon name="mic" size={22} color={colors.text} />}
+              onPress={() => {
+                if (activePhotoIndex !== null) {
+                  setVoiceModalVisible(true);
+                  haptics.light();
+                }
+              }}
+              variant="default"
+              size={44}
+              disabled={activePhotoIndex === null}
+            />
+            <IconButton
+              icon={<FeatherIcon name="folder" size={22} color={colors.text} />}
+              onPress={handleOpenProjectImages}
+              variant="default"
+              size={44}
+            />
+          </View>
         </View>
 
         {/* Top Half: Preview & Timeline */}
@@ -627,6 +647,25 @@ export const EditorScreen = () => {
             </TouchableOpacity>
           </View>
         </View>
+
+        {/* Voice Input Modal */}
+        <VoiceInputModal
+          visible={voiceModalVisible}
+          slideNumber={activePhotoIndex ?? 0}
+          initialText={activePhoto?.caption?.text ?? ''}
+          onConfirm={(text) => {
+            if (currentProject && activePhoto) {
+              updatePhoto(currentProject.id, activePhoto.id, {
+                caption: {
+                  text,
+                  style: activePhoto.caption?.style ?? DEFAULT_CAPTION_STYLE,
+                },
+              });
+            }
+            setVoiceModalVisible(false);
+          }}
+          onCancel={() => setVoiceModalVisible(false)}
+        />
       </GestureHandlerRootView>
     </SafeAreaView>
   );
@@ -639,6 +678,19 @@ interface PhotoPreviewProps {
     width: number;
     height: number;
     effects?: PhotoEffect[];
+    caption?: {
+      text: string;
+      style: {
+        fontSize: number;
+        fontColor: string;
+        backgroundColor: string;
+        position: 'top' | 'center' | 'bottom';
+        fontWeight: 'normal' | 'bold';
+        textAlign: 'left' | 'center' | 'right';
+        padding: number;
+        maxWidth: number;
+      };
+    };
   };
   width: number;
   height: number;
@@ -721,19 +773,79 @@ const PhotoPreview: React.FC<PhotoPreviewProps> = ({
   const x = (width - size.width) / 2;
   const y = (height - size.height) / 2;
 
-  return (
-    <Canvas style={{ width, height }}>
-      <Image
-        image={image}
-        x={x}
-        y={y}
-        width={size.width}
-        height={size.height}
-        fit="contain"
+  // Calculate caption position
+  const renderCaption = () => {
+    if (!photo.caption?.text) return null;
+
+    const { text, style } = photo.caption;
+    const maxTextWidth = (width * style.maxWidth) / 100;
+
+    let captionY: number;
+    if (style.position === 'top') {
+      captionY = style.padding;
+    } else if (style.position === 'center') {
+      captionY = height / 2;
+    } else {
+      captionY = height - style.padding - 40; // Approximate text height
+    }
+
+    let textAlign: 'left' | 'center' | 'right' = 'center';
+    if (style.textAlign === 'left') textAlign = 'left';
+    if (style.textAlign === 'right') textAlign = 'right';
+
+    return (
+      <View
+        style={{
+          position: 'absolute',
+          top: style.position === 'center' ? undefined : captionY,
+          bottom: style.position === 'bottom' ? style.padding : undefined,
+          left: style.textAlign === 'left' ? style.padding : 0,
+          right: style.textAlign === 'right' ? style.padding : 0,
+          width: style.textAlign === 'center' ? '100%' : maxTextWidth,
+          alignItems: style.textAlign === 'left' ? 'flex-start' : style.textAlign === 'right' ? 'flex-end' : 'center',
+          justifyContent: style.position === 'center' ? 'center' : 'flex-start',
+        }}
       >
-        {colorMatrix && <ColorMatrix matrix={colorMatrix} />}
-      </Image>
-    </Canvas>
+        <View
+          style={{
+            backgroundColor: style.backgroundColor,
+            paddingHorizontal: style.padding,
+            paddingVertical: style.padding / 2,
+            borderRadius: 4,
+            maxWidth: maxTextWidth,
+          }}
+        >
+          <Text
+            style={{
+              color: style.fontColor,
+              fontSize: style.fontSize,
+              fontWeight: style.fontWeight,
+              textAlign: textAlign,
+            }}
+          >
+            {text}
+          </Text>
+        </View>
+      </View>
+    );
+  };
+
+  return (
+    <View style={{ width, height }}>
+      <Canvas style={{ width, height }}>
+        <Image
+          image={image}
+          x={x}
+          y={y}
+          width={size.width}
+          height={size.height}
+          fit="contain"
+        >
+          {colorMatrix && <ColorMatrix matrix={colorMatrix} />}
+        </Image>
+      </Canvas>
+      {renderCaption()}
+    </View>
   );
 };
 
@@ -1280,6 +1392,11 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     flexDirection: 'column',
+  },
+  headerRight: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: SPACING.xs,
   },
   undoRedoContainer: {
     flexDirection: 'row',

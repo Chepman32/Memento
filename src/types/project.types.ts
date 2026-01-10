@@ -47,7 +47,41 @@ export interface Photo {
   transition: TransitionType; // Deprecated - kept for backward compatibility
   effects: PhotoEffect[];
   order: number;
+  caption?: PhotoCaption;
 }
+
+export interface PhotoCaption {
+  text: string;
+  style: CaptionStyle;
+}
+
+export interface CaptionStyle {
+  fontSize: number;
+  fontColor: string;
+  backgroundColor: string;
+  position: CaptionPosition;
+  fontWeight: 'normal' | 'bold';
+  textAlign: 'left' | 'center' | 'right';
+  padding: number;
+  maxWidth: number;
+}
+
+export enum CaptionPosition {
+  TOP = 'top',
+  CENTER = 'center',
+  BOTTOM = 'bottom',
+}
+
+export const DEFAULT_CAPTION_STYLE: CaptionStyle = {
+  fontSize: 24,
+  fontColor: '#FFFFFF',
+  backgroundColor: '#00000080',
+  position: CaptionPosition.BOTTOM,
+  fontWeight: 'normal',
+  textAlign: 'center',
+  padding: 12,
+  maxWidth: 90,
+};
 
 export interface Transition {
   id: string;
