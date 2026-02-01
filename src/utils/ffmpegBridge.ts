@@ -85,7 +85,7 @@ const disableStatisticsCallback = (FFmpegKitConfig: any) => {
 
 export const executeFfmpeg = async (
   params: ExecuteFfmpegParams
-): Promise<{ success: boolean; error?: string }> => {
+): Promise<{ success: boolean; error?: string; logs?: string[] }> => {
   let module: FfmpegKitModule;
 
   try {
@@ -98,6 +98,7 @@ export const executeFfmpeg = async (
   }
 
   const { FFmpegKit, FFmpegKitConfig, ReturnCode } = module;
+  const logs: string[] = [];
 
   params.onProgress?.(0);
 
@@ -127,34 +128,38 @@ export const executeFfmpeg = async (
 
           if (ReturnCode?.isSuccess?.(returnCode)) {
             params.onProgress?.(100);
-            resolve({ success: true });
+            resolve({ success: true, logs });
             return;
           }
 
           if (ReturnCode?.isCancel?.(returnCode)) {
-            resolve({ success: false, error: 'cancelled' });
+            resolve({ success: false, error: 'cancelled', logs });
             return;
           }
 
           const failStack = await session.getFailStackTrace();
           const state = await session.getState();
+          const lastLogs = logs.slice(-20).join('\n'); // Last 20 log lines for context
           resolve({
             success: false,
             error:
               (failStack && failStack.toString()) ||
-              `FFmpeg failed (state: ${state?.toString?.() ?? 'unknown'})`,
+              `FFmpeg failed (state: ${state?.toString?.() ?? 'unknown'})\n\nLogs:\n${lastLogs}`,
+            logs,
           });
         } catch (error) {
           resolve({
             success: false,
             error: error instanceof Error ? error.message : String(error),
+            logs,
           });
         }
       },
       (log: any) => {
+        const message =
+          typeof log?.getMessage === 'function' ? log.getMessage() : String(log);
+        logs.push(message);
         if (params.logTag) {
-          const message =
-            typeof log?.getMessage === 'function' ? log.getMessage() : String(log);
           console.log(`[${params.logTag}] ${message}`);
         }
       }
@@ -168,6 +173,7 @@ export const executeFfmpeg = async (
         resolve({
           success: false,
           error: error instanceof Error ? error.message : String(error),
+          logs,
         });
       });
   });

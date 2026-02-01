@@ -1,3 +1,4 @@
+import { Platform } from 'react-native';
 import RNFS from 'react-native-fs';
 import videoEncoder from './videoEncoder';
 import { executeFfmpeg } from './ffmpegBridge';
@@ -195,7 +196,7 @@ export const gifGenerator = {
         fontPath,
       });
 
-      const videoResult = await executeFfmpeg({
+      let videoResult = await executeFfmpeg({
         command: videoCommand,
         estimatedDurationMs,
         onProgress: progress => {
@@ -206,6 +207,25 @@ export const gifGenerator = {
         },
         logTag: 'FFmpeg-GIF-MP4',
       });
+
+      // If hardware encoder fails on iOS, retry with software encoder
+      if (!videoResult.success && Platform.OS === 'ios' && videoCommand.includes('h264_videotoolbox')) {
+        console.log('[FFmpeg-GIF] Hardware encoder failed, retrying with software encoder (libx264)...');
+        
+        const fallbackCommand = videoCommand.replace(/-c:v h264_videotoolbox/, '-c:v libx264 -preset fast');
+        
+        videoResult = await executeFfmpeg({
+          command: fallbackCommand,
+          estimatedDurationMs,
+          onProgress: progress => {
+            if (config.onProgress) {
+              const mapped = Math.min(progress, 100) * 0.7;
+              config.onProgress(mapped);
+            }
+          },
+          logTag: 'FFmpeg-GIF-MP4-Fallback',
+        });
+      }
 
       if (!videoResult.success) {
         return {

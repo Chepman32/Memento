@@ -3090,7 +3090,7 @@ DEPENDENCIES:
   - DoubleConversion (from `../node_modules/react-native/third-party-podspecs/DoubleConversion.podspec`)
   - fast_float (from `../node_modules/react-native/third-party-podspecs/fast_float.podspec`)
   - FBLazyVector (from `../node_modules/react-native/Libraries/FBLazyVector`)
-  - ffmpeg-kit-ios-https (from `/Users/antonchepur/Memento/ios/ffmpeg-kit-ios-https.podspec`)
+  - ffmpeg-kit-ios-https (from `/Users/antonchepur/SlideMint/ios/ffmpeg-kit-ios-https.podspec`)
   - ffmpeg-kit-react-native (from `../node_modules/ffmpeg-kit-react-native`)
   - fmt (from `../node_modules/react-native/third-party-podspecs/fmt.podspec`)
   - glog (from `../node_modules/react-native/third-party-podspecs/glog.podspec`)
@@ -3197,7 +3197,7 @@ EXTERNAL SOURCES:
   FBLazyVector:
     :path: "../node_modules/react-native/Libraries/FBLazyVector"
   ffmpeg-kit-ios-https:
-    :podspec: "/Users/antonchepur/Memento/ios/ffmpeg-kit-ios-https.podspec"
+    :podspec: "/Users/antonchepur/SlideMint/ios/ffmpeg-kit-ios-https.podspec"
   ffmpeg-kit-react-native:
     :path: "../node_modules/ffmpeg-kit-react-native"
   fmt:

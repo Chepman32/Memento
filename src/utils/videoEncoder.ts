@@ -1,3 +1,4 @@
+import { Platform } from 'react-native';
 import { TRANSITIONS } from '../constants/transitions';
 import { executeFfmpeg, cancelActiveFfmpeg } from './ffmpegBridge';
 import { prepareWatermarkResources, WatermarkResources, findPreferredFont } from './watermark';
@@ -702,7 +703,7 @@ export const videoEncoder = {
       };
     }
 
-    const execution = await executeFfmpeg({
+    let execution = await executeFfmpeg({
       command,
       estimatedDurationMs: Math.max(timeline.totalDurationMs, 1000),
       onProgress: progress => {
@@ -712,6 +713,33 @@ export const videoEncoder = {
       },
       logTag: 'FFmpeg-Video',
     });
+
+    // If hardware encoder fails on iOS, retry with software encoder
+    if (!execution.success && Platform.OS === 'ios' && command.includes('h264_videotoolbox')) {
+      console.log('[FFmpeg-Video] Hardware encoder failed, retrying with software encoder (libx264)...');
+      
+      try {
+        const fallbackCommand = videoEncoder.buildFFmpegCommand({
+          ...config,
+          watermarkResources: watermarkResources ?? undefined,
+          fontPath,
+          // Use software encoder by modifying the command
+        }).replace(/-c:v h264_videotoolbox/, '-c:v libx264 -preset fast');
+
+        execution = await executeFfmpeg({
+          command: fallbackCommand,
+          estimatedDurationMs: Math.max(timeline.totalDurationMs, 1000),
+          onProgress: progress => {
+            if (config.onProgress) {
+              config.onProgress(Math.min(progress, 99.9));
+            }
+          },
+          logTag: 'FFmpeg-Video-Fallback',
+        });
+      } catch (fallbackError) {
+        console.error('[FFmpeg-Video] Fallback encoding also failed:', fallbackError);
+      }
+    }
 
     if (!execution.success) {
       return {
