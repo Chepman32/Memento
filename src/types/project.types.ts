@@ -41,6 +41,8 @@ export enum ResolutionPreset {
 export interface Photo {
   id: string;
   uri: string;
+  originalUri?: string; // Original photo library URI (for reference)
+  thumbnailUri?: string; // Smaller preview image in persistent storage
   width: number;
   height: number;
   duration: number;

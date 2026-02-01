@@ -188,6 +188,8 @@
     "gifSaveError": "GIF exported ({{size}}) but could not be saved to gallery. Please check permissions.",
     "cancelExport": "Cancel Export?",
     "cancelExportMessage": "Are you sure you want to cancel the export?",
+    "ffmpegUnavailable": "Video Export Unavailable",
+    "ffmpegUnavailableMessage": "Video export is not available. Please reinstall the app or contact support.",
     "formats": {
       "video": "Video (MP4)",
       "gif": "GIF (Animated)",

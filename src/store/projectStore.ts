@@ -9,6 +9,7 @@ import {
   Transition,
   Folder,
 } from '../types/project.types';
+import { photoStorage } from '../utils/photoStorage';
 
 // Generate unique ID
 const generateId = () => {
@@ -88,6 +89,13 @@ interface ProjectState {
   // Selectors
   getCurrentProject: () => Project | undefined;
   getProjectById: (id: string) => Project | undefined;
+
+  // Migration
+  migrateProjectPhotos: (projectId: string) => Promise<{
+    migrated: number;
+    failed: number;
+  }>;
+  migrateAllProjects: () => Promise<void>;
 }
 
 export const useProjectStore = create<ProjectState>()(
@@ -221,18 +229,25 @@ export const useProjectStore = create<ProjectState>()(
           project.transitions = [];
         }
 
+        // Ensure storage directories exist
+        await photoStorage.ensureDirectories();
+
         // Process each photo
         const newPhotos: Photo[] = [];
 
         for (const asset of assets) {
           try {
-            // In a real app, you would copy the file to your app's directory
-            // For now, we'll just use the URI directly
-            const photoUri = asset.uri;
+            const photoId = generateId();
+
+            // Copy photo to persistent storage
+            const { localUri, thumbnailUri } =
+              await photoStorage.copyAndGenerateThumbnail(asset.uri, photoId);
 
             newPhotos.push({
-              id: generateId(),
-              uri: photoUri,
+              id: photoId,
+              uri: localUri,
+              originalUri: asset.uri,
+              thumbnailUri,
               width: asset.width || 0,
               height: asset.height || 0,
               duration: project.settings.defaultDuration,
@@ -253,9 +268,9 @@ export const useProjectStore = create<ProjectState>()(
           updatedAt: new Date(),
         };
 
-        // Set the first photo as the thumbnail if it's the first one
+        // Set the first photo's thumbnail as the project thumbnail
         if (project.photos.length === 0 && newPhotos.length > 0) {
-          updatedProject.thumbnail = newPhotos[0].uri;
+          updatedProject.thumbnail = newPhotos[0].thumbnailUri || newPhotos[0].uri;
         }
 
         updateProject(currentProjectId, updatedProject);
@@ -264,6 +279,9 @@ export const useProjectStore = create<ProjectState>()(
       removePhoto: (projectId, photoId) => {
         const project = get().projects.find(p => p.id === projectId);
         if (!project) return;
+
+        // Find the photo to get its URIs for cleanup and thumbnail check
+        const photoToRemove = project.photos.find(p => p.id === photoId);
 
         const updatedPhotos = project.photos
           .filter(photo => photo.id !== photoId)
@@ -274,14 +292,26 @@ export const useProjectStore = create<ProjectState>()(
 
         // Update thumbnail if the removed photo was the thumbnail
         let thumbnail = project.thumbnail;
-        if (thumbnail === photoId) {
-          thumbnail = updatedPhotos[0]?.uri || '';
+        if (
+          photoToRemove &&
+          (thumbnail === photoToRemove.uri ||
+            thumbnail === photoToRemove.thumbnailUri)
+        ) {
+          thumbnail =
+            updatedPhotos[0]?.thumbnailUri || updatedPhotos[0]?.uri || '';
         }
 
         get().updateProject(projectId, {
           photos: updatedPhotos,
           thumbnail,
         });
+
+        // Clean up storage files (async, don't block)
+        if (photoToRemove) {
+          photoStorage.deletePhotoFiles(photoId).catch(err => {
+            console.warn('[projectStore] Failed to delete photo files:', err);
+          });
+        }
       },
 
       updatePhoto: (projectId, photoId, updates) => {
@@ -505,6 +535,79 @@ export const useProjectStore = create<ProjectState>()(
           project.transitions = [];
         }
         return project;
+      },
+
+      // Migration functions
+      migrateProjectPhotos: async projectId => {
+        const project = get().projects.find(p => p.id === projectId);
+        if (!project) return { migrated: 0, failed: 0 };
+
+        let migrated = 0;
+        let failed = 0;
+        const updatedPhotos = [...project.photos];
+        let thumbnailUpdated = false;
+        let newThumbnail = project.thumbnail;
+
+        for (let i = 0; i < updatedPhotos.length; i++) {
+          const photo = updatedPhotos[i];
+
+          // Skip if already in local storage
+          if (photoStorage.isLocalStoragePath(photo.uri)) {
+            continue;
+          }
+
+          const result = await photoStorage.migratePhoto(photo.id, photo.uri);
+
+          if (result.migrated) {
+            updatedPhotos[i] = {
+              ...photo,
+              uri: result.uri,
+              originalUri: photo.uri,
+              thumbnailUri: result.thumbnailUri,
+            };
+            migrated++;
+
+            // Update project thumbnail if this was the thumbnail photo
+            if (!thumbnailUpdated && project.thumbnail === photo.uri) {
+              newThumbnail = result.thumbnailUri || result.uri;
+              thumbnailUpdated = true;
+            }
+          } else if (result.error) {
+            failed++;
+            console.warn(
+              `[Migration] Photo ${photo.id} failed:`,
+              result.error,
+            );
+          }
+        }
+
+        if (migrated > 0) {
+          get().updateProject(projectId, {
+            photos: updatedPhotos,
+            thumbnail: newThumbnail,
+          });
+        }
+
+        return { migrated, failed };
+      },
+
+      migrateAllProjects: async () => {
+        const { projects, migrateProjectPhotos } = get();
+
+        for (const project of projects) {
+          // Check if any photos need migration
+          const needsMigration = project.photos.some(
+            photo => !photoStorage.isLocalStoragePath(photo.uri),
+          );
+
+          if (needsMigration) {
+            console.log(`[Migration] Migrating project: ${project.title}`);
+            const result = await migrateProjectPhotos(project.id);
+            console.log(
+              `[Migration] Project ${project.title}: ${result.migrated} migrated, ${result.failed} failed`,
+            );
+          }
+        }
       },
     }),
     {

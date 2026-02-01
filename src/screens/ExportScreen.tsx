@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   View,
   Text,
@@ -19,6 +19,7 @@ import { haptics } from '../utils/hapticFeedback';
 import { videoEncoder } from '../utils/videoEncoder';
 import { gifGenerator } from '../utils/gifGenerator';
 import { photoLibrary } from '../utils/photoLibrary';
+import { isFFmpegAvailable } from '../utils/ffmpegBridge';
 import { ExportQuality, ResolutionPreset } from '../types/project.types';
 import { SPACING, RADII, TYPOGRAPHY } from '../constants/theme';
 import RNFS from 'react-native-fs';
@@ -49,6 +50,25 @@ const ExportScreen: React.FC = () => {
   );
   const [isExporting, setIsExporting] = useState(false);
   const [exportProgress, setExportProgress] = useState(0);
+  const [ffmpegAvailable, setFfmpegAvailable] = useState(true);
+
+  useEffect(() => {
+    const availability = isFFmpegAvailable();
+    setFfmpegAvailable(availability.available);
+
+    if (!availability.available) {
+      Alert.alert(
+        t('export.ffmpegUnavailable'),
+        t('export.ffmpegUnavailableMessage'),
+        [
+          {
+            text: t('common.ok'),
+            onPress: () => navigation.goBack(),
+          },
+        ],
+      );
+    }
+  }, [t, navigation]);
 
   const handleFormatSelect = (selectedFormat: ExportFormat) => {
     haptics.selection();
@@ -358,6 +378,7 @@ const ExportScreen: React.FC = () => {
             onPress={handleExport}
             variant="primary"
             fullWidth
+            disabled={!ffmpegAvailable}
           />
         )}
       </View>

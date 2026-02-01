@@ -33,6 +33,42 @@ type HomeScreenNavigationProp = StackNavigationProp<RootStackParamList, 'Home'>;
 const CARD_WIDTH = (SCREEN_WIDTH - SPACING.md * 3) / 2;
 const CARD_HEIGHT = CARD_WIDTH * 1.4;
 
+// Thumbnail component with error handling
+interface ThumbnailImageProps {
+  uri: string;
+  style: object;
+  placeholderStyle: object;
+  placeholderText: string;
+  placeholderTextStyle: object;
+}
+
+const ThumbnailImage: React.FC<ThumbnailImageProps> = ({
+  uri,
+  style,
+  placeholderStyle,
+  placeholderText,
+  placeholderTextStyle,
+}) => {
+  const [hasError, setHasError] = useState(false);
+
+  if (hasError) {
+    return (
+      <View style={placeholderStyle}>
+        <Text style={placeholderTextStyle}>{placeholderText}</Text>
+      </View>
+    );
+  }
+
+  return (
+    <Image
+      source={{ uri }}
+      style={style}
+      resizeMode="cover"
+      onError={() => setHasError(true)}
+    />
+  );
+};
+
 // Modal state type
 interface ModalState {
   visible: boolean;
@@ -389,10 +425,18 @@ const HomeScreen: React.FC = () => {
             {/* Thumbnail */}
             <View style={styles.thumbnailContainer}>
               {item.thumbnail ? (
-                <Image
-                  source={{ uri: item.thumbnail }}
+                <ThumbnailImage
+                  uri={item.thumbnail}
                   style={styles.thumbnail}
-                  resizeMode="cover"
+                  placeholderStyle={[
+                    styles.thumbnailPlaceholder,
+                    { backgroundColor: colors.border },
+                  ]}
+                  placeholderText={t('home.noPreview')}
+                  placeholderTextStyle={[
+                    styles.placeholderText,
+                    { color: colors.textSecondary },
+                  ]}
                 />
               ) : (
                 <View

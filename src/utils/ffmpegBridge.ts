@@ -37,6 +37,31 @@ const loadModule = (): FfmpegKitModule => {
   }
 };
 
+export interface FFmpegAvailability {
+  available: boolean;
+  error?: string;
+}
+
+let ffmpegAvailabilityCache: FFmpegAvailability | null = null;
+
+export const isFFmpegAvailable = (): FFmpegAvailability => {
+  if (ffmpegAvailabilityCache) {
+    return ffmpegAvailabilityCache;
+  }
+
+  try {
+    loadModule();
+    ffmpegAvailabilityCache = { available: true };
+  } catch (error) {
+    ffmpegAvailabilityCache = {
+      available: false,
+      error: error instanceof Error ? error.message : String(error),
+    };
+  }
+
+  return ffmpegAvailabilityCache;
+};
+
 const clampProgress = (value: number) => {
   if (Number.isNaN(value)) {
     return 0;
