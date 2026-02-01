@@ -70,11 +70,28 @@ const QUALITY_BITRATES: Record<ExportQuality, string> = {
   '4K': '20M',
 };
 
-const RESOLUTION_DIMENSIONS: Record<ResolutionPreset, { width: number; height: number }> = {
-  '1:1': { width: 1080, height: 1080 },
-  '9:16': { width: 1080, height: 1920 },
-  '16:9': { width: 1920, height: 1080 },
-  '21:9': { width: 2560, height: 1080 },
+const RESOLUTION_DIMENSIONS: Record<
+  ExportQuality,
+  Record<ResolutionPreset, { width: number; height: number }>
+> = {
+  '720p': {
+    '1:1': { width: 720, height: 720 },
+    '9:16': { width: 720, height: 1280 },
+    '16:9': { width: 1280, height: 720 },
+    '21:9': { width: 1680, height: 720 },
+  },
+  '1080p': {
+    '1:1': { width: 1080, height: 1080 },
+    '9:16': { width: 1080, height: 1920 },
+    '16:9': { width: 1920, height: 1080 },
+    '21:9': { width: 2560, height: 1080 },
+  },
+  '4K': {
+    '1:1': { width: 2160, height: 2160 },
+    '9:16': { width: 2160, height: 3840 },
+    '16:9': { width: 3840, height: 2160 },
+    '21:9': { width: 5120, height: 2160 },
+  },
 };
 
 const DEFAULT_TRANSITION_DURATION_MS = 600;
@@ -465,7 +482,7 @@ export const videoEncoder = {
       throw new Error('Cannot build FFmpeg command: project has no photos.');
     }
 
-    const dimensions = RESOLUTION_DIMENSIONS[resolution];
+    const dimensions = RESOLUTION_DIMENSIONS[quality][resolution];
     const bitrate = QUALITY_BITRATES[quality];
     const fps = config.fps ?? (quality === '4K' ? 60 : 30);
     const includeWatermark = Boolean(config.includeWatermark && watermarkResources?.imagePath);
