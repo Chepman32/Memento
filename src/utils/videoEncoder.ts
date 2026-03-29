@@ -622,7 +622,7 @@ export const videoEncoder = {
         : `font='Sans'`;
 
       const drawtextParts = [
-        `text='SlideMint'`,
+        `text='Slidevo'`,
         fontDirective,
         `fontsize=${fontSize}`,
         `fontcolor=white`,

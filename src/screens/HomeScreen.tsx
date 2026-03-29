@@ -638,7 +638,7 @@ const HomeScreen: React.FC = () => {
       <View style={styles.header}>
         <View>
           <Text style={[styles.headerTitle, { color: colors.text }]}>
-            SlideMint
+            {t('home.title')}
           </Text>
         </View>
         <View style={styles.headerRight}>

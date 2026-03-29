@@ -398,7 +398,7 @@ const OnboardingScreen: React.FC = () => {
         </View>
         <SafeAreaView style={styles.safeArea}>
           <View style={styles.topBar}>
-            <Text style={[styles.brand, { color: colors.text }]}>SlideMint</Text>
+            <Text style={[styles.brand, { color: colors.text }]}>{t('home.title')}</Text>
             <TouchableOpacity onPress={handleSkip} hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}>
               <Text style={[styles.skipText, { color: colors.textSecondary }]}>
                 {t('onboarding.skip')}
