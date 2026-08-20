@@ -111,6 +111,10 @@ dependencies {
     // The version of react-native is set by the React Native Gradle Plugin
     implementation("com.facebook.react:react-android")
 
+    // ffmpeg-kit-maintained 6.0.3 omits this runtime dependency from its POM.
+    // FFmpegKitConfig loads Exceptions during TurboModule initialization.
+    implementation("com.arthenica:smart-exception-java:0.2.1")
+
     if (hermesEnabled.toBoolean()) {
         implementation("com.facebook.react:hermes-android")
     } else {
