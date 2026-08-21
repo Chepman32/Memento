@@ -5,11 +5,11 @@ import {
   StyleSheet,
   Image,
   TouchableOpacity,
-  SafeAreaView,
   Alert,
   Linking,
   Platform,
 } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { useTranslation } from 'react-i18next';
 import {
   useNavigation,
@@ -22,30 +22,30 @@ import { launchImageLibrary } from 'react-native-image-picker';
 import {
   check,
   request,
-  PERMISSIONS,
   RESULTS,
   openSettings,
 } from 'react-native-permissions';
 import FeatherIcon from 'react-native-vector-icons/Feather';
 import {
+  Gesture,
+  GestureDetector,
   GestureHandlerRootView,
-  PanGestureHandler,
-  PanGestureHandlerGestureEvent,
 } from 'react-native-gesture-handler';
 import Animated, {
   useSharedValue,
   useAnimatedStyle,
-  useAnimatedGestureHandler,
   withSpring,
-  runOnJS,
   useAnimatedRef,
   useAnimatedScrollHandler,
 } from 'react-native-reanimated';
+import type { SharedValue } from 'react-native-reanimated';
+import { scheduleOnRN } from 'react-native-worklets';
 import { RootStackParamList } from '../navigation/navigationTypes';
 import { useThemeStore } from '../store/themeStore';
 import useProjectStore from '../store/projectStore';
 import { Button, IconButton } from '../components/common';
 import { haptics } from '../utils/hapticFeedback';
+import { getPhotoLibraryPermission } from '../utils/photoPermissions';
 import { FREE_TIER_LIMITS } from '../constants/iap';
 import { SPACING, RADII, TYPOGRAPHY, SCREEN_WIDTH } from '../constants/theme';
 
@@ -68,8 +68,8 @@ interface SelectedImage {
 interface DraggableImageProps {
   item: SelectedImage;
   index: number;
-  positions: Animated.SharedValue<number[]>;
-  scrollY: Animated.SharedValue<number>;
+  positions: SharedValue<number[]>;
+  scrollY: SharedValue<number>;
   onRemove: (index: number) => void;
   colors: any;
 }
@@ -85,6 +85,8 @@ const DraggableImage: React.FC<DraggableImageProps> = ({
   const isGestureActive = useSharedValue(false);
   const offsetX = useSharedValue(0);
   const offsetY = useSharedValue(0);
+  const startX = useSharedValue(0);
+  const startY = useSharedValue(0);
 
   const getPosition = (index: number) => {
     'worklet';
@@ -96,24 +98,21 @@ const DraggableImage: React.FC<DraggableImageProps> = ({
     };
   };
 
-  const gestureHandler = useAnimatedGestureHandler<
-    PanGestureHandlerGestureEvent,
-    { startX: number; startY: number }
-  >({
-    onStart: (_, ctx) => {
+  const panGesture = Gesture.Pan()
+    .onStart(() => {
       const currentIndex = positions.value.indexOf(index);
       const pos = getPosition(currentIndex);
-      ctx.startX = pos.x;
-      ctx.startY = pos.y;
+      startX.value = pos.x;
+      startY.value = pos.y;
       isGestureActive.value = true;
-      runOnJS(haptics.light)();
-    },
-    onActive: (event, ctx) => {
+      scheduleOnRN(haptics.light);
+    })
+    .onUpdate(event => {
       offsetX.value = event.translationX;
       offsetY.value = event.translationY;
 
-      const currentX = ctx.startX + event.translationX;
-      const currentY = ctx.startY + event.translationY + scrollY.value;
+      const currentX = startX.value + event.translationX;
+      const currentY = startY.value + event.translationY + scrollY.value;
 
       const newCol = Math.max(
         0,
@@ -138,14 +137,13 @@ const DraggableImage: React.FC<DraggableImageProps> = ({
         newPositions.splice(newIndex, 0, index);
         positions.value = newPositions;
       }
-    },
-    onEnd: () => {
+    })
+    .onFinalize(() => {
       offsetX.value = withSpring(0);
       offsetY.value = withSpring(0);
       isGestureActive.value = false;
-      runOnJS(haptics.light)();
-    },
-  });
+      scheduleOnRN(haptics.light);
+    });
 
   const animatedStyle = useAnimatedStyle(() => {
     const currentIndex = positions.value.indexOf(index);
@@ -176,8 +174,8 @@ const DraggableImage: React.FC<DraggableImageProps> = ({
   });
 
   return (
-    <PanGestureHandler onGestureEvent={gestureHandler}>
-      <Animated.View style={[animatedStyle]}>
+    <GestureDetector gesture={panGesture}>
+      <Animated.View style={animatedStyle}>
         <View style={styles.imageContainer}>
           <Image
             source={{ uri: item.uri }}
@@ -192,7 +190,7 @@ const DraggableImage: React.FC<DraggableImageProps> = ({
           </TouchableOpacity>
         </View>
       </Animated.View>
-    </PanGestureHandler>
+    </GestureDetector>
   );
 };
 
@@ -234,10 +232,10 @@ const ImageSelectionScreen: React.FC = () => {
   }, [selectedImages.length]);
 
   const maxPhotos = FREE_TIER_LIMITS.MAX_PHOTOS;
-  const photoPermission =
-    Platform.OS === 'ios'
-      ? PERMISSIONS.IOS.PHOTO_LIBRARY
-      : PERMISSIONS.ANDROID.READ_MEDIA_IMAGES;
+  const photoPermission = getPhotoLibraryPermission(
+    Platform.OS,
+    Platform.Version,
+  );
   const autoOpenPicker = route.params?.autoOpenPicker ?? false;
 
   const refreshPermissionStatus = useCallback(async () => {

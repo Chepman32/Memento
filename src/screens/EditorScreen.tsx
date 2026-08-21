@@ -36,12 +36,12 @@ import {
   GestureHandlerRootView,
 } from 'react-native-gesture-handler';
 import Animated, {
-  runOnJS,
   useSharedValue,
   useAnimatedStyle,
   withSpring,
   SharedValue,
 } from 'react-native-reanimated';
+import { scheduleOnRN } from 'react-native-worklets';
 import { TransitionType, PhotoEffect, DEFAULT_CAPTION_STYLE } from '../types/project.types';
 import { haptics } from '../utils/hapticFeedback';
 import { sounds } from '../utils/soundEffects';
@@ -910,7 +910,7 @@ const PhotoPreview: React.FC<PhotoPreviewProps> = ({
       isDragging.value = true;
       startX.value = translateX.value;
       startY.value = translateY.value;
-      runOnJS(haptics.medium)();
+      scheduleOnRN(haptics.medium);
     })
     .onUpdate((event) => {
       translateX.value = startX.value + event.translationX;
@@ -939,9 +939,9 @@ const PhotoPreview: React.FC<PhotoPreviewProps> = ({
       translateX.value = (clampedX / 100) * width;
       translateY.value = clampedYPx;
       if (onCaptionDrag) {
-        runOnJS(onCaptionDrag)(clampedX, clampedY);
+        scheduleOnRN(onCaptionDrag, clampedX, clampedY);
       }
-      runOnJS(haptics.light)();
+      scheduleOnRN(haptics.light);
     });
 
   const captionAnimatedStyle = useAnimatedStyle(() => ({
@@ -1172,7 +1172,7 @@ const Slider: React.FC<SliderProps> = ({
 
       if (currentValue.value !== clampedValue) {
         currentValue.value = clampedValue;
-        runOnJS(onValueChange)(clampedValue);
+        scheduleOnRN(onValueChange, clampedValue);
       }
     })
     .onFinalize(() => {
@@ -1464,9 +1464,9 @@ const PhotoTimelineItem: React.FC<PhotoTimelineItemProps> = ({
   const longPress = Gesture.LongPress()
     .minDuration(400)
     .onStart(() => {
-      runOnJS(haptics.medium)();
+      scheduleOnRN(haptics.medium);
       scale.value = withSpring(1.2);
-      runOnJS(setDraggedIndex)(index);
+      scheduleOnRN(setDraggedIndex, index);
     });
 
   const pan = Gesture.Pan()
@@ -1492,8 +1492,8 @@ const PhotoTimelineItem: React.FC<PhotoTimelineItemProps> = ({
         newOrder.splice(targetPos, 0, index);
         positions.value = newOrder;
 
-        runOnJS(setCurrentTargetIndex)(newTargetIndex);
-        runOnJS(haptics.light)();
+        scheduleOnRN(setCurrentTargetIndex, newTargetIndex);
+        scheduleOnRN(haptics.light);
       }
     })
     .onEnd(() => {
@@ -1504,22 +1504,22 @@ const PhotoTimelineItem: React.FC<PhotoTimelineItemProps> = ({
       );
 
       if (targetIndex !== index) {
-        runOnJS(onDragEnd)(index, targetIndex);
-        runOnJS(haptics.success)();
+        scheduleOnRN(onDragEnd, index, targetIndex);
+        scheduleOnRN(haptics.success);
       }
 
       scale.value = withSpring(1);
       translateX.value = withSpring(0);
-      runOnJS(setDraggedIndex)(null);
-      runOnJS(setCurrentTargetIndex)(null);
+      scheduleOnRN(setDraggedIndex, null);
+      scheduleOnRN(setCurrentTargetIndex, null);
 
       // Reset positions after actual reorder
       positions.value = Array.from({ length: photosLength }, (_, i) => i);
     });
 
   const tap = Gesture.Tap().onStart(() => {
-    runOnJS(onSelectPhoto)(index);
-    runOnJS(haptics.light)();
+    scheduleOnRN(onSelectPhoto, index);
+    scheduleOnRN(haptics.light);
   });
 
   const composed = Gesture.Exclusive(Gesture.Simultaneous(longPress, pan), tap);

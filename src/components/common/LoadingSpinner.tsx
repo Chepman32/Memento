@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useMemo } from 'react';
 import { StyleSheet, View } from 'react-native';
 import Animated, {
   useSharedValue,
@@ -7,7 +7,7 @@ import Animated, {
   withTiming,
   Easing,
 } from 'react-native-reanimated';
-import { Canvas, Circle, Paint } from '@shopify/react-native-skia';
+import { Canvas, Circle, Path, Skia } from '@shopify/react-native-skia';
 import { useThemeStore } from '../../store/themeStore';
 
 interface LoadingSpinnerProps {
@@ -30,7 +30,7 @@ export const LoadingSpinner: React.FC<LoadingSpinnerProps> = ({
       }),
       -1
     );
-  }, []);
+  }, [rotation]);
 
   const animatedStyle = useAnimatedStyle(() => {
     return {
@@ -39,6 +39,10 @@ export const LoadingSpinner: React.FC<LoadingSpinnerProps> = ({
   });
 
   const spinnerColor = color || colors.primary;
+  const spinnerPath = useMemo(
+    () => Skia.Path.Circle(size / 2, size / 2, size / 2 - 4),
+    [size],
+  );
 
   return (
     <View style={[styles.container, { width: size, height: size }]}>
@@ -53,10 +57,8 @@ export const LoadingSpinner: React.FC<LoadingSpinnerProps> = ({
             color={spinnerColor}
             opacity={0.3}
           />
-          <Circle
-            cx={size / 2}
-            cy={size / 2}
-            r={size / 2 - 4}
+          <Path
+            path={spinnerPath}
             style="stroke"
             strokeWidth={4}
             color={spinnerColor}

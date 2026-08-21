@@ -5,8 +5,8 @@ import Animated, {
   useAnimatedStyle,
   withTiming,
   Easing,
-  runOnJS,
 } from 'react-native-reanimated';
+import { scheduleOnRN } from 'react-native-worklets';
 
 interface AnimatedCollapsibleProps {
   expanded: boolean;
@@ -63,7 +63,7 @@ const AnimatedCollapsible: React.FC<AnimatedCollapsibleProps> = ({
         },
         finished => {
           if (finished) {
-            runOnJS(setShouldRender)(false);
+            scheduleOnRN(setShouldRender, false);
           }
         },
       );
