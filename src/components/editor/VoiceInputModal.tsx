@@ -15,21 +15,13 @@ import {
   Linking,
 } from 'react-native';
 import { useTranslation } from 'react-i18next';
-import { getLocales } from 'react-native-localize';
 import FeatherIcon from 'react-native-vector-icons/Feather';
 import { useThemeStore } from '../../store/themeStore';
 import { SPACING, TYPOGRAPHY, RADII } from '../../constants/theme';
 import { haptics } from '../../utils/hapticFeedback';
 import { sounds } from '../../utils/soundEffects';
 import { speechRecognition } from '../../utils/speechRecognition';
-
-const getSpeechLocale = (): string => {
-  const locales = getLocales();
-  if (locales.length > 0) {
-    return locales[0].languageTag;
-  }
-  return 'en-US';
-};
+import { resolveSpeechLocale } from '../../utils/localization';
 
 interface VoiceInputModalProps {
   visible: boolean;
@@ -46,7 +38,7 @@ export const VoiceInputModal: React.FC<VoiceInputModalProps> = ({
   onConfirm,
   onCancel,
 }) => {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const { colors } = useThemeStore();
 
   const [text, setText] = useState(initialText);
@@ -155,7 +147,7 @@ export const VoiceInputModal: React.FC<VoiceInputModalProps> = ({
       }
 
       return true;
-    } catch (err) {
+    } catch {
       setPermissionGranted(false);
       setError(t('editor.voiceInput.permissionError'));
       return false;
@@ -204,7 +196,14 @@ export const VoiceInputModal: React.FC<VoiceInputModalProps> = ({
       });
 
       speechRecognition.onError((errorMsg) => {
-        setError(errorMsg);
+        const normalizedError = errorMsg.toLowerCase();
+        const localizedError = normalizedError.includes('network')
+          ? t('editor.voiceInput.networkError')
+          : normalizedError.includes('speech') ||
+              normalizedError.includes('recogn')
+            ? t('editor.voiceInput.noSpeechDetected')
+            : t('editor.voiceInput.unknownError');
+        setError(localizedError);
         setIsRecording(false);
         setIsInitializing(false);
         haptics.error();
@@ -215,12 +214,14 @@ export const VoiceInputModal: React.FC<VoiceInputModalProps> = ({
         setIsInitializing(false);
       });
 
-      // Start recording with device's current locale
-      await speechRecognition.startRecording(getSpeechLocale());
+      // Speech recognition follows the language selected inside the app.
+      await speechRecognition.startRecording(
+        resolveSpeechLocale(i18n.resolvedLanguage || i18n.language),
+      );
       setIsRecording(true);
       sounds.tap();
-    } catch (err) {
-      setError(err instanceof Error ? err.message : t('editor.voiceInput.startError'));
+    } catch {
+      setError(t('editor.voiceInput.startError'));
       haptics.error();
     } finally {
       setIsInitializing(false);
@@ -233,8 +234,8 @@ export const VoiceInputModal: React.FC<VoiceInputModalProps> = ({
       setIsRecording(false);
       haptics.light();
       sounds.tap();
-    } catch (err) {
-      setError(err instanceof Error ? err.message : t('editor.voiceInput.stopError'));
+    } catch {
+      setError(t('editor.voiceInput.stopError'));
     }
   };
 
@@ -348,7 +349,7 @@ export const VoiceInputModal: React.FC<VoiceInputModalProps> = ({
                   },
                   isInitializing && { opacity: 0.5 },
                 ]}
-                onPress={isRecording ? handleStopRecording : handleStartRecording}
+                onPress={isRecording ? handleStopRecording : () => handleStartRecording()}
                 disabled={isInitializing || !permissionGranted}
                 activeOpacity={0.8}
               >

@@ -1,15 +1,29 @@
-import React, { useCallback, useEffect, useRef, useState } from 'react';
+import React, {
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from 'react';
 import {
   View,
   StyleSheet,
   Dimensions,
   ScrollView,
+  Animated as RNAnimated,
+  PanResponder,
   TouchableOpacity,
   Text,
   Image as RNImage,
   LayoutChangeEvent,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import Svg, {
+  Line,
+  Path,
+  Rect,
+  Text as SvgText,
+} from 'react-native-svg';
 import { useNavigation, useRoute, RouteProp } from '@react-navigation/native';
 import { StackNavigationProp } from '@react-navigation/stack';
 import { useTranslation } from 'react-i18next';
@@ -39,6 +53,7 @@ import Animated, {
   useSharedValue,
   useAnimatedStyle,
   withSpring,
+  withTiming,
   SharedValue,
 } from 'react-native-reanimated';
 import { scheduleOnRN } from 'react-native-worklets';
@@ -62,6 +77,7 @@ const PREVIEW_WIDTH = SCREEN_WIDTH - SPACING.sm * 2;
 const PREVIEW_HEIGHT = SCREEN_HEIGHT * 0.55; // Expand preview area to occupy more vertical space
 const TIMELINE_HEIGHT = 80;
 const THUMBNAIL_SIZE = 60;
+const TRANSITION_ITEM_WIDTH = 64;
 const REMOVE_ICON = require('../assets/icons/remove.png');
 const PREVIEW_ICON = require('../assets/icons/preview.png');
 
@@ -87,6 +103,60 @@ const BACKGROUND_COLORS = [
   '#34C75980', // Semi-transparent green
   '#AF52DE80', // Semi-transparent purple
 ];
+
+const EditorVoiceIcon: React.FC<{ color: string }> = ({ color }) => (
+  <Svg width={34} height={34} viewBox="0 0 40 40">
+    <SvgText
+      x={1}
+      y={16}
+      fill="none"
+      stroke={color}
+      strokeWidth={0.9}
+      fontSize={15}
+      fontWeight="700"
+    >
+      Tt
+    </SvgText>
+    <Line
+      x1={14}
+      y1={34}
+      x2={26}
+      y2={5}
+      stroke={color}
+      strokeWidth={1.8}
+      strokeLinecap="round"
+    />
+    <Rect
+      x={27.5}
+      y={13}
+      width={7}
+      height={13}
+      rx={3.5}
+      fill="none"
+      stroke={color}
+      strokeWidth={1.8}
+    />
+    <Line x1={28} y1={18} x2={30} y2={18} stroke={color} strokeWidth={1.2} />
+    <Line x1={32} y1={18} x2={34} y2={18} stroke={color} strokeWidth={1.2} />
+    <Line x1={28} y1={21} x2={30} y2={21} stroke={color} strokeWidth={1.2} />
+    <Line x1={32} y1={21} x2={34} y2={21} stroke={color} strokeWidth={1.2} />
+    <Path
+      d="M25 23v1a6 6 0 0 0 12 0v-1"
+      fill="none"
+      stroke={color}
+      strokeWidth={1.8}
+      strokeLinecap="round"
+    />
+    <Line x1={31} y1={30} x2={31} y2={34} stroke={color} strokeWidth={1.8} />
+    <Path
+      d="M27 36h8"
+      fill="none"
+      stroke={color}
+      strokeWidth={1.8}
+      strokeLinecap="round"
+    />
+  </Svg>
+);
 
 export const EditorScreen = () => {
   const route = useRoute<EditorScreenRouteProp>();
@@ -275,6 +345,17 @@ export const EditorScreen = () => {
     navigation.navigate('Preview', { projectId: currentProject.id });
   };
 
+  const handleExport = async () => {
+    if (!currentProject || currentProject.photos.length === 0) return;
+
+    haptics.medium();
+    sounds.tap();
+    await forceSave();
+    navigation.navigate('Export', {
+      projectId: currentProject.id,
+    });
+  };
+
   // Save project
   const handleSave = () => {
     haptics.success();
@@ -396,6 +477,9 @@ export const EditorScreen = () => {
                   step={1}
                   onValueChange={handleDurationChange}
                   color={colors.primary}
+                  formatValue={sliderValue =>
+                    t('editor.durationValue', { value: sliderValue })
+                  }
                 />
               </View>
             )}
@@ -463,6 +547,9 @@ export const EditorScreen = () => {
                     step={2}
                     onValueChange={(value) => handleCaptionStyleChange({ fontSize: value })}
                     color={colors.primary}
+                    formatValue={sliderValue =>
+                      t('editor.captions.fontSizeValue', { value: sliderValue })
+                    }
                   />
                 </View>
 
@@ -551,6 +638,8 @@ export const EditorScreen = () => {
         );
     }
   };
+
+  const isTabContentScrollEnabled = activeTab === 'captions' && selectedTransitionIndex === null;
 
   return (
     <SafeAreaView
@@ -654,11 +743,11 @@ export const EditorScreen = () => {
               }
               onPress={handlePreview}
               variant="default"
-              size={44}
+              size={40}
               disabled={!currentProject}
             />
             <IconButton
-              icon={<FeatherIcon name="mic" size={22} color={colors.text} />}
+              icon={<EditorVoiceIcon color={colors.text} />}
               onPress={() => {
                 if (activePhotoIndex !== null) {
                   setVoiceModalVisible(true);
@@ -666,14 +755,22 @@ export const EditorScreen = () => {
                 }
               }}
               variant="default"
-              size={44}
+              size={40}
               disabled={activePhotoIndex === null}
             />
             <IconButton
               icon={<FeatherIcon name="folder" size={22} color={colors.text} />}
               onPress={handleOpenProjectImages}
               variant="default"
-              size={44}
+              size={40}
+            />
+            <IconButton
+              icon={<FeatherIcon name="upload" size={22} color="#FFFFFF" />}
+              onPress={handleExport}
+              accessibilityLabel={t('preview.export')}
+              variant="filled"
+              size={40}
+              disabled={!currentProject || currentProject.photos.length === 0}
             />
           </View>
         </View>
@@ -816,12 +913,17 @@ export const EditorScreen = () => {
           </View>
 
           {/* Tab Content */}
-          <ScrollView
-            style={styles.scrollContent}
-            showsVerticalScrollIndicator={false}
-          >
-            {renderTabContent()}
-          </ScrollView>
+          {isTabContentScrollEnabled ? (
+            <ScrollView
+              style={styles.scrollContent}
+              nestedScrollEnabled
+              showsVerticalScrollIndicator={false}
+            >
+              {renderTabContent()}
+            </ScrollView>
+          ) : (
+            <View style={styles.staticTabContent}>{renderTabContent()}</View>
+          )}
         </View>
 
         {/* Voice Input Modal */}
@@ -1122,6 +1224,7 @@ interface SliderProps {
   step: number;
   onValueChange: (value: number) => void;
   color: string;
+  formatValue: (value: number) => string;
 }
 
 const Slider: React.FC<SliderProps> = ({
@@ -1131,12 +1234,14 @@ const Slider: React.FC<SliderProps> = ({
   step,
   onValueChange,
   color,
+  formatValue,
 }) => {
   const { colors } = useThemeStore();
   const [trackWidth, setTrackWidth] = useState(0);
   const position = useSharedValue(0);
   const startOffset = useSharedValue(0);
   const currentValue = useSharedValue(value);
+  const isDragging = useSharedValue(false);
   const range = max - min;
 
   const handleTrackLayout = useCallback((event: LayoutChangeEvent) => {
@@ -1144,15 +1249,25 @@ const Slider: React.FC<SliderProps> = ({
   }, []);
 
   useEffect(() => {
-    if (trackWidth <= 0 || range === 0) return;
+    if (isDragging.value || trackWidth <= 0 || range === 0) return;
     const clampedValue = Math.min(Math.max(value, min), max);
     const ratio = (clampedValue - min) / range;
     position.value = ratio * trackWidth;
     currentValue.value = clampedValue;
-  }, [value, min, max, range, trackWidth, position, currentValue]);
+  }, [
+    value,
+    min,
+    max,
+    range,
+    trackWidth,
+    position,
+    currentValue,
+    isDragging,
+  ]);
 
   const gesture = Gesture.Pan()
     .onBegin(() => {
+      isDragging.value = true;
       startOffset.value = position.value;
     })
     .onChange(event => {
@@ -1176,7 +1291,13 @@ const Slider: React.FC<SliderProps> = ({
       }
     })
     .onFinalize(() => {
-      startOffset.value = position.value;
+      if (trackWidth > 0 && range !== 0) {
+        const snappedPosition =
+          ((currentValue.value - min) / range) * trackWidth;
+        position.value = withTiming(snappedPosition, { duration: 100 });
+        startOffset.value = snappedPosition;
+      }
+      isDragging.value = false;
     });
 
   const progressStyle = useAnimatedStyle(() => ({
@@ -1211,7 +1332,7 @@ const Slider: React.FC<SliderProps> = ({
         </GestureDetector>
       </View>
       <Text style={[styles.sliderValue, { color: colors.textSecondary }]}>
-        {value}s
+        {formatValue(value)}
       </Text>
     </View>
   );
@@ -1305,47 +1426,113 @@ const TransitionPicker: React.FC<TransitionPickerProps> = ({
   const { t } = useTranslation();
   const { colors } = useThemeStore();
   const transitions = Object.values(TRANSITIONS);
+  const viewportWidthRef = useRef(0);
+  const scrollOffsetRef = useRef(0);
+  const dragStartOffsetRef = useRef(0);
+  const animatedScrollOffset = useRef(new RNAnimated.Value(0)).current;
+
+  const scrollTransitionList = useCallback(
+    (offset: number, animated = false) => {
+      const contentWidth =
+        transitions.length * (TRANSITION_ITEM_WIDTH + SPACING.md);
+      const maxOffset = Math.max(0, contentWidth - viewportWidthRef.current);
+      const nextOffset = Math.max(0, Math.min(maxOffset, offset));
+
+      scrollOffsetRef.current = nextOffset;
+      animatedScrollOffset.stopAnimation();
+      if (animated) {
+        RNAnimated.timing(animatedScrollOffset, {
+          toValue: -nextOffset,
+          duration: 180,
+          useNativeDriver: true,
+        }).start();
+      } else {
+        animatedScrollOffset.setValue(-nextOffset);
+      }
+    },
+    [animatedScrollOffset, transitions.length],
+  );
+
+  const transitionPanResponder = useMemo(
+    () =>
+      PanResponder.create({
+        onMoveShouldSetPanResponderCapture: (_, gestureState) =>
+          Math.abs(gestureState.dx) > 4 &&
+          Math.abs(gestureState.dx) > Math.abs(gestureState.dy),
+        onPanResponderGrant: () => {
+          dragStartOffsetRef.current = scrollOffsetRef.current;
+        },
+        onPanResponderMove: (_, gestureState) => {
+          scrollTransitionList(
+            dragStartOffsetRef.current - gestureState.dx,
+            false,
+          );
+        },
+        onPanResponderRelease: (_, gestureState) => {
+          scrollTransitionList(
+            dragStartOffsetRef.current - gestureState.dx - gestureState.vx * 120,
+            true,
+          );
+        },
+        onPanResponderTerminate: () => {
+          dragStartOffsetRef.current = scrollOffsetRef.current;
+        },
+      }),
+    [scrollTransitionList],
+  );
 
   return (
-    <ScrollView
-      horizontal
-      showsHorizontalScrollIndicator={false}
-      contentContainerStyle={styles.transitionContainer}
+    <View
+      style={styles.transitionListViewport}
+      onLayout={event => {
+        viewportWidthRef.current = event.nativeEvent.layout.width;
+      }}
+      {...transitionPanResponder.panHandlers}
     >
-      {transitions.map(transition => {
-        const isSelected = selectedTransition === transition.id;
-        return (
-          <TouchableOpacity
-            key={transition.id}
-            style={styles.transitionItem}
-            onPress={() => onSelect(transition.id)}
-          >
-            <View
-              style={[
-                styles.transitionIcon,
-                { backgroundColor: colors.surface, borderColor: colors.border },
-                isSelected && { borderColor: colors.primary, borderWidth: 2 },
-              ]}
+      <RNAnimated.View
+        style={[
+          styles.transitionContainer,
+          {
+            width: transitions.length * (TRANSITION_ITEM_WIDTH + SPACING.md),
+            transform: [{ translateX: animatedScrollOffset }],
+          },
+        ]}
+      >
+        {transitions.map(transition => {
+          const isSelected = selectedTransition === transition.id;
+          return (
+            <TouchableOpacity
+              key={transition.id}
+              style={styles.transitionItem}
+              onPress={() => onSelect(transition.id)}
             >
-              <FeatherIcon
-                name={getTransitionIcon(transition.id)}
-                size={22}
-                color={colors.primary}
-              />
-            </View>
-            <Text
-              style={[
-                styles.transitionName,
-                { color: colors.textSecondary },
-                isSelected && { color: colors.primary, fontWeight: '600' },
-              ]}
-            >
-              {t(`transitions.${transition.id}`)}
-            </Text>
-          </TouchableOpacity>
-        );
-      })}
-    </ScrollView>
+              <View
+                style={[
+                  styles.transitionIcon,
+                  { backgroundColor: colors.surface, borderColor: colors.border },
+                  isSelected && { borderColor: colors.primary, borderWidth: 2 },
+                ]}
+              >
+                <FeatherIcon
+                  name={getTransitionIcon(transition.id)}
+                  size={22}
+                  color={colors.primary}
+                />
+              </View>
+              <Text
+                style={[
+                  styles.transitionName,
+                  { color: colors.textSecondary },
+                  isSelected && { color: colors.primary, fontWeight: '600' },
+                ]}
+              >
+                {t(`transitions.${transition.id}`)}
+              </Text>
+            </TouchableOpacity>
+          );
+        })}
+      </RNAnimated.View>
+    </View>
   );
 };
 
@@ -1359,16 +1546,17 @@ const EffectPicker: React.FC<EffectPickerProps> = ({
   selectedEffects,
   onSelect,
 }) => {
+  const { t } = useTranslation();
   const { colors } = useThemeStore();
   const effects = [
-    { id: PhotoEffect.KEN_BURNS, name: 'Ken Burns' },
-    { id: PhotoEffect.VIGNETTE, name: 'Vignette' },
-    { id: PhotoEffect.SEPIA, name: 'Sepia' },
-    { id: PhotoEffect.BLACK_WHITE, name: 'B&W' },
-    { id: PhotoEffect.VINTAGE, name: 'Vintage' },
-    { id: PhotoEffect.FILM_GRAIN, name: 'Film Grain' },
-    { id: PhotoEffect.COLOR_POP, name: 'Color Pop' },
-    { id: PhotoEffect.LIGHT_LEAK, name: 'Light Leak' },
+    PhotoEffect.KEN_BURNS,
+    PhotoEffect.VIGNETTE,
+    PhotoEffect.SEPIA,
+    PhotoEffect.BLACK_WHITE,
+    PhotoEffect.VINTAGE,
+    PhotoEffect.FILM_GRAIN,
+    PhotoEffect.COLOR_POP,
+    PhotoEffect.LIGHT_LEAK,
   ];
 
   return (
@@ -1378,13 +1566,14 @@ const EffectPicker: React.FC<EffectPickerProps> = ({
       contentContainerStyle={styles.effectContainer}
     >
       {effects.map(effect => {
-        const isSelected = selectedEffects.includes(effect.id);
+        const isSelected = selectedEffects.includes(effect);
+        const effectName = t(`effects.${effect}`);
 
         return (
           <TouchableOpacity
-            key={effect.id}
+            key={effect}
             style={styles.effectItem}
-            onPress={() => onSelect(effect.id)}
+            onPress={() => onSelect(effect)}
           >
             <View
               style={[
@@ -1403,7 +1592,7 @@ const EffectPicker: React.FC<EffectPickerProps> = ({
                   { color: isSelected ? colors.success : colors.primary },
                 ]}
               >
-                {effect.name.charAt(0)}
+                {effectName.charAt(0)}
               </Text>
             </View>
             <Text
@@ -1413,7 +1602,7 @@ const EffectPicker: React.FC<EffectPickerProps> = ({
                 isSelected && { color: colors.success, fontWeight: '600' },
               ]}
             >
-              {effect.name}
+              {effectName}
             </Text>
           </TouchableOpacity>
         );
@@ -1789,6 +1978,9 @@ const styles = StyleSheet.create({
   scrollContent: {
     flexGrow: 0,
   },
+  staticTabContent: {
+    flex: 1,
+  },
   controlGroup: {
     marginBottom: SPACING.sm,
   },
@@ -1909,10 +2101,18 @@ const styles = StyleSheet.create({
     transform: [{ rotate: '45deg' }],
   },
   transitionContainer: {
+    flexDirection: 'row',
     paddingTop: SPACING.xs,
     paddingBottom: SPACING.sm,
   },
+  transitionListViewport: {
+    width: '100%',
+    flexGrow: 0,
+    overflow: 'hidden',
+  },
   transitionItem: {
+    width: TRANSITION_ITEM_WIDTH,
+    flexShrink: 0,
     alignItems: 'center',
     marginRight: SPACING.md,
     paddingBottom: SPACING.xs,

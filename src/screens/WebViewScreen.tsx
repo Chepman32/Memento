@@ -14,6 +14,7 @@ import { RootStackParamList } from '../navigation/navigationTypes';
 import { useThemeStore } from '../store/themeStore';
 import { haptics } from '../utils/hapticFeedback';
 import { SPACING, TYPOGRAPHY } from '../constants/theme';
+import { useTranslation } from 'react-i18next';
 
 type WebViewScreenRouteProp = RouteProp<RootStackParamList, 'WebView'>;
 type WebViewScreenNavigationProp = StackNavigationProp<
@@ -25,6 +26,7 @@ const WebViewScreen: React.FC = () => {
   const navigation = useNavigation<WebViewScreenNavigationProp>();
   const route = useRoute<WebViewScreenRouteProp>();
   const { url, title } = route.params;
+  const { t } = useTranslation();
   const { colors } = useThemeStore();
 
   const [isLoading, setIsLoading] = useState(true);
@@ -95,16 +97,16 @@ const WebViewScreen: React.FC = () => {
         {hasError && (
           <View style={[styles.errorContainer, { backgroundColor: colors.background }]}>
             <Text style={[styles.errorTitle, { color: colors.text }]}>
-              Failed to Load
+              {t('webView.loadFailed')}
             </Text>
             <Text style={[styles.errorMessage, { color: colors.textSecondary }]}>
-              Unable to load the content. Please check your internet connection.
+              {t('webView.loadErrorMessage')}
             </Text>
             <TouchableOpacity
               style={[styles.retryButton, { backgroundColor: colors.primary }]}
               onPress={handleRetry}
             >
-              <Text style={styles.retryButtonText}>Retry</Text>
+              <Text style={styles.retryButtonText}>{t('webView.retry')}</Text>
             </TouchableOpacity>
           </View>
         )}

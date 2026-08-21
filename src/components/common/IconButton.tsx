@@ -1,16 +1,16 @@
 import React from 'react';
 import {
   TouchableOpacity,
-  StyleSheet,
   ViewStyle,
   ActivityIndicator,
 } from 'react-native';
 import { useThemeStore } from '../../store/themeStore';
-import { RADII, SHADOWS } from '../../constants/theme';
+import { SHADOWS } from '../../constants/theme';
 
 interface IconButtonProps {
   icon: React.ReactNode;
   onPress: () => void;
+  accessibilityLabel?: string;
   size?: number;
   disabled?: boolean;
   loading?: boolean;
@@ -21,6 +21,7 @@ interface IconButtonProps {
 export const IconButton: React.FC<IconButtonProps> = ({
   icon,
   onPress,
+  accessibilityLabel,
   size = 44,
   disabled = false,
   loading = false,
@@ -63,6 +64,8 @@ export const IconButton: React.FC<IconButtonProps> = ({
   return (
     <TouchableOpacity
       onPress={onPress}
+      accessibilityRole="button"
+      accessibilityLabel={accessibilityLabel}
       disabled={disabled || loading}
       activeOpacity={0.7}
       style={[getButtonStyles(), style]}

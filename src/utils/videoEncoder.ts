@@ -642,12 +642,18 @@ export const videoEncoder = {
 
     const filterComplex = filters.join(';');
 
-    // Use h264_videotoolbox (hardware encoder) instead of libx264 on iOS
+    const videoCodec =
+      Platform.OS === 'ios'
+        ? '-c:v h264_videotoolbox'
+        : Platform.OS === 'android'
+          ? '-c:v mpeg4'
+          : '-c:v libx264 -preset fast';
+
     return (
       `${inputs} ` +
       `-filter_complex "${filterComplex}" ` +
       `-map "[outv]" ` +
-      `-c:v h264_videotoolbox -b:v ${bitrate} -pix_fmt yuv420p ` +
+      `${videoCodec} -b:v ${bitrate} -pix_fmt yuv420p ` +
       `-r ${fps} -movflags +faststart -y "${outputPath}"`
     )
       .replace(/\s+/g, ' ')

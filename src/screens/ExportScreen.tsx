@@ -19,9 +19,10 @@ import { haptics } from '../utils/hapticFeedback';
 import { videoEncoder } from '../utils/videoEncoder';
 import { gifGenerator } from '../utils/gifGenerator';
 import { photoLibrary } from '../utils/photoLibrary';
+import { buildExportOutputPath } from '../utils/exportPath';
 import { isFFmpegAvailable } from '../utils/ffmpegBridge';
 import { ExportQuality, ResolutionPreset } from '../types/project.types';
-import { SPACING, RADII, TYPOGRAPHY } from '../constants/theme';
+import { SPACING, TYPOGRAPHY } from '../constants/theme';
 import RNFS from 'react-native-fs';
 
 type ExportScreenRouteProp = RouteProp<RootStackParamList, 'Export'>;
@@ -91,6 +92,10 @@ const ExportScreen: React.FC = () => {
     haptics.medium();
     setIsExporting(true);
     setExportProgress(0);
+    const localizedFailureMessage =
+      format === 'video'
+        ? t('errors.videoEncodeFailed')
+        : t('errors.gifCreateFailed');
 
     try {
       // Use TemporaryDirectoryPath for FFmpeg output
@@ -100,7 +105,7 @@ const ExportScreen: React.FC = () => {
       const filename = `slidemint_${timestamp}.${
         format === 'video' ? 'mp4' : 'gif'
       }`;
-      const outputPath = `${outputDir}${filename}`;
+      const outputPath = buildExportOutputPath(outputDir, filename);
 
       if (format === 'video') {
         const result = await videoEncoder.encodeVideo({
@@ -115,6 +120,12 @@ const ExportScreen: React.FC = () => {
         });
 
         if (result.success) {
+          const outputExists = await RNFS.exists(outputPath);
+          const outputStat = outputExists ? await RNFS.stat(outputPath) : null;
+          if (!outputExists || Number(outputStat?.size ?? 0) <= 0) {
+            throw new Error('FFmpeg completed without creating a video file.');
+          }
+
           // Save to photo library
           try {
             await photoLibrary.saveToPhotoLibrary(outputPath);
@@ -151,7 +162,7 @@ const ExportScreen: React.FC = () => {
             );
           }
         } else {
-          throw new Error(result.error || 'Export failed');
+          throw new Error(localizedFailureMessage);
         }
       } else {
         const result = await gifGenerator.createGif({
@@ -169,6 +180,12 @@ const ExportScreen: React.FC = () => {
         });
 
         if (result.success) {
+          const outputExists = await RNFS.exists(outputPath);
+          const outputStat = outputExists ? await RNFS.stat(outputPath) : null;
+          if (!outputExists || Number(outputStat?.size ?? 0) <= 0) {
+            throw new Error('FFmpeg completed without creating a GIF file.');
+          }
+
           // Save to photo library
           try {
             await photoLibrary.saveToPhotoLibrary(outputPath);
@@ -205,15 +222,13 @@ const ExportScreen: React.FC = () => {
             );
           }
         } else {
-          throw new Error(result.error || 'GIF creation failed');
+          throw new Error(localizedFailureMessage);
         }
       }
     } catch (error) {
       haptics.error();
-      Alert.alert(
-        t('export.error'),
-        error instanceof Error ? error.message : t('errors.generic'),
-      );
+      console.error('Export failed:', error);
+      Alert.alert(t('export.error'), localizedFailureMessage);
     } finally {
       setIsExporting(false);
       setExportProgress(0);

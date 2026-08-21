@@ -1,4 +1,9 @@
-import { NativeModules, Platform, Linking } from 'react-native';
+import {
+  Linking,
+  NativeModules,
+  PermissionsAndroid,
+  Platform,
+} from 'react-native';
 
 interface PhotoLibraryModuleInterface {
   saveToPhotoLibrary(filePath: string): Promise<boolean>;
@@ -14,13 +19,22 @@ export const photoLibrary = {
    * @returns Promise that resolves to true on success
    */
   saveToPhotoLibrary: async (filePath: string): Promise<boolean> => {
-    if (Platform.OS !== 'ios') {
-      throw new Error('Photo library is only supported on iOS');
+    if (Platform.OS !== 'ios' && Platform.OS !== 'android') {
+      throw new Error('Photo library is not supported on this platform');
     }
 
     if (!PhotoLibraryModule) {
       console.warn('PhotoLibraryModule not available. Please rebuild the app.');
       throw new Error('Photo library module not available');
+    }
+
+    if (Platform.OS === 'android' && Number(Platform.Version) <= 28) {
+      const permission = await PermissionsAndroid.request(
+        PermissionsAndroid.PERMISSIONS.WRITE_EXTERNAL_STORAGE,
+      );
+      if (permission !== PermissionsAndroid.RESULTS.GRANTED) {
+        throw new Error('Storage permission denied');
+      }
     }
 
     return PhotoLibraryModule.saveToPhotoLibrary(filePath);
@@ -31,12 +45,16 @@ export const photoLibrary = {
    * @returns Promise that resolves to true if Photos app was opened
    */
   openPhotosApp: async (): Promise<boolean> => {
-    if (Platform.OS !== 'ios') {
-      throw new Error('Opening Photos app is only supported on iOS');
+    if (Platform.OS !== 'ios' && Platform.OS !== 'android') {
+      throw new Error('Opening the photo library is not supported on this platform');
     }
 
-    // Fallback to using Linking if native module isn't available
     if (!PhotoLibraryModule) {
+      if (Platform.OS === 'android') {
+        throw new Error('Photo library module not available');
+      }
+
+      // iOS fallback when the native module has not been linked yet.
       const url = 'photos-redirect://';
       const canOpen = await Linking.canOpenURL(url);
       if (canOpen) {

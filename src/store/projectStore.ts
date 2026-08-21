@@ -36,7 +36,7 @@ interface ProjectState {
 
   // Actions
   createProject: (title?: string) => Promise<Project>;
-  duplicateProject: (id: string) => void;
+  duplicateProject: (id: string, copySuffix?: string) => void;
   updateProject: (id: string, updates: Partial<Project>) => void;
   deleteProject: (id: string) => void;
   setCurrentProject: (id: string | null) => void;
@@ -137,7 +137,7 @@ export const useProjectStore = create<ProjectState>()(
         return newProject;
       },
 
-      duplicateProject: id => {
+      duplicateProject: (id, copySuffix = ' Copy') => {
         const source = get().projects.find(p => p.id === id);
         if (!source) return;
 
@@ -155,7 +155,7 @@ export const useProjectStore = create<ProjectState>()(
         const duplicated: Project = {
           ...source,
           id: generateId(),
-          title: `${source.title} Copy`,
+          title: `${source.title}${copySuffix}`,
           createdAt: new Date(),
           updatedAt: new Date(),
           photos: clonePhotos,

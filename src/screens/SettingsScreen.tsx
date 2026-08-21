@@ -274,7 +274,7 @@ const SettingsScreen: React.FC = () => {
                       { color: colors.textSecondary },
                     ]}
                   >
-                    {currentLanguage.name}
+                    {t(`settings.languageNames.${currentLanguage.code}`)}
                   </Text>
                 </View>
               </View>
@@ -326,7 +326,7 @@ const SettingsScreen: React.FC = () => {
                             { color: colors.textSecondary },
                           ]}
                         >
-                          {language.name}
+                          {t(`settings.languageNames.${language.code}`)}
                         </Text>
                       </View>
                       {isSelected && (

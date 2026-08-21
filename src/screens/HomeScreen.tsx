@@ -27,6 +27,7 @@ import { haptics } from '../utils/hapticFeedback';
 import { sounds } from '../utils/soundEffects';
 import { SPACING, TYPOGRAPHY, SHADOWS, SCREEN_WIDTH } from '../constants/theme';
 import { Project, Folder } from '../types/project.types';
+import { formatProjectDate } from '../utils/localization';
 
 type HomeScreenNavigationProp = StackNavigationProp<RootStackParamList, 'Home'>;
 
@@ -91,7 +92,7 @@ const initialModalState: ModalState = {
 
 const HomeScreen: React.FC = () => {
   const navigation = useNavigation<HomeScreenNavigationProp>();
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const { colors } = useThemeStore();
   const {
     projects,
@@ -177,10 +178,10 @@ const HomeScreen: React.FC = () => {
 
   const handleDuplicateProject = useCallback(
     (projectId: string) => {
-      duplicateProject(projectId);
+      duplicateProject(projectId, t('home.copySuffix'));
       haptics.success();
     },
-    [duplicateProject],
+    [duplicateProject, t],
   );
 
   const handleCreateFolder = useCallback(() => {
@@ -348,12 +349,9 @@ const HomeScreen: React.FC = () => {
 
   const renderProject = useCallback(
     (item: Project) => {
-      const formattedDate = new Date(item.updatedAt).toLocaleDateString(
-        'en-US',
-        {
-          month: 'short',
-          day: 'numeric',
-        },
+      const formattedDate = formatProjectDate(
+        item.updatedAt,
+        i18n.resolvedLanguage || i18n.language,
       );
 
       const contextMenuActions = buildContextMenuActions(item);
@@ -367,7 +365,6 @@ const HomeScreen: React.FC = () => {
         // Check if it's a folder selection from the submenu
         if (indexPath && indexPath.length === 2 && indexPath[0] === 2) {
           // Index 2 is "Move to Folder", second index is the folder
-          const archivedFolder = folders.find(f => f.name === 'Archived');
           const otherFolders = folders.filter(
             f =>
               f.id !== 'root' &&
@@ -497,6 +494,9 @@ const HomeScreen: React.FC = () => {
       handleMoveToFolder,
       handleArchiveProject,
       buildContextMenuActions,
+      i18n.language,
+      i18n.resolvedLanguage,
+      t,
     ],
   );
 
@@ -543,7 +543,11 @@ const HomeScreen: React.FC = () => {
               style={styles.folderIcon}
             />
             <Text style={[styles.folderName, { color: colors.text }]}>
-              {isRoot ? t('home.allProjects') : folder.name}
+              {isRoot
+                ? t('home.allProjects')
+                : folder.name === 'Archived'
+                  ? t('home.archived')
+                  : folder.name}
             </Text>
             <Text style={[styles.folderCount, { color: colors.textSecondary }]}>
               ({projectCount})
@@ -572,6 +576,7 @@ const HomeScreen: React.FC = () => {
       toggleFolder,
       handleRenameFolder,
       handleDeleteFolder,
+      t,
     ],
   );
 

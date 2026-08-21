@@ -3,13 +3,15 @@ import { Text, StyleSheet, Animated } from 'react-native';
 import { useThemeStore } from '../../store/themeStore';
 import { TYPOGRAPHY, SPACING, RADII } from '../../constants/theme';
 import { SaveStatus } from '../../hooks/useAutosave';
+import { useTranslation } from 'react-i18next';
 
 interface SaveIndicatorProps {
   status: SaveStatus;
   lastSaved?: Date | null;
 }
 
-export const SaveIndicator: React.FC<SaveIndicatorProps> = ({ status, lastSaved }) => {
+export const SaveIndicator: React.FC<SaveIndicatorProps> = ({ status }) => {
+  const { t } = useTranslation();
   const { colors } = useThemeStore();
   const [opacity] = useState(new Animated.Value(0));
   const [scale] = useState(new Animated.Value(0.9));
@@ -54,7 +56,7 @@ export const SaveIndicator: React.FC<SaveIndicatorProps> = ({ status, lastSaved 
         return null;
       case 'error':
         return {
-          text: 'Save failed',
+          text: t('editor.saveFailed'),
           color: colors.error,
           icon: '⚠',
         };
