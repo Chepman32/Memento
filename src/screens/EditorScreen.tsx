@@ -1,7 +1,6 @@
 import React, {
   useCallback,
   useEffect,
-  useMemo,
   useRef,
   useState,
 } from 'react';
@@ -10,8 +9,6 @@ import {
   StyleSheet,
   Dimensions,
   ScrollView,
-  Animated as RNAnimated,
-  PanResponder,
   TouchableOpacity,
   Text,
   Image as RNImage,
@@ -48,6 +45,7 @@ import {
   Gesture,
   GestureDetector,
   GestureHandlerRootView,
+  ScrollView as GestureHandlerScrollView,
 } from 'react-native-gesture-handler';
 import Animated, {
   useSharedValue,
@@ -78,6 +76,8 @@ const PREVIEW_HEIGHT = SCREEN_HEIGHT * 0.55; // Expand preview area to occupy mo
 const TIMELINE_HEIGHT = 80;
 const THUMBNAIL_SIZE = 60;
 const TRANSITION_ITEM_WIDTH = 64;
+const TRANSITION_CONTENT_WIDTH =
+  Object.keys(TRANSITIONS).length * (TRANSITION_ITEM_WIDTH + SPACING.md);
 const REMOVE_ICON = require('../assets/icons/remove.png');
 const PREVIEW_ICON = require('../assets/icons/preview.png');
 
@@ -1426,113 +1426,51 @@ const TransitionPicker: React.FC<TransitionPickerProps> = ({
   const { t } = useTranslation();
   const { colors } = useThemeStore();
   const transitions = Object.values(TRANSITIONS);
-  const viewportWidthRef = useRef(0);
-  const scrollOffsetRef = useRef(0);
-  const dragStartOffsetRef = useRef(0);
-  const animatedScrollOffset = useRef(new RNAnimated.Value(0)).current;
-
-  const scrollTransitionList = useCallback(
-    (offset: number, animated = false) => {
-      const contentWidth =
-        transitions.length * (TRANSITION_ITEM_WIDTH + SPACING.md);
-      const maxOffset = Math.max(0, contentWidth - viewportWidthRef.current);
-      const nextOffset = Math.max(0, Math.min(maxOffset, offset));
-
-      scrollOffsetRef.current = nextOffset;
-      animatedScrollOffset.stopAnimation();
-      if (animated) {
-        RNAnimated.timing(animatedScrollOffset, {
-          toValue: -nextOffset,
-          duration: 180,
-          useNativeDriver: true,
-        }).start();
-      } else {
-        animatedScrollOffset.setValue(-nextOffset);
-      }
-    },
-    [animatedScrollOffset, transitions.length],
-  );
-
-  const transitionPanResponder = useMemo(
-    () =>
-      PanResponder.create({
-        onMoveShouldSetPanResponderCapture: (_, gestureState) =>
-          Math.abs(gestureState.dx) > 4 &&
-          Math.abs(gestureState.dx) > Math.abs(gestureState.dy),
-        onPanResponderGrant: () => {
-          dragStartOffsetRef.current = scrollOffsetRef.current;
-        },
-        onPanResponderMove: (_, gestureState) => {
-          scrollTransitionList(
-            dragStartOffsetRef.current - gestureState.dx,
-            false,
-          );
-        },
-        onPanResponderRelease: (_, gestureState) => {
-          scrollTransitionList(
-            dragStartOffsetRef.current - gestureState.dx - gestureState.vx * 120,
-            true,
-          );
-        },
-        onPanResponderTerminate: () => {
-          dragStartOffsetRef.current = scrollOffsetRef.current;
-        },
-      }),
-    [scrollTransitionList],
-  );
 
   return (
-    <View
-      style={styles.transitionListViewport}
-      onLayout={event => {
-        viewportWidthRef.current = event.nativeEvent.layout.width;
-      }}
-      {...transitionPanResponder.panHandlers}
+    <GestureHandlerScrollView
+      testID="transition-list"
+      style={styles.transitionList}
+      horizontal
+      scrollEnabled
+      nestedScrollEnabled
+      showsHorizontalScrollIndicator
+      contentContainerStyle={styles.transitionContainer}
     >
-      <RNAnimated.View
-        style={[
-          styles.transitionContainer,
-          {
-            width: transitions.length * (TRANSITION_ITEM_WIDTH + SPACING.md),
-            transform: [{ translateX: animatedScrollOffset }],
-          },
-        ]}
-      >
-        {transitions.map(transition => {
-          const isSelected = selectedTransition === transition.id;
-          return (
-            <TouchableOpacity
-              key={transition.id}
-              style={styles.transitionItem}
-              onPress={() => onSelect(transition.id)}
+      {transitions.map(transition => {
+        const isSelected = selectedTransition === transition.id;
+        return (
+          <TouchableOpacity
+            key={transition.id}
+            style={styles.transitionItem}
+            onPress={() => onSelect(transition.id)}
+          >
+            <View
+              style={[
+                styles.transitionIcon,
+                { backgroundColor: colors.surface, borderColor: colors.border },
+                isSelected && { borderColor: colors.primary, borderWidth: 2 },
+              ]}
             >
-              <View
-                style={[
-                  styles.transitionIcon,
-                  { backgroundColor: colors.surface, borderColor: colors.border },
-                  isSelected && { borderColor: colors.primary, borderWidth: 2 },
-                ]}
-              >
-                <FeatherIcon
-                  name={getTransitionIcon(transition.id)}
-                  size={22}
-                  color={colors.primary}
-                />
-              </View>
-              <Text
-                style={[
-                  styles.transitionName,
-                  { color: colors.textSecondary },
-                  isSelected && { color: colors.primary, fontWeight: '600' },
-                ]}
-              >
-                {t(`transitions.${transition.id}`)}
-              </Text>
-            </TouchableOpacity>
-          );
-        })}
-      </RNAnimated.View>
-    </View>
+              <FeatherIcon
+                name={getTransitionIcon(transition.id)}
+                size={22}
+                color={colors.primary}
+              />
+            </View>
+            <Text
+              style={[
+                styles.transitionName,
+                { color: colors.textSecondary },
+                isSelected && { color: colors.primary, fontWeight: '600' },
+              ]}
+            >
+              {t(`transitions.${transition.id}`)}
+            </Text>
+          </TouchableOpacity>
+        );
+      })}
+    </GestureHandlerScrollView>
   );
 };
 
@@ -2101,14 +2039,14 @@ const styles = StyleSheet.create({
     transform: [{ rotate: '45deg' }],
   },
   transitionContainer: {
+    width: TRANSITION_CONTENT_WIDTH,
     flexDirection: 'row',
     paddingTop: SPACING.xs,
     paddingBottom: SPACING.sm,
   },
-  transitionListViewport: {
+  transitionList: {
     width: '100%',
     flexGrow: 0,
-    overflow: 'hidden',
   },
   transitionItem: {
     width: TRANSITION_ITEM_WIDTH,

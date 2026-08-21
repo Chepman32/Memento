@@ -17,46 +17,42 @@ const getSourceSection = (startMarker, endMarker) => {
 };
 
 describe('transition picker scrolling', () => {
-  it('enables the horizontal transition list without stale nested gesture flags', () => {
+  it('uses a gesture-aware native horizontal scroll view so every transition is reachable', () => {
     const transitionPicker = getSourceSection(
       'const TransitionPicker:',
       'interface EffectPickerProps',
     );
 
     expect(transitionPicker).toMatch(
-      /<RNAnimated\.View[\s\S]*?transitions\.map\(transition =>/,
+      /<GestureHandlerScrollView[\s\S]*?horizontal[\s\S]*?transitions\.map\(transition =>/,
     );
-    expect(transitionPicker).not.toContain('nestedScrollEnabled');
-    expect(transitionPicker).not.toContain('directionalLockEnabled');
+    expect(editorSource).toMatch(
+      /ScrollView as GestureHandlerScrollView,?\s*\n/,
+    );
+    expect(transitionPicker).toContain('scrollEnabled');
+    expect(transitionPicker).toContain(
+      'contentContainerStyle={styles.transitionContainer}',
+    );
+    expect(transitionPicker).not.toContain('PanResponder');
+    expect(transitionPicker).not.toContain('animatedScrollOffset');
   });
 
-  it('keeps transition items at intrinsic row width so Android has a scroll range', () => {
+  it('keeps transition items wider than the viewport so the native list has a scroll range', () => {
     expect(editorSource).toContain('const TRANSITION_ITEM_WIDTH = 64;');
+    expect(editorSource).toMatch(
+      /const TRANSITION_CONTENT_WIDTH\s*=\s*Object\.keys\(TRANSITIONS\)\.length\s*\*\s*\(TRANSITION_ITEM_WIDTH \+ SPACING\.md\);/,
+    );
     const transitionPicker = getSourceSection(
       'const TransitionPicker:',
       'interface EffectPickerProps',
     );
-    expect(transitionPicker).toContain(
-      'width: transitions.length * (TRANSITION_ITEM_WIDTH + SPACING.md),',
-    );
-    expect(transitionPicker).toContain(
-      'transform: [{ translateX: animatedScrollOffset }],',
-    );
-    expect(editorSource).toMatch(/PanResponder,?\s*\n/);
-    expect(transitionPicker).toContain(
-      'onMoveShouldSetPanResponderCapture: (_, gestureState) =>',
-    );
-    expect(transitionPicker).toContain(
-      '{...transitionPanResponder.panHandlers}',
-    );
-    expect(transitionPicker).toContain(
-      'dragStartOffsetRef.current - gestureState.dx - gestureState.vx * 120',
+    expect(transitionPicker).not.toContain('width: transitions.length');
+    expect(editorSource).not.toMatch(/Animated as RNAnimated|PanResponder/);
+    expect(editorSource).toMatch(
+      /transitionList:\s*\{[\s\S]*?width:\s*'100%'[\s\S]*?flexGrow:\s*0/,
     );
     expect(editorSource).toMatch(
-      /transitionListViewport:\s*\{[\s\S]*?overflow:\s*'hidden'/,
-    );
-    expect(editorSource).toMatch(
-      /transitionContainer:\s*\{[\s\S]*?flexDirection:\s*'row'/,
+      /transitionContainer:\s*\{[\s\S]*?width:\s*TRANSITION_CONTENT_WIDTH[\s\S]*?flexDirection:\s*'row'/,
     );
     expect(editorSource).toMatch(
       /transitionItem:\s*\{[\s\S]*?width:\s*TRANSITION_ITEM_WIDTH[\s\S]*?flexShrink:\s*0/,
