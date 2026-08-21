@@ -59,6 +59,25 @@ describe('transition picker scrolling', () => {
     );
   });
 
+  it('scrolls to an existing current transition after the picker is laid out', () => {
+    const transitionPicker = getSourceSection(
+      'const TransitionPicker:',
+      'interface EffectPickerProps',
+    );
+
+    expect(editorSource).toContain(
+      "import { getTransitionScrollOffset } from '../utils/transitionPickerScroll';",
+    );
+    expect(transitionPicker).toContain('const transitionListRef = useRef');
+    expect(transitionPicker).toContain('getTransitionScrollOffset({');
+    expect(transitionPicker).toContain('selectedIndex: selectedTransitionIndex');
+    expect(transitionPicker).toMatch(
+      /transitionListRef\.current\?\.scrollTo\(\{[\s\S]*?x: scrollOffset[\s\S]*?animated: false/,
+    );
+    expect(transitionPicker).toContain('ref={transitionListRef}');
+    expect(transitionPicker).toContain('onLayout={handleTransitionListLayout}');
+  });
+
   it('renders transition content outside the vertical tab scroller', () => {
     const tabContent = getSourceSection(
       '{/* Tab Content */}',

@@ -58,6 +58,7 @@ import { scheduleOnRN } from 'react-native-worklets';
 import { TransitionType, PhotoEffect, DEFAULT_CAPTION_STYLE } from '../types/project.types';
 import { haptics } from '../utils/hapticFeedback';
 import { sounds } from '../utils/soundEffects';
+import { getTransitionScrollOffset } from '../utils/transitionPickerScroll';
 import { IconButton } from '../components/common';
 import { useAutosave } from '../hooks/useAutosave';
 import { SaveIndicator } from '../components/editor/SaveIndicator';
@@ -1426,9 +1427,41 @@ const TransitionPicker: React.FC<TransitionPickerProps> = ({
   const { t } = useTranslation();
   const { colors } = useThemeStore();
   const transitions = Object.values(TRANSITIONS);
+  const transitionListRef = useRef<
+    React.ElementRef<typeof GestureHandlerScrollView>
+  >(null);
+  const [transitionListWidth, setTransitionListWidth] = useState(0);
+  const selectedTransitionIndex = selectedTransition
+    ? transitions.findIndex(transition => transition.id === selectedTransition)
+    : -1;
+
+  const handleTransitionListLayout = useCallback(
+    (event: LayoutChangeEvent) => {
+      setTransitionListWidth(event.nativeEvent.layout.width);
+    },
+    [],
+  );
+
+  useEffect(() => {
+    const scrollOffset = getTransitionScrollOffset({
+      selectedIndex: selectedTransitionIndex,
+      itemCount: transitions.length,
+      itemWidth: TRANSITION_ITEM_WIDTH,
+      itemSpacing: SPACING.md,
+      viewportWidth: transitionListWidth,
+    });
+
+    if (scrollOffset === null) return;
+
+    transitionListRef.current?.scrollTo({
+      x: scrollOffset,
+      animated: false,
+    });
+  }, [selectedTransitionIndex, transitionListWidth, transitions.length]);
 
   return (
     <GestureHandlerScrollView
+      ref={transitionListRef}
       testID="transition-list"
       style={styles.transitionList}
       horizontal
@@ -1436,6 +1469,7 @@ const TransitionPicker: React.FC<TransitionPickerProps> = ({
       nestedScrollEnabled
       showsHorizontalScrollIndicator
       contentContainerStyle={styles.transitionContainer}
+      onLayout={handleTransitionListLayout}
     >
       {transitions.map(transition => {
         const isSelected = selectedTransition === transition.id;
