@@ -21,12 +21,23 @@ import {
   Image as SkiaImage,
   useImage,
 } from '@shopify/react-native-skia';
+import type { SkImage } from '@shopify/react-native-skia';
+import { useSharedValue, type SharedValue } from 'react-native-reanimated';
 import FeatherIcon from 'react-native-vector-icons/Feather';
 import { RootStackParamList } from '../navigation/navigationTypes';
 import useProjectStore from '../store/projectStore';
 import { useThemeStore } from '../store/themeStore';
 import { IconButton } from '../components/common';
+import { TransitionVfxCanvas } from '../components/preview/TransitionVfxCanvas';
 import { haptics } from '../utils/hapticFeedback';
+import { isTransitionVfx } from '../utils/transitionVfx';
+import { getContainedImageRect } from '../utils/previewImageGeometry';
+import { PREVIEW_IMAGE_SAMPLING } from '../utils/previewImageSampling';
+import {
+  resolvePreviewPlaybackFrame,
+  shouldCommitPlaybackBoundary,
+  type PreviewPlaybackFrame,
+} from '../utils/previewPlayback';
 import {
   SPACING,
   SCREEN_WIDTH,
@@ -37,7 +48,6 @@ import {
   buildTimeline,
   TimelineDescription,
   TransitionSegment,
-  PhotoSegment,
 } from '../utils/videoEncoder';
 import { TransitionType } from '../types/project.types';
 
@@ -56,20 +66,49 @@ const EMPTY_TIMELINE: TimelineDescription = {
   totalDurationMs: 0,
 };
 const CONTROL_ICON_COLOR = '#FFFFFF';
+const VFX_HANDOFF_FRAME_COUNT = 2;
+const EMPTY_LOADED_IMAGES = new Map<string, SkImage>();
 
-// Preload images component - renders hidden to cache images
-const ImagePreloader: React.FC<{ photos: any[] }> = React.memo(({ photos }) => {
-  return (
-    <View style={{ position: 'absolute', opacity: 0, pointerEvents: 'none' }}>
-      {photos.map((photo, index) => (
-        <PreloadedImage key={`preload-${photo.id || index}`} uri={photo.uri} />
-      ))}
-    </View>
-  );
-});
+type ImageLoadedHandler = (uri: string, image: SkImage) => void;
 
-const PreloadedImage: React.FC<{ uri: string }> = React.memo(({ uri }) => {
-  useImage(uri); // This caches the image
+interface VfxRenderFrame {
+  outgoingImage: SkImage;
+  incomingImage: SkImage;
+  outgoingPhoto: any;
+  incomingPhoto: any;
+  transition: TransitionType;
+  isEntrance: boolean;
+}
+
+// The loaded SkImages are shared by every surface, so a handoff never decodes
+// the same photo again or waits for a second asynchronous hook.
+const ImagePreloader: React.FC<{
+  photos: any[];
+  onImageLoaded: ImageLoadedHandler;
+}> = React.memo(({ photos, onImageLoaded }) => (
+  <View style={{ position: 'absolute', opacity: 0, pointerEvents: 'none' }}>
+    {photos.map((photo, index) => (
+      <PreloadedImage
+        key={`preload-${photo.id || index}`}
+        uri={photo.uri}
+        onImageLoaded={onImageLoaded}
+      />
+    ))}
+  </View>
+));
+
+const PreloadedImage: React.FC<{
+  uri: string;
+  onImageLoaded: ImageLoadedHandler;
+}> = React.memo(({ uri, onImageLoaded }) => {
+  const image = useImage(uri);
+
+  useEffect(() => {
+    if (image) {
+      onImageLoaded(uri, image);
+    }
+  }, [image, onImageLoaded, uri]);
+
   return null;
 });
 
@@ -87,12 +126,49 @@ const PreviewScreen: React.FC = () => {
 
   const [isPlaying, setIsPlaying] = useState(true); // Start with autoplay
   const [playbackPositionMs, setPlaybackPositionMs] = useState(0);
+  const [imageCache, setImageCache] = useState<{
+    projectId: string;
+    images: Map<string, SkImage>;
+  }>(() => ({ projectId, images: new Map() }));
 
   const progressAnim = useRef(new RNAnimated.Value(0)).current;
   const transitionAnim = useRef(new RNAnimated.Value(0)).current;
+  const vfxProgress = useSharedValue(0);
   const rafRef = useRef<number | null>(null);
   const pausedAtRef = useRef(0);
   const playbackStartRef = useRef(Date.now());
+  const playbackPositionRef = useRef(0);
+  const playbackBoundaryFrameRef = useRef<PreviewPlaybackFrame | null>(null);
+  const currentProjectIdRef = useRef(projectId);
+  currentProjectIdRef.current = projectId;
+
+  const loadedImagesByUri =
+    imageCache.projectId === projectId
+      ? imageCache.images
+      : EMPTY_LOADED_IMAGES;
+  const handleImageLoaded = useCallback<ImageLoadedHandler>(
+    (uri, image) => {
+      if (currentProjectIdRef.current !== projectId) {
+        return;
+      }
+
+      setImageCache(previousCache => {
+        const previousImages =
+          previousCache.projectId === projectId
+            ? previousCache.images
+            : EMPTY_LOADED_IMAGES;
+
+        if (previousImages.get(uri) === image) {
+          return previousCache;
+        }
+
+        const nextImages = new Map(previousImages);
+        nextImages.set(uri, image);
+        return { projectId, images: nextImages };
+      });
+    },
+    [projectId],
+  );
 
   const timeline = useMemo<TimelineDescription>(
     () => (project ? buildTimeline(project) : EMPTY_TIMELINE),
@@ -101,12 +177,33 @@ const PreviewScreen: React.FC = () => {
 
   const totalDurationMs = timeline.totalDurationMs;
 
+  const updatePlaybackAnimations = useCallback(
+    (positionMs: number) => {
+      const frame = resolvePreviewPlaybackFrame(timeline, positionMs);
+      playbackPositionRef.current = frame.positionMs;
+      progressAnim.setValue(
+        totalDurationMs > 0 ? frame.positionMs / totalDurationMs : 0,
+      );
+
+      // A completed value is intentional outside transitions: it lets a
+      // retained VFX frame stay on the incoming image during the handoff.
+      const visualProgress = frame.activeTransitionSegment
+        ? frame.transitionProgress
+        : 1;
+      transitionAnim.setValue(visualProgress);
+      vfxProgress.value = visualProgress;
+      return frame;
+    },
+    [progressAnim, timeline, totalDurationMs, transitionAnim, vfxProgress],
+  );
+
   useEffect(() => {
     pausedAtRef.current = 0;
+    playbackPositionRef.current = 0;
     setPlaybackPositionMs(0);
-    progressAnim.setValue(0);
-    transitionAnim.setValue(0);
-  }, [projectId, totalDurationMs, progressAnim, transitionAnim]);
+    const firstFrame = updatePlaybackAnimations(0);
+    playbackBoundaryFrameRef.current = firstFrame;
+  }, [projectId, totalDurationMs, updatePlaybackAnimations]);
 
   useEffect(() => {
     if (!project || totalDurationMs <= 0) {
@@ -129,7 +226,16 @@ const PreviewScreen: React.FC = () => {
     const runFrame = () => {
       const elapsed = Date.now() - playbackStartRef.current;
       const nextPosition = totalDurationMs ? elapsed % totalDurationMs : 0;
-      setPlaybackPositionMs(nextPosition);
+      const nextFrame = updatePlaybackAnimations(nextPosition);
+      const previousFrame = playbackBoundaryFrameRef.current;
+
+      if (
+        !previousFrame ||
+        shouldCommitPlaybackBoundary(previousFrame, nextFrame)
+      ) {
+        playbackBoundaryFrameRef.current = nextFrame;
+        setPlaybackPositionMs(nextFrame.positionMs);
+      }
       rafRef.current = requestAnimationFrame(runFrame);
     };
 
@@ -142,40 +248,14 @@ const PreviewScreen: React.FC = () => {
         rafRef.current = null;
       }
     };
-  }, [isPlaying, project, totalDurationMs]);
+  }, [isPlaying, project, totalDurationMs, updatePlaybackAnimations]);
 
-  const activeTransitionSegment = useMemo<TransitionSegment | null>(() => {
-    if (!timeline.transitionSegments.length) {
-      return null;
-    }
-
-    return (
-      timeline.transitionSegments.find(
-        segment =>
-          playbackPositionMs >= segment.startMs &&
-          playbackPositionMs < segment.endMs,
-      ) ?? null
-    );
-  }, [timeline.transitionSegments, playbackPositionMs]);
-
-  const activePhotoSegment = useMemo<PhotoSegment | null>(() => {
-    if (!timeline.photoSegments.length) {
-      return null;
-    }
-
-    let candidate: PhotoSegment | null = timeline.photoSegments[0];
-
-    for (let index = 0; index < timeline.photoSegments.length; index += 1) {
-      const segment = timeline.photoSegments[index];
-      if (segment.startMs <= playbackPositionMs) {
-        candidate = segment;
-      } else {
-        break;
-      }
-    }
-
-    return candidate;
-  }, [timeline.photoSegments, playbackPositionMs]);
+  const playbackFrame = useMemo(
+    () => resolvePreviewPlaybackFrame(timeline, playbackPositionMs),
+    [timeline, playbackPositionMs],
+  );
+  const activeTransitionSegment = playbackFrame.activeTransitionSegment;
+  const activePhotoSegment = playbackFrame.activePhotoSegment;
 
   const isTransitioning = Boolean(activeTransitionSegment);
 
@@ -235,37 +315,19 @@ const PreviewScreen: React.FC = () => {
         Math.min(newPosition, Math.max(totalDurationMs - 1, 0)),
       );
 
-      setPlaybackPositionMs(clamped);
-      pausedAtRef.current = clamped;
-      playbackStartRef.current = Date.now() - clamped;
+      const frame = updatePlaybackAnimations(clamped);
+      playbackBoundaryFrameRef.current = frame;
+      setPlaybackPositionMs(frame.positionMs);
+      pausedAtRef.current = frame.positionMs;
+      playbackStartRef.current = Date.now() - frame.positionMs;
     },
-    [timeline.photoSegments, transitionsIntoPhoto, totalDurationMs],
+    [
+      timeline.photoSegments,
+      transitionsIntoPhoto,
+      totalDurationMs,
+      updatePlaybackAnimations,
+    ],
   );
-
-  useEffect(() => {
-    if (!totalDurationMs) {
-      progressAnim.setValue(0);
-      return;
-    }
-
-    const normalized = Math.min(
-      Math.max(playbackPositionMs / totalDurationMs, 0),
-      1,
-    );
-    progressAnim.setValue(normalized);
-  }, [playbackPositionMs, totalDurationMs, progressAnim]);
-
-  useEffect(() => {
-    if (!activeTransitionSegment) {
-      transitionAnim.setValue(0);
-      return;
-    }
-
-    const { startMs, durationMs } = activeTransitionSegment;
-    const progress =
-      durationMs > 0 ? (playbackPositionMs - startMs) / durationMs : 0;
-    transitionAnim.setValue(Math.min(Math.max(progress, 0), 1));
-  }, [activeTransitionSegment, playbackPositionMs, transitionAnim]);
 
   const outgoingIndex = isTransitioning
     ? activeTransitionSegment?.fromIndex ?? activePhotoSegment?.index ?? 0
@@ -280,7 +342,7 @@ const PreviewScreen: React.FC = () => {
     haptics.medium();
     setIsPlaying(prev => {
       if (prev) {
-        pausedAtRef.current = playbackPositionMs;
+        pausedAtRef.current = playbackPositionRef.current;
       } else {
         playbackStartRef.current = Date.now() - pausedAtRef.current;
       }
@@ -291,18 +353,18 @@ const PreviewScreen: React.FC = () => {
   const handleNext = () => {
     haptics.medium();
     if (timeline.photoSegments.length === 0) return;
+    const playbackPosition = playbackPositionRef.current;
 
     // Find the next photo segment
     let currentSegmentIndex = timeline.photoSegments.findIndex(
       segment =>
-        playbackPositionMs >= segment.startMs &&
-        playbackPositionMs < segment.endMs,
+        playbackPosition >= segment.startMs && playbackPosition < segment.endMs,
     );
 
     // If we're not in any segment (e.g., in a transition), find the last passed segment
     if (currentSegmentIndex === -1) {
       currentSegmentIndex = timeline.photoSegments.findIndex(
-        segment => segment.startMs > playbackPositionMs,
+        segment => segment.startMs > playbackPosition,
       );
       if (currentSegmentIndex === -1) {
         currentSegmentIndex = timeline.photoSegments.length - 1;
@@ -319,18 +381,18 @@ const PreviewScreen: React.FC = () => {
   const handlePrev = () => {
     haptics.medium();
     if (timeline.photoSegments.length === 0) return;
+    const playbackPosition = playbackPositionRef.current;
 
     // Find the current photo segment
     let currentSegmentIndex = timeline.photoSegments.findIndex(
       segment =>
-        playbackPositionMs >= segment.startMs &&
-        playbackPositionMs < segment.endMs,
+        playbackPosition >= segment.startMs && playbackPosition < segment.endMs,
     );
 
     // If we're not in any segment (e.g., in a transition), find the last passed segment
     if (currentSegmentIndex === -1) {
       currentSegmentIndex = timeline.photoSegments.findIndex(
-        segment => segment.startMs > playbackPositionMs,
+        segment => segment.startMs > playbackPosition,
       );
       if (currentSegmentIndex === -1) {
         currentSegmentIndex = timeline.photoSegments.length - 1;
@@ -348,7 +410,7 @@ const PreviewScreen: React.FC = () => {
 
   const handleExport = () => {
     haptics.medium();
-    pausedAtRef.current = playbackPositionMs;
+    pausedAtRef.current = playbackPositionRef.current;
     setIsPlaying(false);
     navigation.navigate('Export', { projectId });
   };
@@ -385,12 +447,33 @@ const PreviewScreen: React.FC = () => {
   const currentTransitionType = isTransitioning
     ? activeTransitionSegment?.transition.type ?? null
     : null;
+  const isVfxActive = isTransitioning && isTransitionVfx(currentTransitionType);
+  const outgoingPhoto = photos[resolvedOutgoingIndex];
+  const incomingPhoto = photos[resolvedIncomingIndex];
+  const outgoingImage = loadedImagesByUri.get(outgoingPhoto.uri) ?? null;
+  const incomingImage = loadedImagesByUri.get(incomingPhoto.uri) ?? null;
+  const activeVfxFrame: VfxRenderFrame | null =
+    isVfxActive && currentTransitionType && outgoingImage && incomingImage
+      ? {
+          outgoingImage,
+          incomingImage,
+          outgoingPhoto,
+          incomingPhoto,
+          transition: currentTransitionType,
+          isEntrance: isEntranceTransition,
+        }
+      : null;
   const displayIndex = resolvedOutgoingIndex;
   const shouldShowOverlay =
     isTransitioning &&
     !isEntranceTransition &&
     resolvedIncomingIndex !== resolvedOutgoingIndex;
-  const layerStyles = getLayerStyles(isEntranceTransition, shouldShowOverlay);
+  const layerStyles = isVfxActive
+    ? {
+        current: { opacity: 1 },
+        next: { opacity: 0, pointerEvents: 'none' as const },
+      }
+    : getLayerStyles(isEntranceTransition, shouldShowOverlay);
 
   const progressWidth = progressAnim.interpolate({
     inputRange: [0, 1],
@@ -566,94 +649,6 @@ const PreviewScreen: React.FC = () => {
         };
         break;
       }
-      case TransitionType.DISSOLVE: {
-        currentStyle = {
-          opacity: fadeOut,
-          transform: [
-            {
-              scale: progress.interpolate({
-                inputRange: [0, 1],
-                outputRange: [1, 0.9],
-              }),
-            },
-          ],
-        };
-        nextStyle = {
-          opacity: fadeIn,
-          transform: [
-            {
-              scale: progress.interpolate({
-                inputRange: [0, 1],
-                outputRange: [1.1, 1],
-              }),
-            },
-          ],
-        };
-        break;
-      }
-      case TransitionType.BLUR: {
-        currentStyle = {
-          opacity: fadeOut,
-          transform: [
-            {
-              translateX: progress.interpolate({
-                inputRange: [0, 1],
-                outputRange: [0, -40],
-              }),
-            },
-          ],
-        };
-        nextStyle = {
-          opacity: fadeIn,
-          transform: [
-            {
-              translateX: progress.interpolate({
-                inputRange: [0, 1],
-                outputRange: [40, 0],
-              }),
-            },
-          ],
-        };
-        break;
-      }
-      case TransitionType.WIPE_CIRCLE: {
-        currentStyle = {
-          opacity: fadeOut,
-          transform: [
-            {
-              scale: progress.interpolate({
-                inputRange: [0, 1],
-                outputRange: [1, 1.2],
-              }),
-            },
-          ],
-        };
-        nextStyle = {
-          opacity: fadeIn,
-          transform: [
-            {
-              scale: progress.interpolate({
-                inputRange: [0, 1],
-                outputRange: [0.8, 1],
-              }),
-            },
-          ],
-        };
-        break;
-      }
-      case TransitionType.PUSH: {
-        const currentTranslate = progress.interpolate({
-          inputRange: [0, 1],
-          outputRange: [0, -PREVIEW_WIDTH],
-        });
-        const nextTranslate = progress.interpolate({
-          inputRange: [0, 1],
-          outputRange: [PREVIEW_WIDTH, 0],
-        });
-        currentStyle = { transform: [{ translateX: currentTranslate }] };
-        nextStyle = { opacity: 1, transform: [{ translateX: nextTranslate }] };
-        break;
-      }
       default: {
         currentStyle = { opacity: fadeOut };
         nextStyle = { opacity: fadeIn };
@@ -685,7 +680,7 @@ const PreviewScreen: React.FC = () => {
   return (
     <SafeAreaView style={[styles.container, { backgroundColor: '#000000' }]}>
       {/* Preload all images to prevent flickering */}
-      <ImagePreloader photos={photos} />
+      <ImagePreloader photos={photos} onImageLoaded={handleImageLoaded} />
 
       {/* Close button */}
       <View style={styles.topBar}>
@@ -699,37 +694,47 @@ const PreviewScreen: React.FC = () => {
 
       {/* Preview canvas */}
       <View style={styles.previewContainer}>
-        {/* Base layer - current photo */}
-        <RNAnimated.View
-          style={[styles.photoLayer, layerStyles.current]}
-          needsOffscreenAlphaCompositing
-          removeClippedSubviews={false}
-          collapsable={false}
-        >
-          <PhotoCanvas
-            key={`photo-${resolvedOutgoingIndex}`}
-            photo={photos[resolvedOutgoingIndex]}
-            width={PREVIEW_WIDTH}
-            height={PREVIEW_HEIGHT}
-          />
-        </RNAnimated.View>
+        <View style={styles.previewViewport} collapsable={false}>
+          {/* Base layer - current photo */}
+          <RNAnimated.View
+            style={[styles.photoLayer, layerStyles.current]}
+            needsOffscreenAlphaCompositing
+            removeClippedSubviews={false}
+            collapsable={false}
+          >
+            <PhotoCanvas
+              photo={outgoingPhoto}
+              image={outgoingImage}
+              width={PREVIEW_WIDTH}
+              height={PREVIEW_HEIGHT}
+            />
+          </RNAnimated.View>
 
-        {/* Overlay layer - next photo during transitions */}
-        <RNAnimated.View
-          pointerEvents="none"
-          style={[styles.photoLayer, layerStyles.next]}
-          needsOffscreenAlphaCompositing
-          removeClippedSubviews={false}
-          collapsable={false}
-        >
-          <PhotoCanvas
-            key={`photo-${resolvedIncomingIndex}`}
-            photo={photos[resolvedIncomingIndex]}
+          {/* Overlay layer - next photo during transitions */}
+          <RNAnimated.View
+            pointerEvents="none"
+            style={[styles.photoLayer, layerStyles.next]}
+            needsOffscreenAlphaCompositing
+            removeClippedSubviews={false}
+            collapsable={false}
+          >
+            <PhotoCanvas
+              photo={incomingPhoto}
+              image={incomingImage}
+              width={PREVIEW_WIDTH}
+              height={PREVIEW_HEIGHT}
+            />
+          </RNAnimated.View>
+
+          <VfxHandoffLayer
+            frame={activeVfxFrame}
+            progress={vfxProgress}
+            captionProgress={transitionAnim}
             width={PREVIEW_WIDTH}
             height={PREVIEW_HEIGHT}
           />
-        </RNAnimated.View>
-        {/* Watermark removed - app is completely free */}
+          {/* Watermark removed - app is completely free */}
+        </View>
       </View>
 
       {/* Progress bar */}
@@ -808,151 +813,249 @@ const PreviewScreen: React.FC = () => {
 // Photo Canvas Component - Memoized to prevent unnecessary re-renders
 interface PhotoCanvasProps {
   photo: any;
+  image: SkImage | null;
   width: number;
   height: number;
 }
 
-const PhotoCanvas: React.FC<PhotoCanvasProps> = React.memo(
-  ({ photo, width, height }) => {
-    const image = useImage(photo.uri);
-    const [displayImage, setDisplayImage] = useState<any>(null);
-    const [size, setSize] = useState({ width, height });
+interface PhotoCaptionOverlayProps {
+  photo: any;
+  width: number;
+  height: number;
+}
 
-    // Update display image only when fully loaded
+const PhotoCaptionOverlay: React.FC<PhotoCaptionOverlayProps> = ({
+  photo,
+  width,
+  height,
+}) => {
+  if (!photo.caption?.text) return null;
+
+  const { text, style } = photo.caption;
+  const maxTextWidth = (width * style.maxWidth) / 100;
+
+  let textAlign: 'left' | 'center' | 'right' = 'center';
+  if (style.textAlign === 'left') textAlign = 'left';
+  if (style.textAlign === 'right') textAlign = 'right';
+
+  return (
+    <View
+      style={{
+        position: 'absolute',
+        top:
+          style.position === 'top'
+            ? style.padding
+            : style.position === 'center'
+            ? 0
+            : undefined,
+        bottom:
+          style.position === 'bottom'
+            ? style.padding
+            : style.position === 'center'
+            ? 0
+            : undefined,
+        left: style.textAlign === 'left' ? style.padding : 0,
+        right: style.textAlign === 'right' ? style.padding : 0,
+        width: style.textAlign === 'center' ? '100%' : maxTextWidth,
+        alignItems:
+          style.textAlign === 'left'
+            ? 'flex-start'
+            : style.textAlign === 'right'
+            ? 'flex-end'
+            : 'center',
+        justifyContent: style.position === 'center' ? 'center' : 'flex-start',
+        transform: [
+          { translateX: ((style.offsetX ?? 0) / 100) * width },
+          { translateY: ((style.offsetY ?? 0) / 100) * height },
+        ],
+      }}
+    >
+      <View
+        style={{
+          backgroundColor: style.backgroundColor,
+          paddingHorizontal: style.padding,
+          paddingVertical: style.padding / 2,
+          borderRadius: 4,
+          maxWidth: maxTextWidth,
+        }}
+      >
+        <Text
+          style={{
+            color: style.fontColor,
+            fontSize: style.fontSize,
+            fontWeight: style.fontWeight,
+            textAlign,
+          }}
+        >
+          {text}
+        </Text>
+      </View>
+    </View>
+  );
+};
+
+interface VfxHandoffLayerProps {
+  frame: VfxRenderFrame | null;
+  progress: SharedValue<number>;
+  captionProgress: RNAnimated.Value;
+  width: number;
+  height: number;
+}
+
+const VfxHandoffLayer: React.FC<VfxHandoffLayerProps> = React.memo(
+  ({ frame, progress, captionProgress, width, height }) => {
+    const retainedFrameRef = useRef<VfxRenderFrame | null>(null);
+    const [, setReleaseVersion] = useState(0);
+
+    if (frame) {
+      retainedFrameRef.current = frame;
+    }
+
+    const displayedFrame = frame ?? retainedFrameRef.current;
+    const outgoingCaptionOpacity = useMemo(
+      () =>
+        captionProgress.interpolate({
+          inputRange: [0, 1],
+          outputRange: [1, 0],
+        }),
+      [captionProgress],
+    );
+
     useEffect(() => {
-      if (image) {
-        // Use requestAnimationFrame to ensure smooth update
-        requestAnimationFrame(() => {
-          setDisplayImage(image);
-        });
-      }
-    }, [image]);
-
-    useEffect(() => {
-      if (!displayImage) return;
-
-      const intrinsicWidth = displayImage.width();
-      const intrinsicHeight = displayImage.height();
-
-      const sourceWidth =
-        intrinsicWidth && intrinsicHeight ? intrinsicWidth : photo.width;
-      const sourceHeight =
-        intrinsicWidth && intrinsicHeight ? intrinsicHeight : photo.height;
-
-      if (!sourceWidth || !sourceHeight) {
-        setSize({ width, height });
+      if (frame || !retainedFrameRef.current) {
         return;
       }
 
-      const aspectRatio = sourceWidth / sourceHeight;
-      const containerAspect = width / height;
+      let animationFrameId: number | null = null;
+      let remainingFrames = VFX_HANDOFF_FRAME_COUNT;
 
-      if (aspectRatio > containerAspect) {
-        setSize({
-          width,
-          height: width / aspectRatio,
-        });
-      } else {
-        setSize({
-          width: height * aspectRatio,
-          height,
-        });
-      }
-    }, [displayImage, photo.width, photo.height, width, height]);
+      const releaseFrame = () => {
+        remainingFrames -= 1;
+        if (remainingFrames > 0) {
+          animationFrameId = requestAnimationFrame(releaseFrame);
+          return;
+        }
 
-    if (!displayImage) {
+        retainedFrameRef.current = null;
+        setReleaseVersion(version => version + 1);
+      };
+
+      animationFrameId = requestAnimationFrame(releaseFrame);
+      return () => {
+        if (animationFrameId !== null) {
+          cancelAnimationFrame(animationFrameId);
+        }
+      };
+    }, [frame]);
+
+    if (!displayedFrame) {
+      return null;
+    }
+
+    return (
+      <View
+        pointerEvents="none"
+        style={styles.photoLayer}
+        collapsable={false}
+      >
+        <TransitionVfxCanvas
+          outgoingImage={displayedFrame.outgoingImage}
+          incomingImage={displayedFrame.incomingImage}
+          transition={displayedFrame.transition}
+          progress={progress}
+          width={width}
+          height={height}
+          isEntrance={displayedFrame.isEntrance}
+        />
+
+        {!displayedFrame.isEntrance && (
+          <RNAnimated.View
+            pointerEvents="none"
+            style={[
+              styles.vfxCaptionLayer,
+              { opacity: outgoingCaptionOpacity },
+            ]}
+          >
+            <PhotoCaptionOverlay
+              photo={displayedFrame.outgoingPhoto}
+              width={width}
+              height={height}
+            />
+          </RNAnimated.View>
+        )}
+        <RNAnimated.View
+          pointerEvents="none"
+          style={[styles.vfxCaptionLayer, { opacity: captionProgress }]}
+        >
+          <PhotoCaptionOverlay
+            photo={displayedFrame.incomingPhoto}
+            width={width}
+            height={height}
+          />
+        </RNAnimated.View>
+      </View>
+    );
+  },
+);
+
+const PhotoCanvas: React.FC<PhotoCanvasProps> = React.memo(
+  ({ photo, image, width, height }) => {
+    const retainedFrameRef = useRef<{ image: SkImage; photo: any } | null>(
+      null,
+    );
+
+    if (image) {
+      retainedFrameRef.current = { image, photo };
+    }
+
+    const displayedFrame = image ? { image, photo } : retainedFrameRef.current;
+
+    if (!displayedFrame) {
       return <View style={{ width, height, backgroundColor: '#000' }} />;
     }
 
-    const x = (width - size.width) / 2;
-    const y = (height - size.height) / 2;
-
-    const renderCaption = () => {
-      if (!photo.caption?.text) return null;
-
-      const { text, style } = photo.caption;
-      const maxTextWidth = (width * style.maxWidth) / 100;
-
-      let textAlign: 'left' | 'center' | 'right' = 'center';
-      if (style.textAlign === 'left') textAlign = 'left';
-      if (style.textAlign === 'right') textAlign = 'right';
-
-      return (
-        <View
-          style={{
-            position: 'absolute',
-            top:
-              style.position === 'top'
-                ? style.padding
-                : style.position === 'center'
-                  ? 0
-                  : undefined,
-            bottom:
-              style.position === 'bottom'
-                ? style.padding
-                : style.position === 'center'
-                  ? 0
-                  : undefined,
-            left: style.textAlign === 'left' ? style.padding : 0,
-            right: style.textAlign === 'right' ? style.padding : 0,
-            width: style.textAlign === 'center' ? '100%' : maxTextWidth,
-            alignItems:
-              style.textAlign === 'left'
-                ? 'flex-start'
-                : style.textAlign === 'right'
-                  ? 'flex-end'
-                  : 'center',
-            justifyContent:
-              style.position === 'center' ? 'center' : 'flex-start',
-            transform: [
-              { translateX: ((style.offsetX ?? 0) / 100) * width },
-              { translateY: ((style.offsetY ?? 0) / 100) * height },
-            ],
-          }}
-        >
-          <View
-            style={{
-              backgroundColor: style.backgroundColor,
-              paddingHorizontal: style.padding,
-              paddingVertical: style.padding / 2,
-              borderRadius: 4,
-              maxWidth: maxTextWidth,
-            }}
-          >
-            <Text
-              style={{
-                color: style.fontColor,
-                fontSize: style.fontSize,
-                fontWeight: style.fontWeight,
-                textAlign: textAlign,
-              }}
-            >
-              {text}
-            </Text>
-          </View>
-        </View>
-      );
-    };
+    const intrinsicWidth = displayedFrame.image.width();
+    const intrinsicHeight = displayedFrame.image.height();
+    const sourceWidth =
+      intrinsicWidth && intrinsicHeight
+        ? intrinsicWidth
+        : displayedFrame.photo.width;
+    const sourceHeight =
+      intrinsicWidth && intrinsicHeight
+        ? intrinsicHeight
+        : displayedFrame.photo.height;
+    const imageRect = getContainedImageRect(
+      sourceWidth,
+      sourceHeight,
+      width,
+      height,
+    );
 
     return (
       <View style={{ width, height }}>
         <Canvas style={{ width, height, backgroundColor: '#000' }}>
           <SkiaImage
-            image={displayImage}
-            x={x}
-            y={y}
-            width={size.width}
-            height={size.height}
-            fit="contain"
+            image={displayedFrame.image}
+            x={imageRect.x}
+            y={imageRect.y}
+            width={imageRect.width}
+            height={imageRect.height}
+            fit="fill"
+            sampling={PREVIEW_IMAGE_SAMPLING}
           />
         </Canvas>
-        {renderCaption()}
+        <PhotoCaptionOverlay
+          photo={displayedFrame.photo}
+          width={width}
+          height={height}
+        />
       </View>
     );
   },
   (prevProps, nextProps) => {
     // Re-render if photo URI or caption changes
     return (
+      prevProps.image === nextProps.image &&
       prevProps.photo.uri === nextProps.photo.uri &&
       prevProps.width === nextProps.width &&
       prevProps.height === nextProps.height &&
@@ -983,10 +1086,15 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
-  photoLayer: {
-    position: 'absolute',
+  previewViewport: {
     width: PREVIEW_WIDTH,
     height: PREVIEW_HEIGHT,
+  },
+  photoLayer: {
+    ...StyleSheet.absoluteFillObject,
+  },
+  vfxCaptionLayer: {
+    ...StyleSheet.absoluteFillObject,
   },
   progressBarContainer: {
     height: 4,

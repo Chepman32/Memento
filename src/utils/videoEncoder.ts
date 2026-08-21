@@ -109,7 +109,7 @@ const FFMPEG_TRANSITION_MAP: Partial<Record<TransitionType, string>> = {
   [TransitionType.DISSOLVE]: 'dissolve',
   [TransitionType.WIPE_CIRCLE]: 'circleopen',
   [TransitionType.PUSH]: 'smoothleft',
-  [TransitionType.BLUR]: 'fade',
+  [TransitionType.BLUR]: 'hblur',
   [TransitionType.CUBE]: 'fade',
   [TransitionType.FLIP]: 'fade',
   [TransitionType.ROTATE]: 'fade',
@@ -691,7 +691,7 @@ export const videoEncoder = {
     let fontPath: string | undefined;
     try {
       fontPath = await findPreferredFont();
-    } catch (error) {
+    } catch {
       console.warn('[FFmpeg-Video] Failed to find preferred font for captions');
     }
 
